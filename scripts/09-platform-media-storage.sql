@@ -43,5 +43,5 @@ CREATE POLICY "service_role_delete_platform_media" ON storage.objects
   FOR DELETE USING (bucket_id = 'platform-media');
 
 INSERT INTO site_settings (key, value) VALUES
-  ('company_logo_url', '/images/energy-logics-logo.png')
+  ('company_logo_url', '/images/theos-art-logo.png')
 ON CONFLICT (key) DO NOTHING;

@@ -1,4 +1,4 @@
--- Paid access for Energy Library books & culture (admin / lecturer uploads)
+-- Paid access for Art Gallery books & culture (admin / lecturer uploads)
 
 ALTER TABLE energy_library_items
   ADD COLUMN IF NOT EXISTS price_rwf INT NOT NULL DEFAULT 0;

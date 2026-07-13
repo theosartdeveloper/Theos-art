@@ -136,20 +136,20 @@ CREATE TABLE IF NOT EXISTS certificates (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Create products table (for engineering store)
+-- Create products table (for art shop)
 CREATE TABLE IF NOT EXISTS products (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   description TEXT,
   price DECIMAL(10, 2) NOT NULL,
-  category VARCHAR(100), -- Arduino, Sensors, Motors, PLC, Kits
+  category VARCHAR(100), -- Paints, Brushes, Canvases, Tools, Artworks
   image_url VARCHAR(500),
   in_stock BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Create orders table (for engineering store)
+-- Create orders table (for art shop)
 CREATE TABLE IF NOT EXISTS orders (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   student_id UUID REFERENCES students(id) ON DELETE SET NULL,

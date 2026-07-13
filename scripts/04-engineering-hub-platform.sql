@@ -1,4 +1,5 @@
--- Engineering Hub Platform Schema
+-- Theos Art Hub Platform Schema
+-- Core tables for courses, shop, content, and site settings
 -- Run in Supabase SQL Editor after existing scripts
 
 -- Extend users role constraint (if users table exists)

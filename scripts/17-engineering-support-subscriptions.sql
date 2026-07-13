@@ -68,19 +68,19 @@ VALUES
   (
     'Starter Support',
     'starter-support',
-    'Individual engineers — email-style help for one active issue at a time.',
+    'Individual creators — email-style help for one active shop or studio question at a time.',
     15000,
     30,
     3,
     48,
-    '["Up to 3 support tickets per month", "48-hour response target", "PLC, electrical & embedded topics", "MoMo receipt verification"]'::jsonb,
+    '["Up to 3 support tickets per month", "48-hour response target", "Materials, studio & product questions", "MoMo receipt verification"]'::jsonb,
     1,
     'published'
   ),
   (
     'Professional Support',
     'professional-support',
-    'For technicians and graduates who need ongoing engineering guidance.',
+    'For artists and collectors who need ongoing studio guidance.',
     35000,
     90,
     12,
@@ -97,7 +97,7 @@ VALUES
     365,
     NULL,
     8,
-    '["Unlimited support tickets", "8-hour SLA on business days", "Dedicated engineer assignment", "Project documentation review"]'::jsonb,
+    '["Unlimited support tickets", "8-hour SLA on business days", "Dedicated studio specialist", "Order & commission review"]'::jsonb,
     3,
     'published'
   )
@@ -105,10 +105,10 @@ ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO support_categories (name, slug, description, status)
 VALUES
-  ('PLC & Industrial Control', 'plc-industrial', 'Ladder logic, HMI, VFD, and automation troubleshooting', 'published'),
-  ('Electrical & Power', 'electrical-power', 'Wiring, protection, solar, and installation issues', 'published'),
-  ('Embedded & IoT', 'embedded-iot', 'Microcontrollers, sensors, firmware, and prototyping', 'published'),
-  ('General Engineering', 'general-engineering', 'Other technical questions and project guidance', 'published')
+  ('Art Materials', 'art-materials', 'Paints, brushes, canvases, and studio supply questions', 'published'),
+  ('Original Artworks', 'original-artworks', 'Commissions, collections, and purchasing studio pieces', 'published'),
+  ('Workshops & Events', 'workshops-events', 'Creative sessions, exhibitions, and live painting', 'published'),
+  ('Orders & Delivery', 'orders-delivery', 'Shop orders, pickup, and Kigali delivery', 'published')
 ON CONFLICT (slug) DO NOTHING;
 
 NOTIFY pgrst, 'reload schema';

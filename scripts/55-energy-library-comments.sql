@@ -1,4 +1,4 @@
--- Energy Library: comments on published culture items
+-- Art Gallery: comments on published culture items
 -- Run in Supabase SQL Editor after scripts/54-energy-library-phase4.sql
 
 CREATE TABLE IF NOT EXISTS energy_library_comments (

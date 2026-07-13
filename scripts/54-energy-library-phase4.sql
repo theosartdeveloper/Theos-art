@@ -1,4 +1,4 @@
--- Energy Library Phase 4: featured reading picks
+-- Art Gallery Phase 4: featured reading picks
 -- Run in Supabase SQL Editor after scripts/53-energy-library.sql
 
 ALTER TABLE energy_library_items

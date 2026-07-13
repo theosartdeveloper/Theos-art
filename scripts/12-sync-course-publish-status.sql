@@ -14,10 +14,13 @@ BEGIN
   UPDATE courses SET status = 'draft' WHERE status IS NULL;
 END $$;
 
--- Optional: publish the three default Energy & Logics programmes
+-- Optional: publish default Theos Art workshop / programme titles (if present)
 UPDATE courses
 SET status = 'published', updated_at = NOW()
 WHERE title IN (
+  'Original Artworks',
+  'Art Materials',
+  'Workshops & Events',
   'Embedded Systems',
   'Industrial Control Systems',
   'Advanced Electrical Technology'

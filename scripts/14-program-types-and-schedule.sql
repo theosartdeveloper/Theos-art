@@ -11,7 +11,9 @@ UPDATE courses SET program_type = 'training' WHERE program_type IS NULL OR progr
 CREATE INDEX IF NOT EXISTS idx_courses_program_type ON courses (program_type);
 CREATE INDEX IF NOT EXISTS idx_courses_status_program_type ON courses (status, program_type);
 
--- Optional: sync company phone in site settings
-UPDATE site_settings SET value = '+250783986252' WHERE key = 'company_phone';
+-- Optional: sync company phone in site settings (Theos Art)
+UPDATE site_settings SET value = '+250783086093', updated_at = NOW() WHERE key = 'company_phone';
+UPDATE site_settings SET value = '+250 783 086 093', updated_at = NOW() WHERE key = 'company_phone_display';
+UPDATE site_settings SET value = '250783086093', updated_at = NOW() WHERE key = 'company_whatsapp';
 
 NOTIFY pgrst, 'reload schema';

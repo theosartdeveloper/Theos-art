@@ -1,4 +1,4 @@
--- Energy Library Phase 1: public gallery, books, and culture items
+-- Art Gallery Phase 1: public gallery, books, and culture items
 -- Run in Supabase SQL Editor after scripts/52-course-pending-review.sql
 
 CREATE TABLE IF NOT EXISTS energy_library_items (

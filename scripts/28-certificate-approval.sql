@@ -1,5 +1,5 @@
 -- Certificate approval flow: lecturer confirms -> admin gives final approval
--- Also allow free-course certificates (rendered with an "Energy & Logics" watermark)
+-- Free-course certificates (rendered with a Theos Art watermark)
 -- Run in Supabase SQL Editor after scripts/27-quiz-assessments.sql
 
 ALTER TABLE student_certificates ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'issued';
