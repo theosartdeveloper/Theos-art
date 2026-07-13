@@ -2,7 +2,7 @@ import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import type { AdminReportData } from '@/lib/admin/data/admin-reports'
 
-const REPORT_TITLE = 'Energy & Logics Academy - Admin Report'
+const REPORT_TITLE = 'Theos Art - Admin Report'
 
 type ReportRow = [section: string, metric: string, value: string | number]
 
@@ -41,7 +41,7 @@ export function buildReportRows(report: AdminReportData): ReportRow[] {
     ['Operations', 'Announcements', stats.announcements],
     [
       'Content',
-      'Energy Library items',
+      'Theos Art Library items',
       `${content.libraryTotal} (${content.libraryPublished} published, ${content.libraryPendingReview} pending review)`,
     ],
     [

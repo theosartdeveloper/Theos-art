@@ -47,7 +47,7 @@ export function generateTotpSecret(): string {
   return base32Encode(randomBytes(20))
 }
 
-export function buildTotpUri(secret: string, email: string, issuer = 'Energy & Logics Admin'): string {
+export function buildTotpUri(secret: string, email: string, issuer = 'Theos Art Admin'): string {
   const label = encodeURIComponent(`${issuer}:${email}`)
   return `otpauth://totp/${label}?secret=${secret}&issuer=${encodeURIComponent(issuer)}&digits=6&period=30`
 }

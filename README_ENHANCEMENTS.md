@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Successfully completed a comprehensive upgrade of the Energy & Logics Admin Dashboard with professional features, advanced analytics, email notifications, certificate generation, and report export functionality.
+Successfully completed a comprehensive upgrade of the Theos Art Admin Dashboard with professional features, advanced analytics, email notifications, certificate generation, and report export functionality.
 
 ---
 
@@ -11,7 +11,7 @@ Successfully completed a comprehensive upgrade of the Energy & Logics Admin Dash
 ### 1. Email Notification System ✅
 - **Acceptance Emails**: Professional congratulation messages sent automatically when applications are approved
 - **Decline Emails**: Respectful decline notifications with encouragement for future applications
-- **HTML Templates**: Branded email templates with Energy & Logics styling
+- **HTML Templates**: Branded email templates with Theos Art styling
 - **Async Sending**: Non-blocking email sending to prevent UI delays
 
 ### 2. Certificate Generation ✅

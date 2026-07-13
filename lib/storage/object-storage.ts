@@ -26,7 +26,7 @@ export function getR2BucketName(): string {
   return process.env.R2_BUCKET_NAME?.trim() || 'platform-media'
 }
 
-/** Public CDN base, e.g. https://media.energyandlogics.com */
+/** Public CDN base, e.g. https://media.theosart.com */
 export function getMediaPublicBaseUrl(): string | null {
   const base =
     process.env.R2_PUBLIC_BASE_URL?.trim() ||

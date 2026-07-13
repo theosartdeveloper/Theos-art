@@ -13,7 +13,7 @@ function escapeXml(value: string) {
 }
 
 export async function GET() {
-  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://energyandlogics.com').replace(/\/$/, '')
+  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://theosart.com').replace(/\/$/, '')
   const articles = await loadPublishedArticles({ limit: 40, accessLevel: 'public' })
 
   const items = articles

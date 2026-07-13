@@ -1,4 +1,4 @@
-# Energy & Logics Academy - Quick Start Guide
+# Theos Art - Quick Start Guide
 
 ## 🚀 Start Development
 

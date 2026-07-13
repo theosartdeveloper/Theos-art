@@ -1,17 +1,17 @@
 {
-  "name": "Energy & Logics Academy",
-  "short_name": "Energy & Logics",
-  "description": "Engineering academy, learning portal, and Energy Library.",
+  "name": "Theos Art",
+  "short_name": "Theos Art",
+  "description": "Original artworks and quality art materials in Kigali, Rwanda.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f8fafc",
-  "theme_color": "#1e3a5f",
+  "background_color": "#ffffff",
+  "theme_color": "#111111",
   "lang": "en",
   "icons": [
     {
-      "src": "/hero-laboratory.jpg",
+      "src": "/images/theos-art-logo.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any"
     }
   ]

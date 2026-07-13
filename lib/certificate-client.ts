@@ -15,7 +15,7 @@ type ApplicationCertificateInput = {
 export function printApplicationCertificate(row: ApplicationCertificateInput): void {
   const data: CertificateData = {
     fullName: row.full_name || row.name || 'Participant',
-    program: row.program || 'Energy & Logics Training Programme',
+    program: row.program || 'Theos Art Training Programme',
     completionDate: row.created_at ? new Date(row.created_at) : new Date(),
     certificateId: generateCertificateId(),
   }

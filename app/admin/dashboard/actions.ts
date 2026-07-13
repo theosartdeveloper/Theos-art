@@ -39,7 +39,7 @@ export async function acceptApplication(id: string) {
     const emailResult = await sendApplicationEmail({
       to: application.email,
       full_name: application.full_name || 'Student',
-      program: application.program || 'Energy & Logics Program',
+      program: application.program || 'Theos Art Program',
       status: 'accepted'
     })
 
@@ -86,7 +86,7 @@ export async function declineApplication(id: string) {
     const emailResult = await sendApplicationEmail({
       to: application.email,
       full_name: application.full_name || 'Student',
-      program: application.program || 'Energy & Logics Program',
+      program: application.program || 'Theos Art Program',
       status: 'declined'
     })
 

@@ -194,7 +194,7 @@ export function LecturerLibraryPanel() {
   if (loading) {
     return (
       <LecturerPortalShell userName={userName || 'Lecturer'}>
-        <p className="text-slate-600">Loading Energy Library…</p>
+        <p className="text-slate-600">Loading Theos Art Library…</p>
       </LecturerPortalShell>
     )
   }
@@ -203,11 +203,11 @@ export function LecturerLibraryPanel() {
     <LecturerPortalShell userName={userName}>
       <div className="max-w-3xl mx-auto space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Energy Library</h1>
+          <h1 className="text-2xl font-bold text-slate-900">Theos Art Library</h1>
           <p className="text-slate-600 mt-1">
             Submit books for the public{' '}
             <Link href="/library" className="text-[var(--brand-navy)] underline" target="_blank">
-              Energy Library
+              Theos Art Library
             </Link>
             . Submissions are reviewed by an admin before they go live.
           </p>

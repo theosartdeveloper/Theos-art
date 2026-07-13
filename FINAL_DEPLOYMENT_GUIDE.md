@@ -1,4 +1,4 @@
-# Final Deployment Guide - Energy & Logics Website
+# Final Deployment Guide - Theos Art Website
 
 ## ✅ All Issues Resolved
 
@@ -77,7 +77,7 @@ NEXT_PUBLIC_SUPABASE_URL = https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY = your_anon_key
 SUPABASE_SERVICE_ROLE_KEY = your_service_role_key
 RESEND_API_KEY = your_resend_key
-NEXT_PUBLIC_APP_NAME = Energy & Logics
+NEXT_PUBLIC_APP_NAME = Theos Art
 NEXT_PUBLIC_APP_URL = https://your-domain.com
 ```
 

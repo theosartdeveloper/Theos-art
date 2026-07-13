@@ -24,8 +24,8 @@ export async function ProgrammesCoursesSection() {
         <div className="max-w-6xl mx-auto text-center">
           <HomeSectionHeader
             eyebrow="Programmes"
-            title="Hands-on engineering training"
-            description="New programmes are added regularly. Browse the full catalogue on the Learning page."
+            title="Workshops & creative learning"
+            description="New workshops and creative sessions are added regularly. Browse the full catalogue on the Learning page."
             className="mb-6"
           />
           <Link href="/learning">

@@ -1,6 +1,6 @@
 # File Manifest - All Changes
 
-This document lists every file that was created, modified, or is part of the Energy & Logics Admin Dashboard.
+This document lists every file that was created, modified, or is part of the Theos Art Admin Dashboard.
 
 ---
 
@@ -442,4 +442,4 @@ For questions about specific files or features, refer to:
 ---
 
 *Last Updated: January 2026*  
-*Energy & Logics Admin Dashboard v1.0.0*
+*Theos Art Admin Dashboard v1.0.0*

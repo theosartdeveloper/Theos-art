@@ -97,7 +97,7 @@ export function FieldNotesArticleBody({ article }: { article: EngineeringArticle
         </div>
         <h1 className="text-3xl sm:text-4xl font-bold text-slate-900">{article.title}</h1>
         <p className="text-sm text-slate-600">
-          {article.author_name ? `${article.author_name}` : 'Energy & Logics'}
+          {article.author_name ? `${article.author_name}` : 'Theos Art'}
           {article.published_at ? ` · ${formatDate(article.published_at)}` : ''}
         </p>
         {article.excerpt ? <p className="text-lg text-slate-700">{article.excerpt}</p> : null}

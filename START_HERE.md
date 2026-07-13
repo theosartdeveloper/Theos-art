@@ -1,4 +1,4 @@
-# 🎯 START HERE - Energy & Logics Engineering Academy
+# 🎯 START HERE - Theos Art Engineering Academy
 
 Welcome! This document is your quick guide to everything.
 
@@ -304,7 +304,7 @@ RESEND_API_KEY                    ← Get from Resend
 - **Dashboard Version:** 1.0.0
 - **Status:** Production Ready ✅
 - **Last Updated:** January 2026
-- **Author:** Energy & Logics Team
+- **Author:** Theos Art Team
 
 ---
 
@@ -338,4 +338,4 @@ For questions, check the documentation files or review the code comments.
 
 ---
 
-*Energy & Logics Admin Dashboard - Empowering Application Management*
+*Theos Art Admin Dashboard - Empowering Application Management*

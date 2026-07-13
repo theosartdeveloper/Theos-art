@@ -42,7 +42,7 @@ export const LIBRARY_PILLARS: { id: LibraryPillar; label: string; description: s
   {
     id: 'gallery',
     label: 'Gallery',
-    description: 'Company photos, engineering project showcases, and visual archives from Energy & Logics.',
+    description: 'Company photos, engineering project showcases, and visual archives from Theos Art.',
   },
   {
     id: 'books',

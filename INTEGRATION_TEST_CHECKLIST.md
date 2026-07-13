@@ -1,6 +1,6 @@
 # Integration Test Checklist
 
-This document outlines all the features and components that should be tested to ensure the Energy & Logics Admin Dashboard is working correctly.
+This document outlines all the features and components that should be tested to ensure the Theos Art Admin Dashboard is working correctly.
 
 ---
 

@@ -185,7 +185,7 @@ export default function EnergyLibraryManagement() {
     })
   }
 
-  if (loading) return <p className="text-slate-600">Loading Energy Library…</p>
+  if (loading) return <p className="text-slate-600">Loading Theos Art Library…</p>
 
   const pendingCount = items.filter((item) => item.status === 'pending_review').length
   const pendingItems = items.filter((item) => item.status === 'pending_review')
@@ -194,7 +194,7 @@ export default function EnergyLibraryManagement() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Energy Library</h1>
+        <h1 className="text-2xl font-bold text-slate-900">Theos Art Library</h1>
         <p className="text-slate-600 mt-1">
           Manage gallery, books, and culture on{' '}
           <Link href="/library" className="text-[var(--brand-navy)] underline" target="_blank">

@@ -1,4 +1,4 @@
-# Energy & Logics Engineering Academy - Implementation Checklist
+# Theos Art Engineering Academy - Implementation Checklist
 
 ## ✅ Database & Schema
 - [x] Created `registrations` table with extended fields

@@ -6,7 +6,7 @@ import { ShieldCheck } from 'lucide-react'
 
 export const metadata = {
   title: `Verify certificate | ${COMPANY.brandName}`,
-  description: `Confirm that an Energy and Logics certificate is authentic by entering its certificate ID.`,
+  description: `Confirm that an Theos Art certificate is authentic by entering its certificate ID.`,
 }
 
 export default function VerifyCertificateLandingPage() {
@@ -30,7 +30,7 @@ export default function VerifyCertificateLandingPage() {
               href={COMPANY.publicSiteUrl}
               className="text-[var(--brand-navy)] underline underline-offset-2"
             >
-              www.energyandlogics.com
+              www.theosart.com
             </Link>
           </p>
         </div>

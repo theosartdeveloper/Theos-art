@@ -9,7 +9,7 @@ export default function Header() {
     <header className="bg-primary text-primary-foreground shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
         <Link href="/" className="flex items-center gap-2 font-bold text-lg hover:opacity-90 transition">
-          <span>Energy & Logics</span>
+          <span>Theos Art</span>
         </Link>
         <div className="flex items-center gap-4">
           <Link href="/">

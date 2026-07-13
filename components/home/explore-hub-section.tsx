@@ -27,7 +27,7 @@ export function ExploreHubSection() {
         <HomeSectionHeader
           eyebrow={COMPANY.platformName}
           title="Navigate the platform"
-          description="Training, career support, public library, field notes, and calculators — choose where to go next."
+          description="Shop, gallery, learning, and studio stories — choose where to go next."
           className="mb-8"
         />
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">

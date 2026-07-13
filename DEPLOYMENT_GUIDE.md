@@ -1,4 +1,4 @@
-# Energy & Logics Engineering Academy - Production Deployment Guide
+# Theos Art Engineering Academy - Production Deployment Guide
 
 ## STATUS: ✅ PRODUCTION READY
 
@@ -200,7 +200,7 @@ git push origin lucide-react-error
 ### 3. Configure Custom Domain
 In Vercel Dashboard:
 1. Settings → Domains
-2. Add `www.energyandlogics.com`
+2. Add `www.theosart.com`
 3. Follow DNS instructions
 4. Wait for SSL (usually instant)
 
@@ -299,7 +299,7 @@ Before marking as live:
 - [ ] All dashboards have Home navigation button
 - [ ] Mobile responsiveness verified
 - [ ] No console errors
-- [ ] Domain configured (www.energyandlogics.com)
+- [ ] Domain configured (www.theosart.com)
 - [ ] SSL certificate active
 
 ## Performance Metrics
@@ -313,7 +313,7 @@ Before marking as live:
 ## Support Information
 
 **Contact Details:**
-- Email: info@energyandlogics.com
+- Email: info@theosart.com
 - Phone: +250 783 986 252
 - Support: Available 24/7
 
@@ -339,4 +339,4 @@ Before marking as live:
 - ✅ Responsive design verified
 - ✅ Ready for live deployment
 
-**The Energy & Logics platform is production-ready and can be deployed immediately.** 🚀
+**The Theos Art platform is production-ready and can be deployed immediately.** 🚀

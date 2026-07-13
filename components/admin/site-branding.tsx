@@ -60,7 +60,7 @@ export default function SiteBrandingPanel({ initialLogoUrl = '/images/energy-log
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-sm text-slate-600">
-          Used in the site header, admin sidebar, and browser tab. Default: Energy & Logics logo bundled with the site.
+          Used in the site header, admin sidebar, and browser tab. Default: Theos Art logo bundled with the site.
         </p>
 
         <div className="flex items-center gap-4">

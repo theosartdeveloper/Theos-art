@@ -72,30 +72,32 @@ export function ProfessionalExperienceSection() {
         ))}
       </div>
 
-      <div className="border-t border-slate-100 bg-slate-50 px-4 py-5 sm:px-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Handshake className="h-4 w-4 text-[var(--brand-navy)]" aria-hidden="true" />
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Trusted partners
-          </p>
+      {partners.length > 0 ? (
+        <div className="border-t border-slate-100 bg-slate-50 px-4 py-5 sm:px-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Handshake className="h-4 w-4 text-[var(--brand-navy)]" aria-hidden="true" />
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Trusted partners
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+            {partners.map((partner) => (
+              <div
+                key={partner.name}
+                className={`relative h-16 w-40 sm:h-20 sm:w-48 rounded-lg border border-slate-200 overflow-hidden ${partner.logoBg}`}
+              >
+                <Image
+                  src={partner.logo}
+                  alt={`${partner.name} logo`}
+                  fill
+                  className="object-contain p-2"
+                  sizes="(max-width: 640px) 160px, 192px"
+                />
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-          {partners.map((partner) => (
-            <div
-              key={partner.name}
-              className={`relative h-16 w-40 sm:h-20 sm:w-48 rounded-lg border border-slate-200 overflow-hidden ${partner.logoBg}`}
-            >
-              <Image
-                src={partner.logo}
-                alt={`${partner.name} logo`}
-                fill
-                className="object-contain p-2"
-                sizes="(max-width: 640px) 160px, 192px"
-              />
-            </div>
-          ))}
-        </div>
-      </div>
+      ) : null}
     </section>
   )
 }

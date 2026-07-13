@@ -1,8 +1,8 @@
-# Energy & Logics Admin Dashboard - Features Summary
+# Theos Art Admin Dashboard - Features Summary
 
 ## Overview
 
-The Energy & Logics Admin Dashboard is a comprehensive application management system with professional analytics, email notifications, report generation, and certificate management.
+The Theos Art Admin Dashboard is a comprehensive application management system with professional analytics, email notifications, report generation, and certificate management.
 
 ---
 
@@ -119,7 +119,7 @@ Four interactive Recharts visualizations:
 - Program name included
 - Congratulatory message
 - Next steps guidance
-- Energy & Logics branding
+- Theos Art branding
 
 #### Decline Email
 - Professional HTML template
@@ -212,7 +212,7 @@ Four interactive Recharts visualizations:
 - Program information
 - Next steps
 - Contact information
-- Energy & Logics branding
+- Theos Art branding
 ```
 
 #### Decline Template

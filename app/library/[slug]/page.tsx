@@ -26,9 +26,9 @@ type PageProps = {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
   const item = await loadPublishedLibraryItemBySlug(slug)
-  if (!item) return { title: 'Energy Library' }
+  if (!item) return { title: 'Theos Art Library' }
   return {
-    title: `${item.title} | Energy Library`,
+    title: `${item.title} | Theos Art Library`,
     description: item.description || item.body?.slice(0, 160) || undefined,
   }
 }
@@ -50,7 +50,7 @@ export default async function LibraryItemPage({ params }: PageProps) {
       <div className="max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-12 space-y-8">
         <nav className="text-sm text-slate-600">
           <Link href="/library" className="text-[var(--brand-navy)] underline font-medium">
-            Energy Library
+            Theos Art Library
           </Link>
           <span className="mx-2">/</span>
           <Link

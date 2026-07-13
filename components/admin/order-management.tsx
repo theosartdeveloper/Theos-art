@@ -282,7 +282,7 @@ export default function OrderManagement() {
                         {order.delivery_address}
                       </p>
                     ) : (
-                      <p className="text-slate-600">Pickup at Energy & Logics — Kigali</p>
+                      <p className="text-slate-600">Pickup at Theos Art — Kigali</p>
                     )}
                     {order.notes ? (
                       <p className="text-slate-600">

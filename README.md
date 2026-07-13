@@ -1,10 +1,10 @@
-# Energy & Logics Engineering Academy Platform
+# Theos Art Engineering Academy Platform
 
 Professional internship program management platform built with Next.js, React, and Supabase.
 
 ## 🎯 Overview
 
-Energy & Logics Engineering Academy is a comprehensive platform for managing engineering internship programs. The application provides:
+Theos Art Engineering Academy is a comprehensive platform for managing engineering internship programs. The application provides:
 
 - **Public-Facing Website** - Home, programs showcase, application portal, contact page
 - **Admin Dashboard** - Application management, registrations tracking, analytics, exports
@@ -195,7 +195,7 @@ Main table for student applications with fields:
 
 ## 📄 License
 
-Proprietary - Energy & Logics Ltd
+Proprietary - Theos Art Ltd
 
 ## Continue with v0
 

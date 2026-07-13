@@ -1,134 +1,121 @@
-/** Single source of truth for Energy & Logics public company details. */
+/** Single source of truth for Theos Art public company details. */
 export const COMPANY = {
-  legalName: 'Energy and Logics Ltd',
-  brandName: 'Energy & Logics',
-  platformName: 'Engineering Hub',
-  slogan: 'Engineering sustainable solutions',
-  tagline: 'Hands-on engineering training and technical support in Rwanda.',
-  email: 'admin@energyandlogics.com',
-  phone: '+250783986252',
-  phoneDisplay: '+250 783 986 252',
-  whatsapp: '250783986252',
-  address: 'Kigali, Rwanda',
-  logoUrl: '/images/energy-logics-logo.png',
+  legalName: 'Theos Art Ltd',
+  brandName: 'Theos Art',
+  platformName: 'Theos Art Hub',
+  slogan: 'Art that speaks',
+  tagline: 'Original artworks and quality art materials in Kigali, Rwanda.',
+  email: 'kubwatheosart@gmail.com',
+  phone: '+250783086093',
+  phoneDisplay: '+250 783 086 093',
+  whatsapp: '250783086093',
+  address: '342G+JX, Kigali, Rwanda',
+  logoUrl: '/images/theos-art-logo.png',
   region: 'East Africa',
   timezone: 'Central Africa Time (CAT, UTC+2)',
   /** Canonical public site URL used on certificates and QR codes */
-  publicSiteUrl: 'https://www.energyandlogics.com',
+  publicSiteUrl: 'https://www.theosart.com',
 } as const
 
 export const FOUNDER = {
-  name: 'Elie Bisamaza',
-  title: 'Embedded Systems Engineer',
-  role: 'Founder & Lead Trainer',
-  photo: '/team/elie-bisamaza.png',
-  headline: 'Engineering education that works in the real world',
+  name: 'Theos Art Studio',
+  title: 'Art & Materials',
+  role: 'Creative studio',
+  photo: '/hero/hero-01.png',
+  headline: 'Art and materials for creators in Rwanda',
   concept:
-    'Energy & Logics exists to close the gap between classroom theory and what technicians, graduates, and professionals actually do on site—programming PLCs, wiring control panels, building embedded prototypes, and troubleshooting under pressure.',
-  bio: `Elie Bisamaza founded ${COMPANY.brandName} after six years in electrical technology and two years delivering hands-on technical training across Rwanda. He has worked with industry partners including Easy Fab and collaborated with the Rwanda TVET Board (RTB) on practical skills programmes.
-
-His training philosophy is simple: learn by building, test on real equipment, and leave every session with something you can demonstrate to an employer or apply on your next project.`,
+    'Theos Art brings original artworks and trusted art materials together — so artists, collectors, and learners can create, collect, and grow in one place.',
+  bio: `${COMPANY.brandName} is a Kigali-based art company focused on original works and the materials that support creative practice. From studio sessions to finished pieces and supplies for your next project, we exist to make quality art more accessible across Rwanda.`,
   experienceHighlights: [
-    '6+ years in electrical & embedded systems practice',
-    '2+ years delivering industry-aligned technical training',
-    'RTB (Rwanda TVET Board) training collaboration',
-    'Field experience with companies including Easy Fab',
+    'Original artworks from studio practice',
+    'Art materials and supplies for creators',
+    'Live painting and gallery experiences',
+    'Based in Kigali, serving East Africa',
   ],
   quote:
-    'Our goal is not certificates for their own sake—it is competent engineers who can walk onto a site or into a lab and deliver results.',
+    'We believe art is not only something you hang — it is something you make, share, and live with.',
 } as const
 
 export const TRAINING_PROGRAMS = [
   {
-    id: 'embedded-systems',
-    title: 'Embedded Systems',
+    id: 'original-artworks',
+    title: 'Original Artworks',
     summary:
-      'Microcontrollers, firmware basics, sensors, and practical IoT projects for students and technicians.',
-    topics: ['Arduino & microcontrollers', 'Sensors & actuators', 'Firmware fundamentals', 'Project-based labs'],
-    href: '/learning',
+      'Studio pieces and commissions for collectors, homes, offices, and public spaces.',
+    topics: ['Canvas works', 'Abstract & figurative', 'Commissions', 'Studio collection'],
+    href: '/shop',
   },
   {
-    id: 'industrial-control',
-    title: 'Industrial Control Systems',
+    id: 'art-materials',
+    title: 'Art Materials',
     summary:
-      'PLC programming, industrial automation, control panels, and troubleshooting for factory and site work.',
-    topics: ['PLC & ladder logic', 'Industrial automation', 'Control panel wiring', 'Fault finding on site'],
-    href: '/learning',
+      'Paints, brushes, canvases, and tools for students, hobbyists, and professional artists.',
+    topics: ['Paints & mediums', 'Brushes & tools', 'Canvases & surfaces', 'Studio essentials'],
+    href: '/shop',
   },
   {
-    id: 'advanced-electrical',
-    title: 'Advanced Electrical Technology',
+    id: 'workshops-events',
+    title: 'Workshops & Events',
     summary:
-      'Power systems, protection, installation practice, and applied electrical engineering for career advancement.',
-    topics: ['Power & protection', 'Electrical installation', 'Solar & power applications', 'Safety & standards'],
+      'Hands-on sessions and creative gatherings for learners and art communities in Kigali.',
+    topics: ['Live painting', 'Community sessions', 'Creative learning', 'Studio visits'],
     href: '/learning',
   },
 ] as const
 
 export const PAYMENT = {
   method: 'MTN Mobile Money (MoMo Pay)',
-  momoPayCode: '4402091',
-  accountName: 'Energy and Logics Ltd',
+  momoPayCode: '0783086093',
+  accountName: 'Theos Art Ltd',
   workflow:
-    'Pay via MTN MoMo using the Pay Code below, then upload your payment receipt so our team can verify and confirm your enrollment.',
+    'Pay via MTN MoMo using the details below, then upload your payment receipt so our team can verify and confirm your order or enrollment.',
   steps: [
-    'Dial MTN MoMo or use the MoMo app and select Pay Code / Merchant payment.',
-    'Enter Pay Code 4402091 — account name: Energy and Logics Ltd.',
-    'Pay the amount shown on your program or invoice.',
+    'Dial MTN MoMo or use the MoMo app and select Pay / Merchant payment.',
+    'Pay using Theos Art Ltd MoMo details (confirm Pay Code with our team if needed).',
+    'Pay the amount shown on your order or invoice.',
     'Save your MoMo confirmation SMS or screenshot as your receipt.',
-    'Submit the receipt through your application or the Payment Receipt page for admin verification.',
+    'Submit the receipt through your order, application, or the Payment Receipt page for verification.',
   ],
 } as const
 
-export const ABOUT_DEFAULT = `${COMPANY.brandName} Ltd is a Rwanda-based engineering company focused on practical training, technical support, and career pathways for students, graduates, and technicians across East Africa.
+export const ABOUT_DEFAULT = `${COMPANY.brandName} is a Rwanda-based art company focused on original artworks, creative experiences, and quality art materials for artists, collectors, and learners.
 
-Through our ${COMPANY.platformName} platform, we deliver structured programmes in embedded systems, industrial control, and advanced electrical technology—combining classroom instruction, lab work, and real project experience.`
+Through our ${COMPANY.platformName} platform, we offer studio pieces, supplies, and community programmes — combining gallery energy with practical tools for creating and collecting art in Kigali and beyond.`
 
-export const MISSION_DEFAULT = `We bridge the gap between classroom theory and industry practice by delivering hands-on engineering training, mentorship, and technical support—so our learners are ready to work, build, and solve real problems in Rwanda and the wider region.`
+export const MISSION_DEFAULT = `We make original art and quality art materials accessible — supporting creators, collectors, and learners with studio works, supplies, and inspiring creative experiences across Rwanda.`
 
-export const VISION_DEFAULT = `A region where every engineering graduate and technician can demonstrate real skills—programming controls, wiring panels, building embedded systems, and troubleshooting on site—with confidence and professional integrity.`
+export const VISION_DEFAULT = `A Rwanda where every home, workspace, and studio can access authentic art and the materials needed to keep creating — with craftsmanship, community, and cultural expression at the centre.`
 
 export const COMPANY_EXPERIENCE = {
-  title: 'Professional Experience',
+  title: 'Studio Experience',
   subtitle:
-    'Hands-on engineering practice and industry-aligned training for students, graduates, and technicians.',
+    'Original artworks, trusted materials, and creative sessions for artists and collectors in Kigali.',
   stats: [
-    { value: '6+', label: 'Years in electrical & embedded systems' },
-    { value: '2+', label: 'Years delivering technical training' },
-    { value: '3', label: 'Core programme tracks' },
+    { value: 'Art', label: 'Original studio artworks' },
+    { value: 'Shop', label: 'Art materials & supplies' },
+    { value: 'Live', label: 'Painting & creative events' },
   ],
   capabilities: [
     {
-      title: 'Industrial control',
-      items: ['PLC & ladder logic', 'Control panel wiring'],
+      title: 'Artworks',
+      items: ['Studio canvases', 'Custom commissions'],
     },
     {
-      title: 'Embedded systems',
-      items: ['Microcontrollers & firmware', 'Sensors & IoT'],
+      title: 'Materials',
+      items: ['Paints, brushes & canvases', 'Studio tools'],
     },
     {
-      title: 'Electrical technology',
-      items: ['Power & protection', 'Installation practice'],
+      title: 'Community',
+      items: ['Workshops & live painting', 'Creative gatherings'],
     },
   ],
-  partners: [
-    {
-      name: 'Namiria Group',
-      logo: '/partners/namiria-group.png',
-      logoBg: 'bg-[#1a2f4a]',
-    },
-    {
-      name: 'Easy Fab',
-      logo: '/partners/easy-fab.png',
-      logoBg: 'bg-white',
-    },
-  ],
+  partners: [] as ReadonlyArray<{ name: string; logo: string; logoBg: string }>,
 } as const
 
 export const GOALS_DEFAULT = [
-  'Deliver practical, industry-aligned training in embedded systems, industrial control, and electrical technology.',
-  'Connect students and graduates with mentors, field notes, and a community of practicing engineers.',
-  'Support employers with job-ready talent and ongoing technical assistance through our Engineering Hub.',
-  'Make quality engineering education accessible across Rwanda and East Africa through online and in-person programmes.',
-  'Promote continuous learning through Field Notes, workshops, and open collaboration between lecturers and learners.',
+  'Offer original artworks that reflect craft, culture, and contemporary studio practice.',
+  'Supply quality art materials for students, hobbyists, and professional artists.',
+  'Host workshops and creative events that grow Rwanda’s art community.',
+  'Make buying art and materials simple through our online shop and local pickup in Kigali.',
+  'Support creators with a trusted place to discover pieces, tools, and inspiration.',
 ] as const

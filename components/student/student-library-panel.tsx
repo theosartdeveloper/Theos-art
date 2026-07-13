@@ -142,7 +142,7 @@ export function StudentLibraryPanel() {
       setSuccess(
         editingId
           ? 'Submission updated. It will be reviewed again by an admin.'
-          : 'Your writing was submitted! It will appear in the Energy Library once approved.'
+          : 'Your writing was submitted! It will appear in the Theos Art Library once approved.'
       )
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Submit failed')
@@ -187,7 +187,7 @@ export function StudentLibraryPanel() {
   if (loading) {
     return (
       <StudentPortalShell userName={userName || 'Student'}>
-        <p className="text-slate-600">Loading Energy Library…</p>
+        <p className="text-slate-600">Loading Theos Art Library…</p>
       </StudentPortalShell>
     )
   }
@@ -200,7 +200,7 @@ export function StudentLibraryPanel() {
           <p className="text-slate-600 mt-1">
             Submit Inkuru, ibisigo, imivugo, or creative arts to the public{' '}
             <Link href="/library?category=culture" className="text-[var(--brand-navy)] underline" target="_blank">
-              Energy Library
+              Theos Art Library
             </Link>
             . Your piece will be reviewed before it goes live.
           </p>

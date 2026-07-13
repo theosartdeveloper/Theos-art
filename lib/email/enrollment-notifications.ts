@@ -6,8 +6,8 @@ function getResend(): Resend | null {
   return key ? new Resend(key) : null
 }
 
-const from = process.env.EMAIL_FROM ?? 'Energy & Logics <noreply@energyandlogics.com>'
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://energyandlogics.com'
+const from = process.env.EMAIL_FROM ?? 'Theos Art <kubwatheosart@gmail.com>'
+const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://theosart.com'
 
 function baseLayout(title: string, body: string) {
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="font-family:system-ui,sans-serif;line-height:1.6;color:#1e293b;max-width:600px;margin:0 auto;padding:24px">

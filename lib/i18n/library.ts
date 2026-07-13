@@ -7,29 +7,29 @@ export const SITE_LOCALES: { id: SiteLocale; label: string }[] = [
 
 const libraryMessages = {
   en: {
-    title: 'Energy Library',
-    subtitle: 'Browse our company gallery, engineering projects, books, and culture.',
-    projectsTitle: 'Engineering projects',
-    projectsSubtitle: 'Student and team builds showcased by Energy & Logics.',
+    title: 'Theos Art Library',
+    subtitle: 'Browse our gallery, studio projects, books, and creative culture.',
+    projectsTitle: 'Studio projects',
+    projectsSubtitle: 'Artworks and creative projects showcased by Theos Art.',
     viewAllProjects: 'View all projects',
     photosEvents: 'Photos & events',
-    engineeringProject: 'Engineering project',
+    engineeringProject: 'Studio project',
     team: 'Team',
     year: 'Year',
-    technologies: 'Technologies',
+    technologies: 'Materials & mediums',
   },
   rw: {
-    title: 'Isomero rya Energy',
+    title: 'Isomero rya Theos Art',
     subtitle:
-      "Reba amafoto, Imishinga migari, ibitabo ndetse n'ibindi bijyanye n'umuco gakondo bitegurwa na Energy & Logics.",
-    projectsTitle: 'Imishinga yubatsi',
-    projectsSubtitle: 'Imishinga y\'abanyeshuri n\'itsinda ryacu yerekanywe na Energy & Logics.',
+      "Reba amafoto, imishinga y'ubuhanzi, ibitabo n'ibindi bijyanye n'umuco gakondo bitegurwa na Theos Art.",
+    projectsTitle: 'Imishinga y\'ubuhanzi',
+    projectsSubtitle: "Imishinga y'ubuhanzi yerekanywe na Theos Art.",
     viewAllProjects: 'Reba imishinga yose',
     photosEvents: "Amafoto n'ibyakozwe",
     engineeringProject: 'Imishinga',
     team: 'Itsinda',
     year: 'Umwaka',
-    technologies: 'Ikoranabuhanga',
+    technologies: 'Ibikoresho',
   },
 } as const
 

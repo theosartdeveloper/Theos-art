@@ -2,7 +2,7 @@
 
 ## Required Environment Variables
 
-Your Energy & Logics Admin Dashboard requires the following environment variables to be configured:
+Your Theos Art Admin Dashboard requires the following environment variables to be configured:
 
 ### 1. Supabase Configuration
 ```

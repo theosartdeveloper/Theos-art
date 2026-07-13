@@ -63,7 +63,7 @@ export async function lookupCertificate(
       status: 'pending',
       certificateCode,
       message:
-        'This certificate is awaiting final approval from Energy and Logics Ltd and cannot be verified yet.',
+        'This certificate is awaiting final approval from Theos Art Ltd and cannot be verified yet.',
     }
   }
 

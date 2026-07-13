@@ -12,7 +12,7 @@ import { getCurrentUser } from '@/app/actions/auth-service'
 
 export const metadata = {
   title: 'Reviews & ratings',
-  description: 'Read verified reviews and share your experience with Energy & Logics training, internship, and engineering services.',
+  description: 'Read verified reviews and share your experience with Theos Art training, internship, and engineering services.',
 }
 
 export default async function ReviewsPage({

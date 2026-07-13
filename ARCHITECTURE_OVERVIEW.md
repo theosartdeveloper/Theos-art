@@ -4,7 +4,7 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                         ENERGY & LOGICS DASHBOARD                        │
+│                         Theos Art DASHBOARD                        │
 └─────────────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────────────┐
@@ -539,4 +539,4 @@ All components are **loosely coupled** and can be **independently modified** wit
 ---
 
 *Last Updated: January 2026*  
-*Energy & Logics Admin Dashboard v1.0.0*
+*Theos Art Admin Dashboard v1.0.0*

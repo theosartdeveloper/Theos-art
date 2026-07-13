@@ -59,7 +59,7 @@ export async function batchAcceptApplications({
         const result = await sendApplicationEmail({
           to: application.email,
           full_name: application.full_name || 'Student',
-          program: application.program || 'Energy & Logics Program',
+          program: application.program || 'Theos Art Program',
           status: 'accepted',
         })
 
@@ -122,7 +122,7 @@ export async function batchDeclineApplications({
         const result = await sendApplicationEmail({
           to: application.email,
           full_name: application.full_name || 'Student',
-          program: application.program || 'Energy & Logics Program',
+          program: application.program || 'Theos Art Program',
           status: 'declined',
         })
 

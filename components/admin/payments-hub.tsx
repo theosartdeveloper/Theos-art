@@ -30,7 +30,7 @@ export default function PaymentsHub() {
     <div className="space-y-6">
       <AdminSectionHeader
         title="E-learning payments"
-        description="Review MoMo receipts for programme enrollments, Energy Library purchases, and engineer support plans. Product order payments are under Products → Product orders."
+        description="Review MoMo receipts for programme enrollments, Theos Art Library purchases, and engineer support plans. Product order payments are under Products → Product orders."
       />
       <Tabs defaultValue="programme">
         <TabsList className="admin-mobile-tabs bg-white border border-slate-300 w-full sm:w-auto flex flex-wrap h-auto gap-1 p-1">

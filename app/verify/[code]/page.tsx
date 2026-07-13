@@ -96,7 +96,7 @@ export default async function VerifyCertificatePage({ params }: PageProps) {
               Verification home
             </Link>
             <Link href="/" className="text-[var(--brand-navy)] underline underline-offset-2">
-              www.energyandlogics.com
+              www.theosart.com
             </Link>
           </div>
         </div>

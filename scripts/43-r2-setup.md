@@ -1,16 +1,16 @@
-# Cloudflare R2 setup (Energy & Logics)
+# Cloudflare R2 setup (Theos Art)
 
 Run after creating the `platform-media` bucket (Standard storage class).
 
 ## 1. Custom domain
 
-R2 bucket → **Settings** → **Custom Domains** → add e.g. `media.energyandlogics.com`.
+R2 bucket → **Settings** → **Custom Domains** → add e.g. `media.theosart.com`.
 
 Set in Vercel:
 
 ```
-R2_PUBLIC_BASE_URL=https://media.energyandlogics.com
-NEXT_PUBLIC_R2_PUBLIC_BASE_URL=https://media.energyandlogics.com
+R2_PUBLIC_BASE_URL=https://media.theosart.com
+NEXT_PUBLIC_R2_PUBLIC_BASE_URL=https://media.theosart.com
 ```
 
 ## 2. CORS (required for browser uploads)
@@ -29,13 +29,13 @@ Update `AllowedOrigins` if your production URL differs.
 | `R2_ACCESS_KEY_ID` | Account API token |
 | `R2_SECRET_ACCESS_KEY` | Account API token secret |
 | `R2_BUCKET_NAME` | `platform-media` |
-| `R2_PUBLIC_BASE_URL` | `https://media.energyandlogics.com` |
+| `R2_PUBLIC_BASE_URL` | `https://media.theosart.com` |
 | `NEXT_PUBLIC_R2_PUBLIC_BASE_URL` | Same as above |
 
 Redeploy after adding variables.
 
 ## 4. Verify
 
-1. Admin → Settings → upload a product image → URL should be `https://media.energyandlogics.com/products/...`
-2. Homepage hero videos load from `https://media.energyandlogics.com/hero/...`
+1. Admin → Settings → upload a product image → URL should be `https://media.theosart.com/products/...`
+2. Homepage hero videos load from `https://media.theosart.com/hero/...`
 3. Supabase Usage → cached egress should drop over the next billing cycle

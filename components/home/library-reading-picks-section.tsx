@@ -12,7 +12,7 @@ export async function LibraryReadingPicksSection() {
         <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
           <div className="max-w-2xl">
             <p className="text-sm font-semibold uppercase tracking-wide text-[var(--brand-navy)] mb-2">
-              Energy Library
+              Theos Art Library
             </p>
             <h2 className="text-3xl font-bold text-slate-900 mb-2">Reading picks</h2>
             <p className="text-slate-600">

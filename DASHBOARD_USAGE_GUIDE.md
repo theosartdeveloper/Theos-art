@@ -2,7 +2,7 @@
 
 ## Getting Started
 
-The Admin Dashboard is a comprehensive management tool for the Energy & Logics registration and application management system. It provides real-time insights, bulk operations, and professional reporting capabilities.
+The Admin Dashboard is a comprehensive management tool for the Theos Art registration and application management system. It provides real-time insights, bulk operations, and professional reporting capabilities.
 
 ## Dashboard Overview
 
@@ -179,7 +179,7 @@ When you click "Accept":
 - Applicant receives congratulations email
 - Email includes program name
 - Contains next steps
-- Professional branding with Energy & Logics logo
+- Professional branding with Theos Art logo
 
 ### Decline Email
 When you click "Decline":
@@ -394,7 +394,7 @@ We welcome suggestions for improvements:
 
 ## Contact & Support
 
-**Email Support**: support@energyandlogics.com
+**Email Support**: support@theosart.com
 **Response Time**: 24 business hours
 **Hours**: Monday-Friday, 9AM-5PM
 **Emergency**: Use in-app support chat for urgent issues

@@ -74,7 +74,7 @@ export async function acceptAdminApplication(
     const emailResult = await sendApplicationEmail({
       to: result.row.email,
       full_name: result.row.full_name,
-      program: result.row.program || 'Energy & Logics Program',
+      program: result.row.program || 'Theos Art Program',
       status: 'accepted',
     })
 
@@ -103,7 +103,7 @@ export async function declineAdminApplication(
     const emailResult = await sendApplicationEmail({
       to: result.row.email,
       full_name: result.row.full_name,
-      program: result.row.program || 'Energy & Logics Program',
+      program: result.row.program || 'Theos Art Program',
       status: 'declined',
     })
 

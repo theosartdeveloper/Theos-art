@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     const items: PosItem[] = body.items ?? []
     const customerName = String(body.customerName ?? 'Walk-in customer').trim()
     const customerPhone = String(body.customerPhone ?? '').trim()
-    const customerEmail = String(body.customerEmail ?? 'pos@energyandlogics.com').trim()
+    const customerEmail = String(body.customerEmail ?? 'kubwatheosart@gmail.com').trim()
     const paymentMethod = ['cash', 'momo'].includes(body.paymentMethod)
       ? body.paymentMethod
       : 'cash'

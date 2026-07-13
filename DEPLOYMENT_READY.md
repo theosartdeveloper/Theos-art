@@ -1,4 +1,4 @@
-# Energy & Logics V1 - DEPLOYMENT READY
+# Theos Art V1 - DEPLOYMENT READY
 
 ## ✅ Build Status: SUCCESSFUL
 
@@ -93,7 +93,7 @@ git push origin Energy-and-Logics-V1
 
 Then connect the repository to Vercel and select the `Energy-and-Logics-V1` branch.
 
-### Custom Domain (www.energyandlogics.com)
+### Custom Domain (www.theosart.com)
 1. Go to Vercel Project Settings
 2. Navigate to Domains
 3. Add custom domain
@@ -129,10 +129,10 @@ Before going live:
 
 ## 🔧 Admin Credentials for Testing
 After deployment, create these test accounts:
-- **Admin**: admin@energyandlogics.com / set password during first login
-- **Lecturer**: lecturer@energyandlogics.com
-- **Engineer**: engineer@energyandlogics.com  
-- **Student**: student@energyandlogics.com
+- **Admin**: kubwatheosart@gmail.com / set password during first login
+- **Lecturer**: lecturer@theosart.com
+- **Engineer**: engineer@theosart.com  
+- **Student**: student@theosart.com
 
 ## 📝 Important Notes
 1. The hero image is now professional and branded

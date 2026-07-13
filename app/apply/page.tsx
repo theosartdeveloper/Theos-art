@@ -149,7 +149,7 @@ export default function ApplyPage() {
           </Link>
           <h1 className="text-5xl font-bold mb-4">Apply for Internship</h1>
           <p className="text-lg text-primary-foreground/90">
-            Complete your application and start your engineering journey with Energy & Logics.
+            Complete your application and start your creative journey with Theos Art.
           </p>
         </div>
       </div>

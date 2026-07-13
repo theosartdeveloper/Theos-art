@@ -1,4 +1,4 @@
-# Energy & Logics Engineering Academy - Documentation Index
+# Theos Art Engineering Academy - Documentation Index
 
 A complete guide to all documentation and resources for the Engineering Academy platform.
 

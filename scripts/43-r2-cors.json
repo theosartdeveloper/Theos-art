@@ -1,8 +1,8 @@
 [
   {
     "AllowedOrigins": [
-      "https://www.energyandlogics.com",
-      "https://energyandlogics.com"
+      "https://www.theosart.com",
+      "https://theosart.com"
     ],
     "AllowedMethods": ["GET", "PUT", "HEAD"],
     "AllowedHeaders": ["*"],

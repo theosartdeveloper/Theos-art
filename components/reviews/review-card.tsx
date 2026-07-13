@@ -41,7 +41,7 @@ export function ReviewCard({ review, compact = false }: { review: ServiceReview;
 
         {review.admin_reply ? (
           <div className="mt-4 rounded-lg bg-slate-50 border border-slate-200 p-3">
-            <p className="text-xs font-semibold text-[var(--brand-navy)] mb-1">Response from Energy & Logics</p>
+            <p className="text-xs font-semibold text-[var(--brand-navy)] mb-1">Response from Theos Art</p>
             <p className="text-sm text-slate-600">{review.admin_reply}</p>
           </div>
         ) : null}

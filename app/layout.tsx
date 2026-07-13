@@ -31,10 +31,10 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       type: 'website',
       locale: 'en_RW',
-      url: 'https://energyandlogics.com',
+      url: 'https://www.theosart.com',
       title: profile.seo.title,
       description: profile.seo.description,
-      images: [{ url: '/hero-laboratory.jpg', width: 1920, height: 600 }],
+      images: [{ url: '/hero/hero-01.png', width: 1920, height: 1080 }],
     },
   }
 }

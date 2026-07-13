@@ -5,7 +5,7 @@ export const LEGAL_LAST_UPDATED = '6 July 2026'
 export const privacyPolicySections = [
   {
     title: '1. Who we are',
-    body: `${COMPANY.legalName} ("${COMPANY.brandName}", "we", "us") operates the ${COMPANY.platformName} platform at ${COMPANY.publicSiteUrl}. We provide engineering training, technical support, and related digital services from ${COMPANY.address}.`,
+    body: `${COMPANY.legalName} ("${COMPANY.brandName}", "we", "us") operates the ${COMPANY.platformName} platform at ${COMPANY.publicSiteUrl}. We provide original artworks, art materials, creative programmes, and related digital services from ${COMPANY.address}.`,
   },
   {
     title: '2. Information we collect',
@@ -56,11 +56,11 @@ export const privacyPolicySections = [
 export const termsSections = [
   {
     title: '1. Agreement',
-    body: `By accessing ${COMPANY.publicSiteUrl}, creating an account, enrolling in a programme, purchasing from our shop, or subscribing to engineering support, you agree to these Terms & Conditions and our Privacy Policy.`,
+    body: `By accessing ${COMPANY.publicSiteUrl}, creating an account, purchasing from our shop, enrolling in a programme, or using our creative services, you agree to these Terms & Conditions and our Privacy Policy.`,
   },
   {
     title: '2. Services',
-    body: `${COMPANY.brandName} provides online and blended engineering training, webinars, shop products, career/internship information, and paid engineering support plans through the ${COMPANY.platformName} platform. Content and schedules may be updated to improve quality.`,
+    body: `${COMPANY.brandName} provides original artworks, art materials through our shop, workshops and creative events, and related online services through the ${COMPANY.platformName} platform. Content, collections, and schedules may be updated to improve quality.`,
   },
   {
     title: '3. Accounts',

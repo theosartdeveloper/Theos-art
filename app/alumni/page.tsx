@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Alumni',
-  description: 'Graduates and programme alumni from Energy & Logics Academy.',
+  description: 'Graduates and programme alumni from Theos Art.',
 }
 
 export default async function AlumniPage() {

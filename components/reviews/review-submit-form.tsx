@@ -127,7 +127,7 @@ export function ReviewSubmitForm({
         <Textarea
           className="mt-1"
           rows={compact ? 4 : 5}
-          placeholder="Share your experience with Energy & Logics — what went well, what you learned, and how it helped you."
+          placeholder="Share your experience with Theos Art — what went well, what you learned, and how it helped you."
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           required

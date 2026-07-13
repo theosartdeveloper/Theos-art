@@ -372,7 +372,7 @@ export function ReportsTab({ initialData }: { initialData?: AdminReportData }) {
           <div className="grid md:grid-cols-2 gap-6">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0">
-                <CardTitle>Energy Library</CardTitle>
+                <CardTitle>Theos Art Library</CardTitle>
                 <Zap className="w-4 h-4 text-primary" />
               </CardHeader>
               <CardContent>

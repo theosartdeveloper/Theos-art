@@ -6,7 +6,7 @@ export type CertificateData = {
   finalScore?: number | null
   /** Student portrait shown above the recipient name when set. */
   profilePhotoUrl?: string | null
-  /** Free programmes render a diagonal "Energy & Logics" watermark. */
+  /** Free programmes render a diagonal "Theos Art" watermark. */
   freeCourse?: boolean
   /** Awaiting admin stamp — preview only, not publicly verifiable. */
   pendingApproval?: boolean
@@ -531,7 +531,7 @@ export function createCertificateHTML({
         }
 
         <div class="content">
-          <img class="logo" src="${logoUrl}" alt="Energy & Logics">
+          <img class="logo" src="${logoUrl}" alt="Theos Art">
 
           <div class="cert-title">Certificate of Completion</div>
           <div class="cert-subtitle">Professional Training &amp; Development</div>
@@ -565,7 +565,7 @@ export function createCertificateHTML({
               pendingApproval
                 ? `<div class="pending-approval-notice">
                     <strong>Preview — pending admin approval</strong>
-                    This certificate will receive the official company stamp and authorised signature once approved by Energy and Logics Ltd. It is not yet publicly verifiable.
+                    This certificate will receive the official company stamp and authorised signature once approved by Theos Art Ltd. It is not yet publicly verifiable.
                   </div>`
                 : ''
             }
@@ -578,7 +578,7 @@ export function createCertificateHTML({
                 isOfficial
                   ? `<div class="sig-name">Elie BISAMAZA</div>
                      <div class="sig-rule"></div>
-                     <div class="sig-org">Managing Director · Energy and Logics Ltd</div>`
+                     <div class="sig-org">Managing Director · Theos Art Ltd</div>`
                   : `<div class="sig-rule" style="margin-top: 18mm"></div>
                      <div class="sig-pending">Awaiting official stamp &amp; signature</div>`
               }
@@ -590,7 +590,7 @@ export function createCertificateHTML({
                   ? `<div class="qr-block">
                       <img src="${qrImageUrl}" alt="Scan to verify certificate">
                       <div class="qr-label">Scan to verify</div>
-                      <div class="qr-hint">www.energyandlogics.com</div>
+                      <div class="qr-hint">www.theosart.com</div>
                     </div>`
                   : ''
               }

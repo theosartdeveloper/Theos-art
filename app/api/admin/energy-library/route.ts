@@ -50,7 +50,7 @@ export async function POST(request: Request) {
     const body = await request.json()
     if (!body.terms_accepted) {
       return NextResponse.json(
-        { error: 'You must accept the Energy & Logics terms before uploading' },
+        { error: 'You must accept the Theos Art terms before uploading' },
         { status: 400 }
       )
     }

@@ -1,8 +1,8 @@
-# Energy & Logics - Internship Program Website
+# Theos Art - Internship Program Website
 
 ## 🎯 Project Overview
 
-A professional, fully-featured website for Energy & Logics internship programs in Kigali, Rwanda. Built with Next.js 16, React 19, and modern web technologies.
+A professional, fully-featured website for Theos Art internship programs in Kigali, Rwanda. Built with Next.js 16, React 19, and modern web technologies.
 
 ## ✨ Features
 
@@ -278,11 +278,11 @@ For issues or questions:
 
 ## 📄 License
 
-This project is proprietary. All rights reserved to Energy & Logics Ltd.
+This project is proprietary. All rights reserved to Theos Art Ltd.
 
 ## 👥 Team
 
-- **Development**: Energy & Logics Team
+- **Development**: Theos Art Team
 - **Design**: Professional UI/UX
 - **Deployment**: Vercel Infrastructure
 

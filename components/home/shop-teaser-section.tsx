@@ -17,8 +17,8 @@ export async function ShopTeaserSection() {
         <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
           <HomeSectionHeader
             eyebrow="Products"
-            title="Engineering supplies"
-            description={`Components and tools from ${COMPANY.brandName} — browse the shop.`}
+            title="Art materials & works"
+            description={`Canvases, supplies, and artworks from ${COMPANY.brandName} — browse the shop.`}
             align="left"
             className="mb-0"
           />

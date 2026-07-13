@@ -44,7 +44,7 @@ export default async function AboutPage() {
           <p className="text-white/80 text-sm font-medium mb-2">{COMPANY.brandName} Ltd</p>
           <h1 className="text-4xl font-bold mb-2">About Us</h1>
           <p className="text-white/90 text-lg max-w-2xl">
-            Practical engineering training, technical support, and product supply from {profile.address}.
+            Original artworks, creative sessions, and art materials from {profile.address}.
           </p>
         </div>
       </section>
@@ -57,9 +57,9 @@ export default async function AboutPage() {
           <CardContent>
             <p className="text-slate-700 whitespace-pre-line leading-relaxed">{about}</p>
             <p className="text-sm text-slate-600 mt-4 leading-relaxed">
-              Based in {profile.address}, we serve students, graduates, technicians, and engineering
-              teams across {COMPANY.region} through training, our online Engineering Hub, Field Notes,
-              and technical support.
+              Based in {profile.address}, we serve artists, collectors, learners, and creative
+              communities across {COMPANY.region} through studio artworks, our online shop, library,
+              and creative events.
             </p>
           </CardContent>
         </Card>
@@ -96,7 +96,7 @@ export default async function AboutPage() {
           <CardHeader>
             <CardTitle className="text-slate-900">Our Goals</CardTitle>
             <p className="text-sm text-slate-600 mt-1">
-              What we work toward every day as a training and engineering company.
+              What we work toward every day as an art and materials company.
             </p>
           </CardHeader>
           <CardContent>
@@ -149,7 +149,7 @@ export default async function AboutPage() {
 
         <Card className="border-slate-200 bg-white">
           <CardHeader>
-            <CardTitle className="text-slate-900">Our Training Programmes</CardTitle>
+            <CardTitle className="text-slate-900">What we offer</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {TRAINING_PROGRAMS.map((program) => (
@@ -170,12 +170,12 @@ export default async function AboutPage() {
           <CardHeader className="bg-slate-50 border-b border-slate-100">
             <CardTitle className="flex items-center gap-2 text-slate-900">
               <ShoppingBag className="h-5 w-5 text-[var(--brand-navy)]" />
-              Engineering Products
+              Art materials & products
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 pt-6">
             <p className="text-slate-700 leading-relaxed">
-              Browse components, tools, and engineering supplies through our online shop. Add items to your cart,
+              Browse original artworks, materials, and studio supplies through our online shop. Add items to your cart,
               submit an order with your contact details, and our team confirms availability, total, and fulfillment.
             </p>
 
@@ -256,8 +256,8 @@ export default async function AboutPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-slate-700">
-              Read verified feedback from students, interns, and engineering clients — or share your own experience
-              with our training, shop, and support services.
+              Read verified feedback from collectors, artists, and workshop participants — or share your own experience
+              with our studio, shop, and creative services.
             </p>
             <div className="flex flex-wrap gap-2">
               <Link href="/reviews">
@@ -280,7 +280,7 @@ export default async function AboutPage() {
           </CardHeader>
           <CardContent className="space-y-6">
             <p className="text-slate-700">
-              Reach {COMPANY.brandName} for training enquiries, shop orders, partnerships, or technical support.
+              Reach {COMPANY.brandName} for artwork enquiries, shop orders, workshops, or partnerships.
               We respond within one business day.
             </p>
 

@@ -267,7 +267,7 @@ export const ADMIN_NAV: AdminNavGroup[] = [
       },
       {
         id: 'energy-library',
-        label: 'Energy Library',
+        label: 'Theos Art Library',
         href: '/admin/dashboard/energy-library',
         icon: 'book-open',
         permission: PERMISSIONS.CONTENT_ANNOUNCEMENTS,

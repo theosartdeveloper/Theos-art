@@ -1,4 +1,4 @@
-# Build Summary - Energy & Logics Website
+# Build Summary - Theos Art Website
 
 ## Project Status: ✅ PRODUCTION READY
 

@@ -1,4 +1,4 @@
-# Energy & Logics Engineering Academy - Files Overview
+# Theos Art Engineering Academy - Files Overview
 
 **Complete Guide to Project Files and Structure**
 

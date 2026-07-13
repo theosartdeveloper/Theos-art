@@ -35,7 +35,7 @@ export async function PATCH(request: Request, context: RouteContext) {
 
     if (!termsAccepted && !existing.terms_accepted_at) {
       return NextResponse.json(
-        { error: 'You must accept the Energy & Logics terms before saving' },
+        { error: 'You must accept the Theos Art terms before saving' },
         { status: 400 }
       )
     }

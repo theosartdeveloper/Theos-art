@@ -4,13 +4,13 @@ import { COMPANY } from '@/lib/company/constants'
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
 export const EMAIL_FROM =
-  process.env.EMAIL_FROM?.trim() || `${COMPANY.brandName} <noreply@energyandlogics.com>`
+  process.env.EMAIL_FROM?.trim() || `${COMPANY.brandName} <kubwatheosart@gmail.com>`
 
 export const ADMIN_NOTIFICATION_EMAIL =
   process.env.ADMIN_NOTIFICATION_EMAIL?.trim() || COMPANY.email
 
 export function getAppUrl(): string {
-  const url = process.env.NEXT_PUBLIC_APP_URL?.trim() || 'https://energyandlogics.com'
+  const url = process.env.NEXT_PUBLIC_APP_URL?.trim() || 'https://theosart.com'
   return url.replace(/\/$/, '')
 }
 

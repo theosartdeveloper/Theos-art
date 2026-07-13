@@ -90,18 +90,17 @@ export const DEFAULT_WEB_SETTINGS: WebSettingsForm = {
   payment_method_label: PAYMENT.method,
   founder_name: FOUNDER.name,
   founder_title: FOUNDER.title,
-  seo_title: `${COMPANY.brandName} — Engineering Training Rwanda`,
+  seo_title: `${COMPANY.brandName} — Art & Materials Rwanda`,
   seo_description: COMPANY.tagline,
-  seo_keywords:
-    'Energy and Logics, engineering training Rwanda, embedded systems, PLC, Kigali',
+  seo_keywords: 'Theos Art, art Kigali, art materials Rwanda, original artworks, canvas, studio',
   hero: {
-    title: `${COMPANY.brandName} — Engineering Training`,
+    title: COMPANY.brandName,
     subtitle:
-      'Hands-on programmes in embedded systems, industrial control, and advanced electrical technology. Based in Kigali, Rwanda.',
-    background_image: '/videos/playlist',
-    cta_primary_label: 'View Programmes',
-    cta_primary_url: '/learning',
-    cta_secondary_label: 'About our founder',
+      'Original artworks and quality art materials in Kigali — create, collect, and supply your studio.',
+    background_image: '/hero/playlist',
+    cta_primary_label: 'Browse shop',
+    cta_primary_url: '/shop',
+    cta_secondary_label: 'About us',
     cta_secondary_url: '/about',
   },
 }

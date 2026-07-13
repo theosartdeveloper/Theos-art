@@ -250,7 +250,7 @@ export async function getAdminSession(): Promise<AdminSession | null> {
     return {
       user: {
         id: 'legacy-admin',
-        email: 'admin@energyandlogics.com',
+        email: 'kubwatheosart@gmail.com',
         role: 'admin',
         firstName: 'Admin',
         lastName: '',

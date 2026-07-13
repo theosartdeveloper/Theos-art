@@ -7,8 +7,8 @@ function getResend(): Resend | null {
   return key ? new Resend(key) : null
 }
 
-const from = process.env.EMAIL_FROM ?? 'Energy & Logics <noreply@energyandlogics.com>'
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://www.energyandlogics.com'
+const from = process.env.EMAIL_FROM ?? 'Theos Art <kubwatheosart@gmail.com>'
+const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://www.theosart.com'
 
 function reminderEmail(title: string, when: string, link: string | null, body: string) {
   const linkBlock = link
