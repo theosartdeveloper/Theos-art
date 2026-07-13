@@ -7,7 +7,7 @@ export const SITE_LOCALES: { id: SiteLocale; label: string }[] = [
 
 const libraryMessages = {
   en: {
-    title: 'Theos Art Library',
+    title: 'Art Gallery',
     subtitle: 'Browse our gallery, studio projects, books, and creative culture.',
     projectsTitle: 'Studio projects',
     projectsSubtitle: 'Artworks and creative projects showcased by Theos Art.',
@@ -19,7 +19,7 @@ const libraryMessages = {
     technologies: 'Materials & mediums',
   },
   rw: {
-    title: 'Isomero rya Theos Art',
+    title: 'Isomo ry\'ubuhanzi',
     subtitle:
       "Reba amafoto, imishinga y'ubuhanzi, ibitabo n'ibindi bijyanye n'umuco gakondo bitegurwa na Theos Art.",
     projectsTitle: 'Imishinga y\'ubuhanzi',

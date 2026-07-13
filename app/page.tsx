@@ -2,15 +2,13 @@ import { SiteHeader } from '@/components/layout/site-header'
 import { SiteFooter } from '@/components/layout/site-footer'
 import { HomeHeroSection } from '@/components/home/home-hero'
 import { FounderSection } from '@/components/home/founder-section'
-import { ExploreHubSection } from '@/components/home/explore-hub-section'
 import { ProgrammesCoursesSection } from '@/components/home/programmes-courses-section'
-import { ReadExploreSection } from '@/components/home/read-explore-section'
 import { ShopTeaserSection } from '@/components/home/shop-teaser-section'
 import { ReviewsTrustSection } from '@/components/home/reviews-trust-section'
-import { WhatsHappeningSection } from '@/components/home/whats-happening-section'
-import { MembershipSection } from '@/components/home/membership-section'
 import { HomeStickyNav } from '@/components/home/home-sticky-nav'
 import { HomeSignedInStrip } from '@/components/home/home-signed-in-strip'
+import { ArtEventsSection } from '@/components/home/art-events-section'
+import { StudioAnnouncementsSection } from '@/components/home/studio-announcements-section'
 
 export default function HomePage() {
   return (
@@ -21,13 +19,11 @@ export default function HomePage() {
         <HomeHeroSection fullViewport />
       </div>
       <HomeSignedInStrip />
-      <ExploreHubSection />
-      <ProgrammesCoursesSection />
-      <ReadExploreSection />
-      <ReviewsTrustSection compact />
       <ShopTeaserSection />
-      <WhatsHappeningSection />
-      <MembershipSection />
+      <ProgrammesCoursesSection />
+      <ArtEventsSection />
+      <StudioAnnouncementsSection />
+      <ReviewsTrustSection compact />
       <FounderSection compact />
       <SiteFooter />
     </main>

@@ -3,14 +3,8 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ChevronDown, Menu } from 'lucide-react'
+import { Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import {
   Sheet,
   SheetContent,
@@ -20,31 +14,19 @@ import {
 } from '@/components/ui/sheet'
 import { COMPANY } from '@/lib/company/constants'
 
-const learningLinks = [
-  { href: '/learning', label: 'All courses & programmes' },
-  { href: '/learning?module=training', label: 'Training' },
-  { href: '/internship', label: 'Internship' },
-]
-
-const careerLinks = [
-  { href: '/career?module=guidance', label: 'Career Guidance' },
-  { href: '/career?module=mentorship', label: 'Mentorship' },
-  { href: '/career?module=workshops', label: 'Workshops' },
-  { href: '/career?module=webinars', label: 'Webinars' },
-  { href: '/career?module=events', label: 'Events' },
-  { href: '/engineering-support', label: 'Engineering Support' },
-]
-
-const navDropdownContentClass =
-  'nav-dropdown-panel z-[100] min-w-[14rem] bg-white text-slate-900 border border-slate-200 shadow-xl'
-
-const navDropdownItemClass =
-  'cursor-pointer text-slate-800 focus:bg-slate-100 focus:text-slate-900'
+/** Primary public nav — other routes stay wired in the app, just not listed here. */
+const PRIMARY_NAV = [
+  { href: '/', label: 'Home' },
+  { href: '/shop', label: 'Shop' },
+  { href: '/art-gallery', label: 'Art Gallery' },
+  { href: '/about', label: 'About' },
+] as const
 
 const headerNavButtonClass =
   'text-white hover:bg-white/15 hover:text-white focus-visible:ring-white/40 h-9 px-3 text-sm font-medium'
 
-const desktopHeaderInnerClass = 'hidden lg:grid lg:grid-cols-[auto_1fr_auto] lg:items-center lg:gap-6 max-w-7xl mx-auto w-full px-6 xl:px-8 py-2.5'
+const desktopHeaderInnerClass =
+  'hidden lg:grid lg:grid-cols-[auto_1fr_auto] lg:items-center lg:gap-6 max-w-7xl mx-auto w-full px-6 xl:px-8 py-2.5'
 
 const mobileNavLinkClass =
   'block rounded-lg px-3 py-2.5 text-base font-medium text-slate-950 hover:bg-slate-100 no-underline hover:no-underline'
@@ -57,17 +39,18 @@ function BrandMark({
   compact?: boolean
 }) {
   return (
-    <div className="bg-white rounded-md p-0.5 shrink-0 shadow-sm border border-white/80">
+    <div className="bg-white rounded-md p-1 shrink-0 shadow-sm border border-white/80">
       <Image
         src={logoUrl}
         alt={`${COMPANY.brandName} logo`}
-        width={48}
-        height={48}
+        width={compact ? 40 : 120}
+        height={compact ? 40 : 48}
         className={
           compact
-            ? 'rounded object-contain h-8 w-8'
-            : 'rounded object-contain h-9 w-9 xl:h-10 xl:w-auto xl:max-w-[100px]'
+            ? 'rounded object-contain h-9 w-9'
+            : 'rounded object-contain h-10 w-auto max-h-11 max-w-[140px]'
         }
+        priority
         unoptimized
       />
     </div>
@@ -115,69 +98,31 @@ function MobileNavSheet({
           </Link>
         </SheetHeader>
         <div className="px-4 pb-6">
-          <MobileNav onNavigate={close} />
+          <div className="mobile-nav-panel flex flex-col gap-6 py-2">
+            <div className="space-y-1">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-600 px-1">Menu</p>
+              {PRIMARY_NAV.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={close}
+                  className={mobileNavLinkClass}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+            <div className="border-t border-slate-200 pt-4">
+              <Link href="/auth/login" onClick={close} className="no-underline hover:no-underline">
+                <Button className="w-full bg-[var(--brand-navy)] text-white hover:bg-[var(--brand-navy)]/90 font-semibold">
+                  Login
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </SheetContent>
     </Sheet>
-  )
-}
-
-function MobileNav({ onNavigate }: { onNavigate?: () => void }) {
-  const topLinks = [
-    { href: '/', label: 'Home' },
-    { href: '/tools', label: 'Tools' },
-    { href: '/shop', label: 'Products' },
-  ]
-
-  return (
-    <div className="mobile-nav-panel flex flex-col gap-6 py-2">
-      <div className="space-y-1">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-600 px-1">Menu</p>
-        {topLinks.map((link) => (
-          <Link key={link.href} href={link.href} onClick={onNavigate} className={mobileNavLinkClass}>
-            {link.label}
-          </Link>
-        ))}
-      </div>
-
-      <div className="space-y-1">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-600 px-1">Learning</p>
-        {learningLinks.map((link) => (
-          <Link key={link.href} href={link.href} onClick={onNavigate} className={mobileNavLinkClass}>
-            {link.label}
-          </Link>
-        ))}
-      </div>
-
-      <div className="space-y-1">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-600 px-1">Career</p>
-        {careerLinks.map((link) => (
-          <Link key={link.href} href={link.href} onClick={onNavigate} className={mobileNavLinkClass}>
-            {link.label}
-          </Link>
-        ))}
-      </div>
-
-      <div className="space-y-1">
-        <Link href="/library" onClick={onNavigate} className={mobileNavLinkClass}>
-          Library
-        </Link>
-        <Link href="/engineering" onClick={onNavigate} className={mobileNavLinkClass}>
-          Blog
-        </Link>
-        <Link href="/about" onClick={onNavigate} className={mobileNavLinkClass}>
-          About
-        </Link>
-      </div>
-
-      <div className="border-t border-slate-200 pt-4">
-        <Link href="/auth/login" onClick={onNavigate} className="no-underline hover:no-underline">
-          <Button className="w-full bg-[var(--brand-navy)] text-white hover:bg-[var(--brand-navy)]/90 font-semibold">
-            Login
-          </Button>
-        </Link>
-      </div>
-    </div>
   )
 }
 
@@ -202,89 +147,26 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
           : 'sticky top-0 bg-[var(--brand-navy)]'
       }`}
     >
-      {/* Desktop — logo left · nav centered · auth right */}
       <div className={desktopHeaderInnerClass}>
         <Link
           href="/"
-          className="flex items-center gap-2.5 shrink-0 hover:opacity-90 transition no-underline hover:no-underline min-w-0"
+          className="flex items-center gap-3 shrink-0 hover:opacity-90 transition no-underline hover:no-underline min-w-0"
         >
           <BrandMark logoUrl={logoUrl} />
-          <div className="min-w-0 hidden lg:block max-w-[11rem] xl:max-w-[13rem]">
-            <p className="font-bold text-sm xl:text-base leading-tight text-white truncate">{COMPANY.brandName}</p>
-            <p className="text-[10px] text-white/75 truncate leading-snug hidden xl:block">{COMPANY.slogan}</p>
+          <div className="min-w-0 hidden xl:block max-w-[12rem]">
+            <p className="font-bold text-base leading-tight text-white truncate">{COMPANY.brandName}</p>
+            <p className="text-[10px] text-white/75 truncate leading-snug">{COMPANY.slogan}</p>
           </div>
         </Link>
 
-        <div className="flex items-center justify-center gap-0.5 flex-wrap min-w-0">
-          <Link href="/">
-            <Button variant="ghost" size="sm" className={headerNavButtonClass}>
-              Home
-            </Button>
-          </Link>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+        <div className="flex items-center justify-center gap-1 min-w-0">
+          {PRIMARY_NAV.map((link) => (
+            <Link key={link.href} href={link.href}>
               <Button variant="ghost" size="sm" className={headerNavButtonClass}>
-                Learning <ChevronDown className="ml-0.5 h-3.5 w-3.5 opacity-80" />
+                {link.label}
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="center" className={navDropdownContentClass}>
-              {learningLinks.map((link) => (
-                <DropdownMenuItem key={link.href} asChild className={navDropdownItemClass}>
-                  <Link href={link.href} className="w-full text-slate-800 no-underline hover:no-underline hover:text-[var(--brand-navy)]">
-                    {link.label}
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <Link href="/shop">
-            <Button variant="ghost" size="sm" className={headerNavButtonClass}>
-              Products
-            </Button>
-          </Link>
-
-          <Link href="/tools">
-            <Button variant="ghost" size="sm" className={headerNavButtonClass}>
-              Tools
-            </Button>
-          </Link>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className={headerNavButtonClass}>
-                Career <ChevronDown className="ml-0.5 h-3.5 w-3.5 opacity-80" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="center" className={navDropdownContentClass}>
-              {careerLinks.map((link) => (
-                <DropdownMenuItem key={link.href} asChild className={navDropdownItemClass}>
-                  <Link href={link.href} className="w-full text-slate-800 no-underline hover:no-underline hover:text-[var(--brand-navy)]">
-                    {link.label}
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <Link href="/library">
-            <Button variant="ghost" size="sm" className={headerNavButtonClass}>
-              Library
-            </Button>
-          </Link>
-
-          <Link href="/engineering">
-            <Button variant="ghost" size="sm" className={headerNavButtonClass}>
-              Blog
-            </Button>
-          </Link>
-
-          <Link href="/about">
-            <Button variant="ghost" size="sm" className={headerNavButtonClass}>
-              About
-            </Button>
-          </Link>
+            </Link>
+          ))}
         </div>
 
         <div className="flex items-center justify-end shrink-0">
@@ -299,9 +181,14 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
         </div>
       </div>
 
-      {/* Mobile: Menu · Login */}
       <div className="lg:hidden flex w-full items-center justify-between gap-3 px-4 py-2">
-        <MobileNavSheet logoUrl={logoUrl} open={mobileOpen} onOpenChange={setMobileOpen} />
+        <div className="flex items-center gap-2 min-w-0">
+          <MobileNavSheet logoUrl={logoUrl} open={mobileOpen} onOpenChange={setMobileOpen} />
+          <Link href="/" className="flex items-center gap-2 no-underline hover:no-underline min-w-0">
+            <BrandMark logoUrl={logoUrl} compact />
+            <span className="font-bold text-sm text-white truncate">{COMPANY.brandName}</span>
+          </Link>
+        </div>
 
         <div className="site-header-mobile-auth flex items-center shrink-0">
           <Link href="/auth/login" className="no-underline hover:no-underline">

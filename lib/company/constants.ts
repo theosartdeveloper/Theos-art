@@ -65,13 +65,13 @@ export const TRAINING_PROGRAMS = [
 
 export const PAYMENT = {
   method: 'MTN Mobile Money (MoMo Pay)',
-  momoPayCode: '0783086093',
-  accountName: 'Theos Art Ltd',
+  momoPayCode: '581661',
+  accountName: 'THEOSART LTD',
   workflow:
-    'Pay via MTN MoMo using the details below, then upload your payment receipt so our team can verify and confirm your order or enrollment.',
+    'Pay via MTN MoMo using the Pay Code below, then upload your payment receipt so our team can verify and confirm your order or enrollment.',
   steps: [
-    'Dial MTN MoMo or use the MoMo app and select Pay / Merchant payment.',
-    'Pay using Theos Art Ltd MoMo details (confirm Pay Code with our team if needed).',
+    'Dial MTN MoMo or use the MoMo app and select Pay Code / Merchant payment.',
+    'Enter Pay Code 581661 — account name: THEOSART LTD.',
     'Pay the amount shown on your order or invoice.',
     'Save your MoMo confirmation SMS or screenshot as your receipt.',
     'Submit the receipt through your order, application, or the Payment Receipt page for verification.',

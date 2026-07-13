@@ -32,9 +32,9 @@ import { getLibraryMessages, parseSiteLocale } from '@/lib/i18n/library'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Theos Art Library',
+  title: 'Art Gallery | Theos Art',
   description:
-    'Explore the Theos Art Library — company gallery, books, and culture. Browse by category and start reading without an account.',
+    'Explore the Theos Art Gallery — studio works, books, and creative culture. Browse by category without an account.',
 }
 
 type PageProps = {
