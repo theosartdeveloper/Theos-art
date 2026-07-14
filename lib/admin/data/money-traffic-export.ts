@@ -40,7 +40,7 @@ export function moneyTrafficFileStamp(data: FinancialSummary): string {
 
 /** Excel-compatible SpreadsheetML (.xls) — opens in Excel / Google Sheets without extra packages. */
 export function buildMoneyTrafficExcelXml(data: FinancialSummary): string {
-  const letterhead = companyLetterheadRows()
+  const letterhead = companyLetterheadRows(rangeLabel(data))
   const summaryRows: Array<[string, string | number]> = [
     ['Report', 'Money traffic & shop sales'],
     ['Report range', rangeLabel(data)],
@@ -132,7 +132,7 @@ ${ordersSheet}
 
 export function buildMoneyTrafficCsv(data: FinancialSummary): string {
   const lines: Array<Array<string | number>> = [
-    ...companyLetterheadRows(),
+    ...companyLetterheadRows(rangeLabel(data)),
     ['Money traffic & shop sales'],
     ['Range', rangeLabel(data)],
     [],
@@ -189,20 +189,19 @@ export function downloadMoneyTrafficCsv(data: FinancialSummary) {
 export async function downloadMoneyTrafficPdf(data: FinancialSummary) {
   const doc = new jsPDF()
   const logoDataUrl = await loadReportLogoDataUrl()
+  const range = rangeLabel(data)
 
-  // Cover / letterhead page only — maximize space for metrics on the next page
-  drawReportHeader(doc, {
+  // Header + key metrics on the same page
+  const startY = drawReportHeader(doc, {
     title: 'Money traffic & shop sales',
-    subtitle: `Report range: ${rangeLabel(data)}`,
+    reportRange: range,
     logoDataUrl,
   })
 
-  doc.addPage()
-  const metricsTop = 18
   doc.setFont('helvetica', 'bold')
-  doc.setFontSize(12)
+  doc.setFontSize(11)
   doc.setTextColor(58, 58, 58)
-  doc.text('Key metrics', 14, metricsTop)
+  doc.text('Key metrics', 14, startY)
 
   autoTable(doc, {
     head: [['Metric', 'Value']],
@@ -222,7 +221,7 @@ export async function downloadMoneyTrafficPdf(data: FinancialSummary) {
       ['Out of stock', String(data.outOfStockCount)],
       ['Pending receipts', String(data.pendingPaymentsCount)],
     ],
-    startY: metricsTop + 4,
+    startY: startY + 3,
     theme: 'striped',
     headStyles: { fillColor: [58, 58, 58] },
     styles: { fontSize: 9 },

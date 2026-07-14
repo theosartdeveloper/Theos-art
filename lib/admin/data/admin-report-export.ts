@@ -64,23 +64,21 @@ function escapeCsvCell(value: string | number): string {
 async function buildAdminReportPdfDoc(report: AdminReportData): Promise<jsPDF> {
   const doc = new jsPDF()
   const logoDataUrl = await loadReportLogoDataUrl()
-  drawReportHeader(doc, {
+  const startY = drawReportHeader(doc, {
     title: 'Admin platform report',
     subtitle: `${COMPANY.platformName} — operations & programme summary`,
     logoDataUrl,
   })
 
-  doc.addPage()
-  const metricsTop = 18
   doc.setFont('helvetica', 'bold')
-  doc.setFontSize(12)
+  doc.setFontSize(11)
   doc.setTextColor(58, 58, 58)
-  doc.text('Key metrics', 14, metricsTop)
+  doc.text('Key metrics', 14, startY)
 
   autoTable(doc, {
     head: [['Section', 'Metric', 'Value']],
     body: buildReportRows(report),
-    startY: metricsTop + 4,
+    startY: startY + 3,
     margin: { left: 14, right: 14 },
     theme: 'striped',
     styles: { fontSize: 9, cellPadding: 3 },
