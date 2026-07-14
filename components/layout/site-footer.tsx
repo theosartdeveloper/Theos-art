@@ -30,12 +30,6 @@ export async function SiteFooter() {
               <Link href="/learning">E-learning</Link>
             </li>
             <li>
-              <Link href="/trainings">Trainings</Link>
-            </li>
-            <li>
-              <Link href="/internship">Internship</Link>
-            </li>
-            <li>
               <Link href="/about">About</Link>
             </li>
           </ul>
