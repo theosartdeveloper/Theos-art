@@ -2,9 +2,11 @@ import { jsPDF } from 'jspdf'
 import { COMPANY } from '@/lib/company/constants'
 
 const BRAND_CHARCOAL: [number, number, number] = [58, 58, 58]
+/** Soft charcoal / “light black” panel under the top identity strip */
+const HEADER_PANEL: [number, number, number] = [72, 72, 74]
 const BRAND_ORANGE: [number, number, number] = [240, 138, 40]
-const MUTED: [number, number, number] = [100, 116, 139]
-const META_BG: [number, number, number] = [248, 250, 252]
+const MUTED_ON_DARK: [number, number, number] = [200, 204, 210]
+const WHITE: [number, number, number] = [255, 255, 255]
 
 /** Display form for reports (no protocol). */
 export const REPORT_SITE_DISPLAY = 'www.theosartltd.com'
@@ -15,7 +17,6 @@ let cachedLogoDataUrl: string | null | undefined
 export async function loadReportLogoDataUrl(): Promise<string | null> {
   if (cachedLogoDataUrl !== undefined) return cachedLogoDataUrl
 
-  // Server: read from public assets
   if (typeof window === 'undefined') {
     try {
       const { promises: fs } = await import('fs')
@@ -49,114 +50,118 @@ export async function loadReportLogoDataUrl(): Promise<string | null> {
 }
 
 export type ReportHeaderOptions = {
-  /** Report name shown top-right in the brand bar (e.g. Money traffic & shop sales). */
+  /** Report name shown top-right (e.g. Money traffic & shop sales). */
   title: string
-  /** Report range label, e.g. "All time" or "2024-01-01 → 2024-12-31". */
+  /** Report range label, e.g. "All time". */
   reportRange?: string
-  /** Optional subtitle when reportRange is not used. */
+  /** Optional subtitle when reportRange is not used (shown as context under title). */
   subtitle?: string
   logoDataUrl?: string | null
   generatedAt?: Date
 }
 
 /**
- * Draws a professional letterhead + meta block on the current page.
- * Logo / company left; report title right; range, location, contacts, generated
- * in an aligned header panel — then reporting details continue on the same page.
- * Returns the Y position where content should start.
+ * Professional letterhead:
+ * - Left: logo, company, slogan → Location + Contacts under slogan
+ * - Right: report title → Report range + Generated under title
+ * Both columns sit on a light-black (soft charcoal) header panel.
+ * Returns Y where page content should start.
  */
 export function drawReportHeader(doc: jsPDF, options: ReportHeaderOptions): number {
   const pageWidth = doc.internal.pageSize.getWidth()
   const margin = 14
-  const headerTop = 9
-  const barHeight = 26
   const rightEdge = pageWidth - margin
-  const contentWidth = pageWidth - margin * 2
   const generated = (options.generatedAt ?? new Date()).toLocaleString()
 
-  // Brand bar
-  doc.setFillColor(...BRAND_CHARCOAL)
-  doc.rect(0, 0, pageWidth, barHeight + 3, 'F')
-  doc.setFillColor(...BRAND_ORANGE)
-  doc.rect(0, barHeight + 3, pageWidth, 1.2, 'F')
-
-  let textLeft = margin
-  if (options.logoDataUrl) {
-    try {
-      const format = options.logoDataUrl.includes('image/jpeg') ? 'JPEG' : 'PNG'
-      doc.setFillColor(255, 255, 255)
-      doc.roundedRect(margin, headerTop - 1, 20, 16, 2, 2, 'F')
-      doc.addImage(options.logoDataUrl, format, margin + 1.5, headerTop + 0.5, 17, 13)
-      textLeft = margin + 24
-    } catch {
-      // Logo failed — continue with text-only header
-    }
-  }
-
-  // Company identity (left, beside logo)
-  doc.setTextColor(255, 255, 255)
-  doc.setFont('helvetica', 'bold')
-  doc.setFontSize(12)
-  doc.text(COMPANY.legalName, textLeft, headerTop + 6)
-  doc.setFont('helvetica', 'normal')
-  doc.setFontSize(7.5)
-  doc.text(COMPANY.slogan, textLeft, headerTop + 12)
-
-  // Report title (top-right)
-  doc.setFont('helvetica', 'bold')
-  doc.setFontSize(10)
-  const titleLines = doc.splitTextToSize(options.title, 78)
-  doc.text(titleLines, rightEdge, headerTop + 7, { align: 'right' })
-
-  // Meta panel: professionally aligned label / value rows under the brand bar
   const rangeLine =
     options.reportRange != null
       ? options.reportRange
       : options.subtitle?.replace(/^Report range:\s*/i, '') || undefined
 
-  const metaRows: Array<[string, string]> = []
-  if (rangeLine) metaRows.push(['Report range', rangeLine])
-  metaRows.push(['Location', `${COMPANY.address} · ${COMPANY.region}`])
-  metaRows.push([
-    'Contact',
-    `${COMPANY.email}  ·  ${COMPANY.phoneDisplay}  ·  ${REPORT_SITE_DISPLAY}`,
-  ])
-  metaRows.push(['Generated', generated])
+  const leftInfo = [
+    `Location  ${COMPANY.address} · ${COMPANY.region}`,
+    `Contacts  ${COMPANY.email}  ·  ${COMPANY.phoneDisplay}  ·  ${REPORT_SITE_DISPLAY}`,
+  ]
+  const rightInfo: string[] = []
+  if (rangeLine) rightInfo.push(`Report range  ${rangeLine}`)
+  rightInfo.push(`Generated  ${generated}`)
 
-  const panelTop = barHeight + 7
-  const rowH = 5.2
-  const panelPadY = 4
-  const panelH = panelPadY * 2 + metaRows.length * rowH
-  const labelW = 28
-  const valueX = margin + 4 + labelW
+  const leftColWidth = pageWidth * 0.55 - margin
+  const rightColWidth = pageWidth * 0.42 - margin
 
-  doc.setFillColor(...META_BG)
-  doc.roundedRect(margin, panelTop, contentWidth, panelH, 1.5, 1.5, 'F')
-  doc.setDrawColor(226, 232, 240)
-  doc.setLineWidth(0.25)
-  doc.roundedRect(margin, panelTop, contentWidth, panelH, 1.5, 1.5, 'S')
+  // Measure wrapped info so the panel height fits
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(7)
+  const leftWrapped = leftInfo.flatMap((line) => doc.splitTextToSize(line, leftColWidth))
+  const rightWrapped = rightInfo.flatMap((line) => doc.splitTextToSize(line, rightColWidth))
+  const infoLines = Math.max(leftWrapped.length, rightWrapped.length, 2)
 
-  let y = panelTop + panelPadY + 3.5
-  for (const [label, value] of metaRows) {
-    doc.setFont('helvetica', 'bold')
-    doc.setFontSize(7.5)
-    doc.setTextColor(...MUTED)
-    doc.text(label, margin + 4, y)
+  const topStripH = 22
+  const infoBlockH = 6 + infoLines * 4.2 + 4
+  const totalHeaderH = topStripH + infoBlockH
 
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(8)
-    doc.setTextColor(...BRAND_CHARCOAL)
-    const wrapped = doc.splitTextToSize(value, contentWidth - labelW - 10)
-    doc.text(wrapped, valueX, y)
-    y += rowH * Math.max(1, wrapped.length)
+  // Light-black / soft charcoal full-width header
+  doc.setFillColor(...HEADER_PANEL)
+  doc.rect(0, 0, pageWidth, totalHeaderH, 'F')
+
+  // Slightly darker top identity strip
+  doc.setFillColor(...BRAND_CHARCOAL)
+  doc.rect(0, 0, pageWidth, topStripH, 'F')
+
+  doc.setFillColor(...BRAND_ORANGE)
+  doc.rect(0, totalHeaderH, pageWidth, 1.2, 'F')
+
+  const headerTop = 7
+  let textLeft = margin
+
+  if (options.logoDataUrl) {
+    try {
+      const format = options.logoDataUrl.includes('image/jpeg') ? 'JPEG' : 'PNG'
+      doc.setFillColor(255, 255, 255)
+      doc.roundedRect(margin, headerTop - 1, 18, 14, 1.5, 1.5, 'F')
+      doc.addImage(options.logoDataUrl, format, margin + 1.5, headerTop + 0.5, 15, 11)
+      textLeft = margin + 22
+    } catch {
+      // continue text-only
+    }
   }
 
-  const bottom = panelTop + panelH + 5
-  doc.setDrawColor(226, 232, 240)
-  doc.setLineWidth(0.3)
-  doc.line(margin, bottom, pageWidth - margin, bottom)
+  // Company + slogan (left)
+  doc.setTextColor(...WHITE)
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(12)
+  doc.text(COMPANY.legalName, textLeft, headerTop + 5)
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(7.5)
+  doc.setTextColor(...MUTED_ON_DARK)
+  doc.text(COMPANY.slogan, textLeft, headerTop + 11)
 
-  return bottom + 5
+  // Report title (right)
+  doc.setTextColor(...WHITE)
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(10)
+  const titleLines = doc.splitTextToSize(options.title, rightColWidth)
+  doc.text(titleLines, rightEdge, headerTop + 7, { align: 'right' })
+
+  // Under slogan (left) + under title (right) on the soft charcoal panel
+  const infoY = topStripH + 7
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(7)
+  doc.setTextColor(...MUTED_ON_DARK)
+
+  let ly = infoY
+  for (const line of leftWrapped) {
+    doc.text(line, margin, ly)
+    ly += 4.2
+  }
+
+  let ry = infoY
+  for (const line of rightWrapped) {
+    doc.text(line, rightEdge, ry, { align: 'right' })
+    ry += 4.2
+  }
+
+  return totalHeaderH + 8
 }
 
 /** Company letterhead rows for Excel / CSV exports. */
@@ -164,9 +169,9 @@ export function companyLetterheadRows(reportRange?: string): Array<Array<string 
   return [
     [COMPANY.legalName],
     [COMPANY.slogan],
-    ...(reportRange ? [[`Report range: ${reportRange}`] as Array<string | number>] : []),
     [`Location: ${COMPANY.address} · ${COMPANY.region}`],
-    [`Contact: ${COMPANY.email} · ${COMPANY.phoneDisplay} · ${REPORT_SITE_DISPLAY}`],
+    [`Contacts: ${COMPANY.email} · ${COMPANY.phoneDisplay} · ${REPORT_SITE_DISPLAY}`],
+    ...(reportRange ? [[`Report range: ${reportRange}`] as Array<string | number>] : []),
     [`Generated: ${new Date().toLocaleString()}`],
     [],
   ]
@@ -176,7 +181,7 @@ export function drawReportFooter(doc: jsPDF, pageNumber: number, pageCount: numb
   const pageWidth = doc.internal.pageSize.getWidth()
   const pageHeight = doc.internal.pageSize.getHeight()
   doc.setFontSize(7)
-  doc.setTextColor(...MUTED)
+  doc.setTextColor(100, 116, 139)
   doc.text(
     `${COMPANY.legalName} · ${REPORT_SITE_DISPLAY} · Confidential · Page ${pageNumber} of ${pageCount}`,
     pageWidth / 2,
