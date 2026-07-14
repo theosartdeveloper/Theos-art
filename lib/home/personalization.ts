@@ -115,8 +115,8 @@ export function resolveHomeHeroCtas(
   }
 
   return {
-    primaryLabel: heroDefaults?.primaryLabel?.trim() || 'Create account',
-    primaryUrl: heroDefaults?.primaryUrl?.trim() || '/auth/register',
+    primaryLabel: 'Create account',
+    primaryUrl: '/auth/register',
     secondaryLabel: 'Art Gallery',
     secondaryUrl: '/art-gallery',
   }
