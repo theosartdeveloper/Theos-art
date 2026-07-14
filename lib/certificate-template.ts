@@ -376,24 +376,24 @@ export function createCertificateHTML({
       position: relative;
       width: 100%;
       max-width: 95mm;
-      min-height: 36mm;
+      min-height: 42mm;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-end;
-      padding-top: 10mm;
+      padding-top: 12mm;
     }
     .stamp {
       position: absolute;
       left: 50%;
-      top: 42%;
-      width: 42mm;
-      height: 42mm;
+      top: 40%;
+      width: 48mm;
+      height: 48mm;
       object-fit: contain;
-      opacity: 0.88;
+      opacity: 0.9;
       transform: translate(-50%, -50%) rotate(-12deg);
       mix-blend-mode: multiply;
-      filter: contrast(1.12) saturate(1.08);
+      filter: contrast(1.14) saturate(1.1);
       z-index: 1;
       pointer-events: none;
     }
