@@ -358,17 +358,25 @@ export default function WebSettingsPanel() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <p className="text-sm text-slate-600">
+                <strong className="font-semibold text-slate-800">Company logo</strong> is used for the
+                homepage, emails, favicon, and reports. There is no separate Email logo upload — upload
+                here (https R2 URL), then click <strong>Save all</strong>.
+              </p>
               <div className="flex items-center gap-4">
                 <div className="relative h-16 w-16 rounded-lg border bg-white overflow-hidden">
                   <Image src={form.company_logo_url} alt="Logo preview" fill className="object-contain p-1" unoptimized />
                 </div>
                 <p className="text-sm text-slate-600 break-all">{form.company_logo_url}</p>
               </div>
-              <Field label="Logo URL">
+              <Field
+                label="Company / email logo URL"
+                hint="Must be an https:// R2 URL. Old /images/... paths will not show in emails."
+              >
                 <Input value={form.company_logo_url} onChange={(e) => patch('company_logo_url', e.target.value)} />
               </Field>
               <div>
-                <Label className="text-slate-800">Upload logo</Label>
+                <Label className="text-slate-800">Upload company / email logo</Label>
                 <Input
                   ref={logoFileRef}
                   type="file"

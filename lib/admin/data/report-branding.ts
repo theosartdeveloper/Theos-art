@@ -41,34 +41,53 @@ async function fetchImageDataUrl(url: string): Promise<string | null> {
   }
 }
 
+/** Absolutize branding URLs without pulling email/server modules into the client bundle. */
+function toAbsoluteMediaUrl(pathOrUrl: string): string {
+  const value = pathOrUrl.trim()
+  if (!value) return ''
+  if (/^https?:\/\//i.test(value) || value.startsWith('data:')) return value
+  if (value.startsWith('/images/')) return ''
+  const base = COMPANY.publicSiteUrl.replace(/\/$/, '')
+  return `${base}${value.startsWith('/') ? '' : '/'}${value}`
+}
+
+type PublicBrandingPayload = {
+  logoUrl?: string
+  stampUrl?: string
+  signatoryName?: string
+  signatoryTitle?: string
+}
+
+async function loadPublicBranding(): Promise<PublicBrandingPayload> {
+  // Browser: hit the public API (works from admin Client Components).
+  if (typeof window !== 'undefined') {
+    const res = await fetch('/api/public/certificate-branding', { cache: 'no-store' })
+    if (!res.ok) return {}
+    return (await res.json()) as PublicBrandingPayload
+  }
+
+  // Server (e.g. emailed leadership PDF): resolve settings directly.
+  const { loadCertificateBranding } = await import('@/lib/certificate/branding')
+  const branding = await loadCertificateBranding()
+  return {
+    logoUrl: toAbsoluteMediaUrl(branding.logoUrl) || branding.logoUrl,
+    stampUrl: toAbsoluteMediaUrl(branding.stampUrl) || branding.stampUrl,
+    signatoryName: branding.signatoryName,
+    signatoryTitle: branding.signatoryTitle,
+  }
+}
+
 /** Load company logo as a data URL for reliable PDF embedding. */
 export async function loadReportLogoDataUrl(): Promise<string | null> {
   if (cachedLogoDataUrl !== undefined) return cachedLogoDataUrl
 
   try {
-    if (typeof window !== 'undefined') {
-      const brandingRes = await fetch('/api/public/certificate-branding', { cache: 'no-store' })
-      if (brandingRes.ok) {
-        const branding = (await brandingRes.json()) as { logoUrl?: string }
-        if (branding.logoUrl) {
-          const fromBranding = await fetchImageDataUrl(branding.logoUrl)
-          if (fromBranding) {
-            cachedLogoDataUrl = fromBranding
-            return cachedLogoDataUrl
-          }
-        }
-      }
-    } else {
-      const { loadCertificateBranding } = await import('@/lib/certificate/branding')
-      const { absolutePublicUrl } = await import('@/lib/email/core')
-      const branding = await loadCertificateBranding()
-      const absolute = absolutePublicUrl(branding.logoUrl) || branding.logoUrl
-      if (absolute) {
-        const fromBranding = await fetchImageDataUrl(absolute)
-        if (fromBranding) {
-          cachedLogoDataUrl = fromBranding
-          return cachedLogoDataUrl
-        }
+    const branding = await loadPublicBranding()
+    if (branding.logoUrl) {
+      const fromBranding = await fetchImageDataUrl(branding.logoUrl)
+      if (fromBranding) {
+        cachedLogoDataUrl = fromBranding
+        return cachedLogoDataUrl
       }
     }
   } catch {
@@ -90,9 +109,12 @@ export async function loadReportLogoDataUrl(): Promise<string | null> {
   }
 
   try {
-    const res = await fetch(COMPANY.logoUrl, { cache: 'no-store' })
-    if (!res.ok) throw new Error(`Logo HTTP ${res.status}`)
-    cachedLogoDataUrl = await blobToDataUrl(await res.blob())
+    const absolute = toAbsoluteMediaUrl(COMPANY.logoUrl)
+    if (!absolute) {
+      cachedLogoDataUrl = null
+      return null
+    }
+    cachedLogoDataUrl = await fetchImageDataUrl(absolute)
     return cachedLogoDataUrl
   } catch {
     cachedLogoDataUrl = null
@@ -115,40 +137,14 @@ export async function loadReportAuthorityAssets(): Promise<{
   }
 
   try {
-    if (typeof window !== 'undefined') {
-      const res = await fetch('/api/public/certificate-branding', { cache: 'no-store' })
-      if (!res.ok) {
-        cachedAuthority = fallback
-        return cachedAuthority
-      }
-      const branding = (await res.json()) as {
-        stampUrl?: string
-        signatoryName?: string
-        signatoryTitle?: string
-      }
-      const role =
-        String(branding.signatoryTitle || '')
-          .split('·')[0]
-          ?.trim() || 'Managing Director'
-      cachedAuthority = {
-        stampDataUrl: branding.stampUrl ? await fetchImageDataUrl(branding.stampUrl) : null,
-        signatoryName: branding.signatoryName?.trim() || fallback.signatoryName,
-        signatoryRole: role,
-      }
-      return cachedAuthority
-    }
-
-    const { loadCertificateBranding } = await import('@/lib/certificate/branding')
-    const { absolutePublicUrl } = await import('@/lib/email/core')
-    const branding = await loadCertificateBranding()
-    const stampAbs = absolutePublicUrl(branding.stampUrl) || branding.stampUrl
+    const branding = await loadPublicBranding()
     const role =
       String(branding.signatoryTitle || '')
         .split('·')[0]
         ?.trim() || 'Managing Director'
     cachedAuthority = {
-      stampDataUrl: stampAbs ? await fetchImageDataUrl(stampAbs) : null,
-      signatoryName: branding.signatoryName || fallback.signatoryName,
+      stampDataUrl: branding.stampUrl ? await fetchImageDataUrl(branding.stampUrl) : null,
+      signatoryName: branding.signatoryName?.trim() || fallback.signatoryName,
       signatoryRole: role,
     }
     return cachedAuthority
@@ -362,6 +358,7 @@ export function drawReportAuthorityBlock(
       // text-only signature if stamp fails
     }
   }
+}
 
 /** Convenience: authority after last autoTable, with page break if needed. */
 export function drawReportAuthorityAfterContent(
