@@ -9,7 +9,7 @@ type RecipientMode = 'single' | 'role' | 'all_students' | 'emails'
 
 export async function POST(request: Request) {
   try {
-    const session = await requireAdminPermission(PERMISSIONS.USERS_EDIT)
+    const session = await requireAdminPermission(PERMISSIONS.SETTINGS_MANAGE)
     if (!supabaseAdmin) {
       return NextResponse.json({ error: 'Database not configured' }, { status: 500 })
     }

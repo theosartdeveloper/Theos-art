@@ -6,6 +6,7 @@ import {
   BookOpen,
   CreditCard,
   ImageIcon,
+  Mail,
   Megaphone,
   Palette,
   ShoppingBag,
@@ -154,6 +155,15 @@ function buildStudioHubs(stats: AdminStats, permissions: string[]): HubCard[] {
           icon: Award,
           href: '/admin/dashboard/enrollments',
           stat: `${stats.pendingEnrollments} pending`,
+        }
+      : null,
+    hasPermission(permissions, PERMISSIONS.SETTINGS_MANAGE)
+      ? {
+          id: 'email',
+          title: 'Send email',
+          description: 'Compose customized messages to any email address via Resend.',
+          icon: Mail,
+          href: '/admin/dashboard/communications',
         }
       : null,
     hasPermission(permissions, PERMISSIONS.SETTINGS_MANAGE)

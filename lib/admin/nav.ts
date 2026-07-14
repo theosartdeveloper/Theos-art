@@ -356,10 +356,11 @@ export const ADMIN_NAV: AdminNavGroup[] = [
       },
       {
         id: 'communications',
-        label: 'Email communications',
+        label: 'Send email',
         href: '/admin/dashboard/communications',
         icon: 'mail',
-        permission: PERMISSIONS.USERS_EDIT,
+        permission: PERMISSIONS.SETTINGS_MANAGE,
+        description: 'Compose and send customized emails via Resend',
       },
       {
         id: 'audit-log',
@@ -451,6 +452,7 @@ const THEOS_ART_ADMIN_VISIBLE_IDS = new Set([
   'services',
   'reviews',
   'settings',
+  'communications',
   'security',
 ])
 

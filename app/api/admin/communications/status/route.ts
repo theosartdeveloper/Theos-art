@@ -5,7 +5,7 @@ import { isResendConfigured, EMAIL_FROM } from '@/lib/email/core'
 
 export async function GET() {
   try {
-    await requireAdminPermission(PERMISSIONS.USERS_EDIT)
+    await requireAdminPermission(PERMISSIONS.SETTINGS_MANAGE)
     return NextResponse.json({
       configured: isResendConfigured(),
       from: EMAIL_FROM,
