@@ -5,7 +5,7 @@ INSERT INTO site_settings (key, value) VALUES
   ('company_legal_name', 'Theos Art Ltd'),
   ('company_brand_name', 'Theos Art'),
   ('company_platform_name', 'Theos Art Hub'),
-  ('company_email', 'kubwatheosart@gmail.com'),
+  ('company_email', 'info@theosartltd.com'),
   ('company_phone', '+250783086093'),
   ('company_phone_display', '+250 783 086 093'),
   ('company_whatsapp', '250783086093'),

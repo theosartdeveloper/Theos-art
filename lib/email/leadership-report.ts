@@ -12,7 +12,7 @@ function getResend(): Resend | null {
   return key ? new Resend(key) : null
 }
 
-const from = process.env.EMAIL_FROM ?? 'Theos Art <kubwatheosart@gmail.com>'
+const from = process.env.EMAIL_FROM ?? 'Theos Art <info@theosartltd.com>'
 
 export async function sendLeadershipReportEmail(): Promise<{ sent: boolean; skipped?: boolean }> {
   const resend = getResend()

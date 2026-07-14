@@ -5,7 +5,7 @@ import { getCompanyLogoUrl } from '@/lib/platform/branding'
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
 export const EMAIL_FROM =
-  process.env.EMAIL_FROM?.trim() || `${COMPANY.brandName} <noreply@theosart.com>`
+  process.env.EMAIL_FROM?.trim() || `${COMPANY.brandName} <info@theosartltd.com>`
 
 export const ADMIN_NOTIFICATION_EMAIL =
   process.env.ADMIN_NOTIFICATION_EMAIL?.trim() || COMPANY.email

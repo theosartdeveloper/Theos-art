@@ -5,7 +5,7 @@ export const COMPANY = {
   platformName: 'Theos Art Hub',
   slogan: 'Lasting Impressions',
   tagline: 'Original artworks and quality art materials in Kigali, Rwanda.',
-  email: 'kubwatheosart@gmail.com',
+  email: 'info@theosartltd.com',
   phone: '+250783086093',
   phoneDisplay: '+250 783 086 093',
   whatsapp: '250783086093',

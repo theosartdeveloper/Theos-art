@@ -6,7 +6,7 @@ INSERT INTO site_settings (key, value) VALUES
 
 Through our Theos Art Hub platform, we offer studio pieces, supplies, and community programmes — combining gallery energy with practical tools for creating and collecting art in Kigali and beyond.'),
   ('mission_content', 'We make original art and quality art materials accessible — supporting creators, collectors, and learners with studio works, supplies, and inspiring creative experiences across Rwanda.'),
-  ('company_email', 'kubwatheosart@gmail.com'),
+  ('company_email', 'info@theosartltd.com'),
   ('company_phone', '+250783086093'),
   ('company_phone_display', '+250 783 086 093'),
   ('company_whatsapp', '250783086093'),
