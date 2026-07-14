@@ -92,6 +92,9 @@ export async function sendSupportSubscriptionApprovedEmail(input: {
   })
 }
 
+/** Alias used by payment review (support subscriptions). */
+export const sendSubscriptionApprovedEmail = sendSupportSubscriptionApprovedEmail
+
 export async function sendSupportSubscriptionRejectedEmail(input: {
   to: string
   name: string
@@ -118,6 +121,10 @@ export async function sendSupportSubscriptionRejectedEmail(input: {
     }),
   })
 }
+
+/** Alias used by payment review (support subscriptions). */
+export const sendSubscriptionRejectedEmail = sendSupportSubscriptionRejectedEmail
+
 
 export async function sendCertificateIssuedEmail(input: {
   to: string
