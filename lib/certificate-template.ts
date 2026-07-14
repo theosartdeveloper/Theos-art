@@ -61,11 +61,11 @@ export function createCertificateHTML({
 
   const logoUrl = resolveAsset(
     assetBaseUrl,
-    logoOverride || '/images/theos-art-logo-v2.png'
+    logoOverride || ''
   )
   const stampUrl = resolveAsset(
     assetBaseUrl,
-    stampOverride || '/images/company-stamp.png'
+    stampOverride || ''
   )
   const safeName = String(signatoryName)
     .replace(/&/g, '&amp;')
@@ -541,7 +541,7 @@ export function createCertificateHTML({
         <div class="corner bl"></div>
         <div class="corner br"></div>
 
-        <div class="watermark"><img src="${logoUrl}" alt=""></div>
+        <div class="watermark">${logoUrl ? `<img src="${logoUrl}" alt="">` : ''}</div>
         ${
           freeCourse
             ? `<div class="text-watermark">
@@ -562,7 +562,7 @@ export function createCertificateHTML({
         }
 
         <div class="content">
-          <img class="logo" src="${logoUrl}" alt="Theos Art">
+          ${logoUrl ? `<img class="logo" src="${logoUrl}" alt="Theos Art">` : `<div class="logo" style="font-weight:700;font-size:22px;color:#3a3a3a">${'Theos Art'}</div>`}
 
           <div class="cert-title">Certificate of Completion</div>
           <div class="cert-subtitle">Creative Training &amp; Studio Development</div>
@@ -604,7 +604,7 @@ export function createCertificateHTML({
 
           <div class="bottom-row">
             <div class="sig-block">
-              ${isOfficial ? `<img class="sig-stamp" src="${stampUrl}" alt="Official company stamp">` : ''}
+              ${isOfficial && stampUrl ? `<img class="sig-stamp" src="${stampUrl}" alt="Official company stamp">` : ''}
               ${
                 isOfficial
                   ? `<div class="sig-name">${safeName}</div>

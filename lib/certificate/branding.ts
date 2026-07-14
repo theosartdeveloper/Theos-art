@@ -1,5 +1,6 @@
 import { COMPANY } from '@/lib/company/constants'
 import { loadAllSiteSettingRows } from '@/lib/platform/site-settings'
+import { pickUsableMediaUrl } from '@/lib/media/usable-url'
 
 export type CertificateBranding = {
   logoUrl: string
@@ -9,8 +10,8 @@ export type CertificateBranding = {
 }
 
 const DEFAULTS: CertificateBranding = {
-  logoUrl: COMPANY.logoUrl,
-  stampUrl: '/images/company-stamp.png',
+  logoUrl: '',
+  stampUrl: '',
   signatoryName: 'Elie BISAMAZA',
   signatoryTitle: `Managing Director · ${COMPANY.legalName}`,
 }
@@ -18,9 +19,18 @@ const DEFAULTS: CertificateBranding = {
 export async function loadCertificateBranding(): Promise<CertificateBranding> {
   try {
     const rows = await loadAllSiteSettingRows()
+    // Prefer certificate-specific assets, but never keep stale `/images/...` seeds
+    // once company logo/stamp has been moved to R2 (https://…).
+    const logoUrl = pickUsableMediaUrl(
+      rows.certificate_logo_url,
+      rows.company_logo_url,
+      COMPANY.logoUrl
+    )
+    const stampUrl = pickUsableMediaUrl(rows.certificate_stamp_url)
+
     return {
-      logoUrl: rows.certificate_logo_url?.trim() || rows.company_logo_url?.trim() || DEFAULTS.logoUrl,
-      stampUrl: rows.certificate_stamp_url?.trim() || DEFAULTS.stampUrl,
+      logoUrl,
+      stampUrl,
       signatoryName: rows.certificate_signatory_name?.trim() || rows.founder_name?.trim() || DEFAULTS.signatoryName,
       signatoryTitle:
         rows.certificate_signatory_title?.trim() ||
@@ -29,7 +39,10 @@ export async function loadCertificateBranding(): Promise<CertificateBranding> {
           : DEFAULTS.signatoryTitle),
     }
   } catch {
-    return { ...DEFAULTS }
+    return {
+      ...DEFAULTS,
+      logoUrl: pickUsableMediaUrl(COMPANY.logoUrl),
+    }
   }
 }
 

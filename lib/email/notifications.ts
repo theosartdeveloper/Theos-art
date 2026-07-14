@@ -38,7 +38,7 @@ export async function sendApplicationEmail(params: ApplicationEmailParams): Prom
             <li>Review the schedule and requirements on our website</li>
             <li>Contact us if you have any questions</li>
           </ul>
-          ${ctaButton('Visit Engineering Hub', getAppUrl())}
+          ${ctaButton(`Visit ${COMPANY.platformName}`, getAppUrl())}
           <p><strong>${escapeHtml(COMPANY.brandName)} Team</strong></p>
         `,
       }),

@@ -85,7 +85,7 @@ export default function LecturerProfilePage() {
       setUserName(
         [user.firstName, user.lastName].filter(Boolean).join(' ') ||
           user.email ||
-          (isMentorDeliveryRole(user.role) ? 'Mentor' : 'Lecturer')
+          (isMentorDeliveryRole(user.role) ? 'Mentor' : 'Instructor')
       )
 
       const [profileRes, coursesRes] = await Promise.all([
@@ -107,7 +107,7 @@ export default function LecturerProfilePage() {
         setUserName(
           [data.first_name, data.last_name].filter(Boolean).join(' ') ||
             user.email ||
-            'Lecturer'
+            'Instructor'
         )
         setTeamProfile({
           profile_title: data.profile_title ?? '',
@@ -245,7 +245,7 @@ export default function LecturerProfilePage() {
           <p className="text-sm text-slate-600 mt-1">
             {isMentorDeliveryRole(profile.role)
               ? `${COMPANY.platformName} mentor account — manage your public team profile.`
-              : `${COMPANY.platformName} lecturer account — add your photo and CV details for the team page.`}
+              : `${COMPANY.platformName} instructor account — add your photo and profile for the studio team page.`}
           </p>
         </div>
 
@@ -378,7 +378,7 @@ export default function LecturerProfilePage() {
               <Textarea
                 id="profile-education"
                 className="min-h-[90px]"
-                placeholder="e.g. BSc Electrical Engineering — University of Rwanda"
+                placeholder="e.g. Fine Arts Diploma — University of Rwanda"
                 value={teamProfile.profile_education}
                 onChange={(e) =>
                   setTeamProfile((p) => ({ ...p, profile_education: e.target.value }))
@@ -466,7 +466,7 @@ export default function LecturerProfilePage() {
               <Label htmlFor="profile-title">Professional title</Label>
               <Input
                 id="profile-title"
-                placeholder="e.g. Electrical Systems Instructor"
+                placeholder="e.g. Painting & Drawing Instructor"
                 value={teamProfile.profile_title}
                 onChange={(e) =>
                   setTeamProfile((p) => ({ ...p, profile_title: e.target.value }))

@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   BookOpen,
-  Calculator,
   GraduationCap,
   Home,
   Library,
@@ -35,7 +34,6 @@ const NAV_ICONS = {
   programmes: GraduationCap,
   students: Users,
   library: Library,
-  tools: Calculator,
   profile: User,
 } as const
 
@@ -46,7 +44,6 @@ function useNavActive(pathname: string) {
     }
     if (item.match === 'students') return pathname.startsWith('/lecturer/students')
     if (item.match === 'library') return pathname.startsWith('/lecturer/library')
-    if (item.match === 'tools') return pathname.startsWith('/lecturer/tools')
     if (item.match === 'profile') return pathname.startsWith('/lecturer/profile')
     return false
   }
@@ -114,14 +111,14 @@ function LecturerSidebarContent({
             </Button>
           </Link>
         ) : (
-          <Link href="/engineering-support" onClick={onNavigate} className="no-underline hover:no-underline">
+          <Link href="/contact" onClick={onNavigate} className="no-underline hover:no-underline">
             <Button
               variant="ghost"
               size="sm"
               className="w-full justify-start text-white hover:text-white hover:bg-white/15 min-h-[44px] text-sm font-medium"
             >
               <BookOpen className="h-5 w-5 mr-2" />
-              Engineering support
+              Contact studio
             </Button>
           </Link>
         )}

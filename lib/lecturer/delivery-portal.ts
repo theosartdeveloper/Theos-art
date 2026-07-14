@@ -50,8 +50,8 @@ export function portalBranding(role: string) {
     }
   }
   return {
-    title: 'Lecturer portal',
-    subtitle: 'Assigned programmes & classroom',
+    title: 'Instructor portal',
+    subtitle: 'Assigned programmes & studio classroom',
     programmesLabel: 'My programmes',
     proposeLabel: 'Propose new programme',
   }
@@ -61,20 +61,19 @@ export type DeliveryNavItem = {
   id: string
   href: string
   label: string
-  match: 'programmes' | 'students' | 'library' | 'tools' | 'profile'
+  match: 'programmes' | 'students' | 'library' | 'profile'
 }
 
 const FULL_NAV: DeliveryNavItem[] = [
   { id: 'programmes', href: '/lecturer/dashboard', label: 'My programmes', match: 'programmes' },
   { id: 'students', href: '/lecturer/students', label: 'Students', match: 'students' },
   { id: 'library', href: '/lecturer/library', label: 'Library', match: 'library' },
-  { id: 'tools', href: '/lecturer/tools', label: 'Tools', match: 'tools' },
   { id: 'profile', href: '/lecturer/profile', label: 'Profile', match: 'profile' },
 ]
 
 export function deliveryNavForRole(role: string): DeliveryNavItem[] {
   if (isMentorDeliveryRole(role)) {
-    return FULL_NAV.filter((item) => item.id !== 'library' && item.id !== 'tools').map((item) =>
+    return FULL_NAV.filter((item) => item.id !== 'library').map((item) =>
       item.id === 'programmes' ? { ...item, label: 'My career programmes' } : item
     )
   }

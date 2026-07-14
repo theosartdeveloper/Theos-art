@@ -253,7 +253,7 @@ export function LecturerQuizBuilder({ courseId }: { courseId: string }) {
                   className="mt-1 bg-white"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="e.g., Module 1 quiz — Electrical fundamentals"
+                  placeholder="e.g., Module 1 quiz — Colour theory basics"
                 />
               </div>
               <div>

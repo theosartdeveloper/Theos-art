@@ -213,7 +213,7 @@ export function LecturerCourseWorkspace({ courseId }: { courseId: string }) {
       setUserName(
         [currentUser.firstName, currentUser.lastName].filter(Boolean).join(' ') ||
           currentUser.email ||
-          (isMentorDeliveryRole(currentUser.role) ? 'Mentor' : 'Lecturer')
+          (isMentorDeliveryRole(currentUser.role) ? 'Mentor' : 'Instructor')
       )
       await load()
     }

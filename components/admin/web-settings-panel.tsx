@@ -376,7 +376,17 @@ export default function WebSettingsPanel() {
                   className="mt-1"
                   onChange={(e) => {
                     const file = e.target.files?.[0]
-                    if (file) void uploadImage(file, 'brand', (url) => patch('company_logo_url', url))
+                    if (file)
+                      void uploadImage(file, 'brand', (url) => {
+                        // Keep certificate logo in sync so print/PDF does not stay on stale /images/ paths
+                        setForm((prev) => ({
+                          ...prev,
+                          company_logo_url: url,
+                          certificate_logo_url: prev.certificate_logo_url?.startsWith('/images/')
+                            ? url
+                            : prev.certificate_logo_url || url,
+                        }))
+                      })
                   }}
                 />
               </div>
@@ -429,13 +439,28 @@ export default function WebSettingsPanel() {
                     }}
                   />
                 </div>
-                <Field label="Certificate logo URL" hint="Defaults to company logo when empty">
+                <Field
+                  label="Certificate logo URL"
+                  hint="Use an https:// R2 URL. Leave blank to use the company logo. Avoid /images/ paths — they 404 after media moved to R2."
+                >
                   <Input
                     value={form.certificate_logo_url}
                     onChange={(e) => patch('certificate_logo_url', e.target.value)}
-                    placeholder={form.company_logo_url}
+                    placeholder={form.company_logo_url || 'Uses company logo'}
                   />
                 </Field>
+                <div>
+                  <Label className="text-slate-800">Upload certificate logo</Label>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    className="mt-1"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) void uploadImage(file, 'brand', (url) => patch('certificate_logo_url', url))
+                    }}
+                  />
+                </div>
                 <div className="grid md:grid-cols-2 gap-4">
                   <Field label="Signatory name">
                     <Input

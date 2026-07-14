@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { PROGRAM_TYPE_LABELS } from '@/lib/enrollment/program-types'
 import type { ProgramType } from '@/lib/enrollment/program-types'
-import { BookOpen, Users, FileBarChart, Calculator } from 'lucide-react'
+import { BookOpen, Users, FileBarChart, Library } from 'lucide-react'
 import { LecturerBroadcastPanel } from '@/components/lecturer/lecturer-broadcast-panel'
 import {
   LecturerCreateCourseDialog,
@@ -70,8 +70,8 @@ export function LecturerDashboardView() {
       setUserName(
         [currentUser.firstName, currentUser.lastName].filter(Boolean).join(' ') ||
           currentUser.email ||
-          (isMentorDeliveryRole(currentUser.role) ? 'Mentor' : 'Lecturer')
-      )
+          (isMentorDeliveryRole(currentUser.role) ? 'Mentor' : 'Instructor')
+        )
       try {
         await loadCourses()
         const studentsRes = await fetch('/api/lecturer/students', { credentials: 'same-origin' })
@@ -120,7 +120,7 @@ export function LecturerDashboardView() {
             <p className="text-sm text-slate-700 mt-1">
               {isMentor
                 ? 'Manage assigned career guidance and mentorship programmes, participants, and sessions.'
-                : 'Open a classroom to manage lessons, students, assessments, and reports.'}
+                : 'Open a programme to manage lessons, students, assessments, and reports.'}
             </p>
           </div>
           <LecturerCreateCourseDialog onCreated={loadCourses} isMentor={isMentor} />
@@ -168,15 +168,15 @@ export function LecturerDashboardView() {
               </p>
             </CardContent>
           </Card>
-          <Link href="/lecturer/tools" className="no-underline hover:no-underline">
+          <Link href="/lecturer/library" className="no-underline hover:no-underline">
             <Card className="border-slate-200 h-full hover:border-[var(--brand-navy)]/40 hover:shadow-sm transition-shadow">
               <CardContent className="pt-4">
                 <p className="text-sm text-slate-600 flex items-center gap-1.5">
-                  <Calculator className="h-4 w-4" />
-                  Engineering tools
+                  <Library className="h-4 w-4" />
+                  Studio library
                 </p>
                 <p className="text-sm font-semibold text-[var(--brand-navy)] mt-2">
-                  Calculators &amp; helpers →
+                  Resources for programmes →
                 </p>
               </CardContent>
             </Card>
@@ -222,7 +222,7 @@ export function LecturerDashboardView() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <p className="text-sm text-slate-700 line-clamp-2">
-                    {course.description || 'Manage lessons, students, and assessments in your classroom.'}
+                    {course.description || 'Manage lessons, students, and assessments for this programme.'}
                   </p>
                   <Link href={`/lecturer/courses/${course.id}`}>
                     <Button className="w-full bg-[var(--brand-navy)] text-white hover:bg-[var(--brand-navy)]/90">

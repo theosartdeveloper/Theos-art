@@ -58,7 +58,7 @@ export function LecturerStudentsView() {
       setUserName(
         [user.firstName, user.lastName].filter(Boolean).join(' ') ||
           user.email ||
-          (isMentorDeliveryRole(user.role) ? 'Mentor' : 'Lecturer')
+          (isMentorDeliveryRole(user.role) ? 'Mentor' : 'Instructor')
       )
       try {
         await load()

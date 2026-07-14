@@ -5,6 +5,7 @@ import {
   MISSION_DEFAULT,
   PAYMENT,
 } from '@/lib/company/constants'
+import { pickUsableMediaUrl } from '@/lib/media/usable-url'
 import type { HeroContent } from '@/types/platform'
 
 /** Keys stored in `site_settings` (key/value). */
@@ -90,8 +91,8 @@ export const DEFAULT_WEB_SETTINGS: WebSettingsForm = {
   company_slogan: COMPANY.slogan,
   company_tagline: COMPANY.tagline,
   company_logo_url: COMPANY.logoUrl,
-  certificate_stamp_url: '/images/company-stamp.png',
-  certificate_logo_url: COMPANY.logoUrl,
+  certificate_stamp_url: '',
+  certificate_logo_url: '',
   certificate_signatory_name: 'Elie BISAMAZA',
   certificate_signatory_title: `Managing Director · ${COMPANY.legalName}`,
   about_content: ABOUT_DEFAULT,
@@ -198,7 +199,7 @@ export function toPublicCompanyProfile(form: WebSettingsForm): PublicCompanyProf
     address: form.company_address,
     slogan: form.company_slogan,
     tagline: form.company_tagline,
-    logoUrl: form.company_logo_url,
+    logoUrl: pickUsableMediaUrl(form.company_logo_url, COMPANY.logoUrl),
     about: form.about_content,
     mission: form.mission_content,
     payment: {

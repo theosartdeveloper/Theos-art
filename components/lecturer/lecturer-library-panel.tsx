@@ -193,7 +193,7 @@ export function LecturerLibraryPanel() {
 
   if (loading) {
     return (
-      <LecturerPortalShell userName={userName || 'Lecturer'}>
+      <LecturerPortalShell userName={userName || 'Instructor'}>
         <p className="text-slate-600">Loading Theos Art Library…</p>
       </LecturerPortalShell>
     )

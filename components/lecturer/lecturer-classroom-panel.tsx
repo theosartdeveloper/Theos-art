@@ -300,7 +300,7 @@ export function LecturerClassroomPanel({ courseId }: { courseId: string }) {
                   className="mt-1"
                   value={sessionForm.topic}
                   onChange={(e) => setSessionForm({ ...sessionForm, topic: e.target.value })}
-                  placeholder="e.g., Week 3 — PLC ladder logic lab"
+                  placeholder="e.g., Week 3 — Live painting studio session"
                 />
               </div>
               <div className="grid sm:grid-cols-2 gap-3">

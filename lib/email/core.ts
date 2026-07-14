@@ -3,6 +3,7 @@ import path from 'path'
 import { Resend } from 'resend'
 import { COMPANY } from '@/lib/company/constants'
 import { getCompanyLogoUrl } from '@/lib/platform/branding'
+import { isAbsoluteMediaUrl, isLegacyLocalImagePath, pickUsableMediaUrl } from '@/lib/media/usable-url'
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
@@ -29,6 +30,7 @@ export function absolutePublicUrl(pathOrUrl: string): string {
   const value = pathOrUrl.trim()
   if (!value) return ''
   if (/^https?:\/\//i.test(value)) return value
+  if (isLegacyLocalImagePath(value)) return ''
   const base = getAppUrl()
   return `${base}${value.startsWith('/') ? '' : '/'}${value}`
 }
@@ -42,11 +44,50 @@ type LogoAttachment = {
   path?: string
 }
 
-async function resolveLogoAttachment(preferredUrl?: string): Promise<LogoAttachment | null> {
-  const localFile = path.join(process.cwd(), 'public', 'images', 'theos-art-logo-v2.png')
-
-  // Prefer bundling the file so clients don't need to fetch a remote URL
+async function fetchLogoBuffer(url: string): Promise<Buffer | null> {
   try {
+    const res = await fetch(url, { cache: 'force-cache' })
+    if (!res.ok) return null
+    const ab = await res.arrayBuffer()
+    if (!ab.byteLength) return null
+    return Buffer.from(ab)
+  } catch {
+    return null
+  }
+}
+
+async function resolveLogoAttachment(preferredUrl?: string): Promise<LogoAttachment | null> {
+  let logoUrl = pickUsableMediaUrl(preferredUrl)
+  if (!logoUrl) {
+    try {
+      logoUrl = await getCompanyLogoUrl()
+    } catch {
+      logoUrl = ''
+    }
+  }
+
+  // Prefer downloading the live company / R2 logo into a Buffer for reliable CID embedding
+  const absolute = absolutePublicUrl(logoUrl)
+  if (absolute && isAbsoluteMediaUrl(absolute)) {
+    const content = await fetchLogoBuffer(absolute)
+    if (content) {
+      return {
+        filename: 'theos-art-logo.png',
+        contentId: EMAIL_LOGO_CID,
+        content,
+      }
+    }
+    // Fall back to Resend path fetch if our server cannot reach the URL
+    return {
+      filename: 'theos-art-logo.png',
+      contentId: EMAIL_LOGO_CID,
+      path: absolute,
+    }
+  }
+
+  // Last resort: local file (often missing after R2 migration)
+  try {
+    const localFile = path.join(process.cwd(), 'public', 'images', 'theos-art-logo-v2.png')
     const content = await fs.readFile(localFile)
     if (content.length > 0) {
       return {
@@ -56,27 +97,10 @@ async function resolveLogoAttachment(preferredUrl?: string): Promise<LogoAttachm
       }
     }
   } catch {
-    // fall through to remote / custom logo
+    // no local logo
   }
 
-  let logoUrl = preferredUrl?.trim() || ''
-  if (!logoUrl) {
-    try {
-      logoUrl = await getCompanyLogoUrl()
-    } catch {
-      logoUrl = COMPANY.logoUrl
-    }
-  }
-
-  const absolute = absolutePublicUrl(logoUrl || COMPANY.logoUrl)
-  if (!absolute) return null
-
-  // Let Resend fetch and embed the hosted logo
-  return {
-    filename: 'theos-art-logo.png',
-    contentId: EMAIL_LOGO_CID,
-    path: absolute,
-  }
+  return null
 }
 
 export async function sendEmail(input: {
@@ -168,8 +192,6 @@ export function emailLayout(options: {
   const headerBg = headerColors[options.headerTone ?? 'primary']
   const year = new Date().getFullYear()
 
-  // White plate behind the logo — brand mark stays readable on the dark header,
-  // and CID embedding avoids broken remote hotlinks in Gmail/Outlook.
   const logoBlock = `
         <div style="margin:0 auto 16px;display:inline-block;background:#ffffff;padding:10px 16px;border-radius:10px;line-height:0;">
           <img src="cid:${EMAIL_LOGO_CID}" alt="${escapeHtml(COMPANY.brandName)}" width="140" height="44" style="display:block;max-width:140px;max-height:44px;width:auto;height:auto;border:0;outline:none;">
@@ -214,19 +236,18 @@ export function emailLayout(options: {
 </html>`
 }
 
-/** Same as emailLayout but records the live company logo URL for CID attachment embedding. */
+/** Resolves live company logo then builds HTML (CID attachment resolved again in sendEmail). */
 export async function brandedEmailLayout(
   options: Omit<Parameters<typeof emailLayout>[0], 'logoUrl'> & { logoUrl?: string }
 ): Promise<string> {
-  let logoUrl = options.logoUrl
+  let logoUrl = pickUsableMediaUrl(options.logoUrl)
   if (!logoUrl) {
     try {
       logoUrl = await getCompanyLogoUrl()
     } catch {
-      logoUrl = COMPANY.logoUrl
+      logoUrl = ''
     }
   }
-  // HTML always uses cid:; logoUrl is resolved again in sendEmail for the attachment payload.
   return emailLayout({ ...options, logoUrl })
 }
 
