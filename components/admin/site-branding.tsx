@@ -79,7 +79,7 @@ export default function SiteBrandingPanel({ initialLogoUrl = '/images/theos-art-
             id="logo-url"
             value={logoUrl}
             onChange={(e) => setLogoUrl(e.target.value)}
-            placeholder="/images/energy-logics-logo.png"
+            placeholder="/images/theos-art-logo-v2.png"
             className="mt-1"
           />
         </div>
