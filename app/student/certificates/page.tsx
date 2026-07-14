@@ -55,10 +55,22 @@ export default function StudentCertificates() {
     })
   }, [router])
 
-  const printCert = (cert: CertificateRow) => {
+  const printCert = async (cert: CertificateRow) => {
     const origin = window.location.origin
     const isOfficial = (cert.status ?? 'issued') === 'issued'
     const verifyUrl = isOfficial ? getCertificateVerifyUrl(cert.certificate_code) : undefined
+    let branding: {
+      logoUrl?: string
+      stampUrl?: string
+      signatoryName?: string
+      signatoryTitle?: string
+    } = {}
+    try {
+      const res = await fetch('/api/public/certificate-branding')
+      if (res.ok) branding = await res.json()
+    } catch {
+      // Fall back to template defaults
+    }
     const html = createCertificateHTML({
       fullName: cert.student_name,
       program: cert.program_title,
@@ -71,6 +83,10 @@ export default function StudentCertificates() {
       assetBaseUrl: origin,
       verifyUrl,
       qrImageUrl: isOfficial ? getCertificateQrImageUrl(cert.certificate_code) : undefined,
+      logoUrl: branding.logoUrl,
+      stampUrl: branding.stampUrl,
+      signatoryName: branding.signatoryName,
+      signatoryTitle: branding.signatoryTitle,
     })
     const win = window.open('', '_blank')
     if (!win) return

@@ -6,6 +6,7 @@ import { SiteFooter } from '@/components/layout/site-footer'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AddToCartButton } from '@/components/shop/add-to-cart-button'
+import { BuyNowPanel } from '@/components/shop/buy-now-panel'
 import { getProductById, getPublishedProducts } from '@/lib/platform/queries'
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -18,7 +19,9 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     .slice(0, 3)
 
   const finalPrice = product.discount ? product.price - product.discount : product.price
-  const specs = Object.entries(product.specifications ?? {})
+  const specs = Object.entries(product.specifications ?? {}).filter(
+    ([key]) => key !== 'sale_unit' && key !== 'pack_quantity'
+  )
   const images = product.images?.length ? product.images : []
 
   return (
@@ -64,6 +67,15 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             </span>
           </p>
           <div className="flex flex-wrap gap-3">
+            <BuyNowPanel
+              productId={product.id}
+              name={product.name}
+              price={finalPrice}
+              stock={product.stock}
+              image={images[0]}
+              saleUnit={product.sale_unit || 'piece'}
+              packQuantity={product.pack_quantity || 1}
+            />
             <AddToCartButton
               productId={product.id}
               name={product.name}
@@ -79,7 +91,8 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             </Link>
           </div>
           <p className="text-xs text-slate-600 mt-3 leading-relaxed">
-            Open the cart (top bar) to submit your order with contact details for delivery or pickup in Kigali.
+            Use <span className="font-medium text-slate-800">Order now</span> to buy this item alone, or add to
+            cart to order several products together.
           </p>
           {specs.length > 0 && (
             <Card className="mt-8 border-slate-200">
@@ -120,7 +133,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 <CardContent>
                   <Link href={`/shop/${item.id}`}>
                     <Button variant="outline" size="sm" className="border-slate-300 text-slate-800 hover:bg-slate-50">
-                      View
+                      View details
                     </Button>
                   </Link>
                 </CardContent>

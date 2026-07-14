@@ -28,6 +28,7 @@ import {
   type LibrarySort,
 } from '@/lib/library/urls'
 import { getLibraryMessages, parseSiteLocale } from '@/lib/i18n/library'
+import { CATALOG_GRID, CATALOG_GRID_COMFORT, CATALOG_SHELL } from '@/lib/ui/catalog-layout'
 
 export const dynamic = 'force-dynamic'
 
@@ -113,7 +114,7 @@ export default async function LibraryPage({ searchParams }: PageProps) {
   return (
     <main className="min-h-screen bg-slate-50">
       <SiteHeader />
-      <div className="max-w-6xl mx-auto px-4 md:px-6 py-8 md:py-12 space-y-10">
+      <div className={`${CATALOG_SHELL} py-8 md:py-12 space-y-10`}>
         <section className="space-y-4">
           <div className="space-y-3">
             <p className="text-sm font-semibold uppercase tracking-wider text-[var(--brand-navy)]">
@@ -147,7 +148,7 @@ export default async function LibraryPage({ searchParams }: PageProps) {
                 {t.viewAllProjects}
               </Link>
             </div>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className={CATALOG_GRID_COMFORT}>
               {featuredProjects.map((item) => (
                 <LibraryItemCard key={item.id} item={item} showViews />
               ))}
@@ -163,7 +164,7 @@ export default async function LibraryPage({ searchParams }: PageProps) {
                 <p className="text-sm text-slate-600">Curated highlights from our library team.</p>
               </div>
             </div>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className={CATALOG_GRID_COMFORT}>
               {readingPicks.map((item) => (
                 <LibraryItemCard key={item.id} item={item} showViews />
               ))}
@@ -185,7 +186,7 @@ export default async function LibraryPage({ searchParams }: PageProps) {
                 View all culture
               </Link>
             </div>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className={CATALOG_GRID_COMFORT}>
               {featuredCulture.map((item) => (
                 <LibraryItemCard key={item.id} item={item} />
               ))}
@@ -199,7 +200,7 @@ export default async function LibraryPage({ searchParams }: PageProps) {
               <h2 className="text-xl font-semibold text-slate-900">Popular this month</h2>
               <p className="text-sm text-slate-600">Most opened titles from the last 30 days.</p>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className={CATALOG_GRID}>
               {popularMonth.map((item) => (
                 <LibraryItemCard key={item.id} item={item} showViews />
               ))}
@@ -347,7 +348,7 @@ export default async function LibraryPage({ searchParams }: PageProps) {
         </section>
 
         {items.length > 0 ? (
-          <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <section className={CATALOG_GRID}>
             {items.map((item) => (
               <LibraryItemCard key={item.id} item={item} showViews={sort === 'popular'} />
             ))}

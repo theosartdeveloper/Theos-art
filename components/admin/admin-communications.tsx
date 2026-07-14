@@ -28,7 +28,7 @@ type RecipientMode = 'single' | 'role' | 'all_students' | 'emails'
 
 export default function AdminCommunicationsTab() {
   const [users, setUsers] = useState<UserOption[]>([])
-  const [mode, setMode] = useState<RecipientMode>('single')
+  const [mode, setMode] = useState<RecipientMode>('emails')
   const [userId, setUserId] = useState('')
   const [role, setRole] = useState('student')
   const [customEmails, setCustomEmails] = useState('')
@@ -37,6 +37,8 @@ export default function AdminCommunicationsTab() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [resendReady, setResendReady] = useState<boolean | null>(null)
+  const [emailFrom, setEmailFrom] = useState('')
 
   const loadUsers = useCallback(async () => {
     const res = await fetch('/api/admin/users?role=student', { credentials: 'same-origin' })
@@ -55,6 +57,13 @@ export default function AdminCommunicationsTab() {
 
   useEffect(() => {
     void loadUsers()
+    fetch('/api/admin/communications/status', { credentials: 'same-origin' })
+      .then((res) => res.json())
+      .then((data) => {
+        setResendReady(Boolean(data.configured))
+        setEmailFrom(typeof data.from === 'string' ? data.from : '')
+      })
+      .catch(() => setResendReady(false))
   }, [loadUsers])
 
   const handleSend = async () => {
@@ -86,10 +95,8 @@ export default function AdminCommunicationsTab() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to send email')
       setSuccess(data.message ?? 'Email sent successfully.')
-      if (mode !== 'emails') {
-        setSubject('')
-        setMessage('')
-      }
+      setSubject('')
+      setMessage('')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to send email')
     } finally {
@@ -105,10 +112,24 @@ export default function AdminCommunicationsTab() {
           Email communications
         </h1>
         <p className="text-slate-600 mt-1">
-          Send customized messages to students or user groups. Compose your own subject and body —
-          nothing is hardcoded.
+          Send customized messages to any email address, students, or user groups via Resend. Emails
+          include the company logo when configured.
         </p>
       </div>
+
+      {resendReady === false ? (
+        <Card className="border-amber-200 bg-amber-50">
+          <CardContent className="py-4 text-sm text-amber-950">
+            Resend is not configured on this server. Add <code className="font-mono">RESEND_API_KEY</code>{' '}
+            and preferably <code className="font-mono">EMAIL_FROM</code> (verified domain) in Vercel /
+            environment variables, then redeploy.
+          </CardContent>
+        </Card>
+      ) : resendReady ? (
+        <p className="text-sm text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-md px-3 py-2">
+          Resend ready{emailFrom ? ` · sending as ${emailFrom}` : ''}.
+        </p>
+      ) : null}
 
       <Card className="border-slate-200">
         <CardHeader>
@@ -119,7 +140,9 @@ export default function AdminCommunicationsTab() {
             <p className="text-sm text-red-800 bg-red-50 border border-red-200 rounded-md p-3">{error}</p>
           ) : null}
           {success ? (
-            <p className="text-sm text-green-800 bg-green-50 border border-green-200 rounded-md p-3">{success}</p>
+            <p className="text-sm text-green-800 bg-green-50 border border-green-200 rounded-md p-3">
+              {success}
+            </p>
           ) : null}
 
           <div>
@@ -129,10 +152,10 @@ export default function AdminCommunicationsTab() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="emails">Custom email address(es)</SelectItem>
                 <SelectItem value="single">One student</SelectItem>
                 <SelectItem value="all_students">All active students</SelectItem>
                 <SelectItem value="role">By role</SelectItem>
-                <SelectItem value="emails">Custom email list</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -180,10 +203,11 @@ export default function AdminCommunicationsTab() {
               <Textarea
                 className="mt-1"
                 rows={3}
-                placeholder="One per line, or separated by commas"
+                placeholder="name@example.com&#10;another@example.com"
                 value={customEmails}
                 onChange={(e) => setCustomEmails(e.target.value)}
               />
+              <p className="text-xs text-slate-500 mt-1">One per line, or separated by commas.</p>
             </div>
           ) : null}
 
@@ -211,7 +235,7 @@ export default function AdminCommunicationsTab() {
           <Button
             className="bg-[var(--brand-navy)] text-white"
             onClick={handleSend}
-            disabled={loading || !subject.trim() || !message.trim()}
+            disabled={loading || !subject.trim() || !message.trim() || resendReady === false}
           >
             <Send className="h-4 w-4 mr-2" />
             {loading ? 'Sending…' : 'Send email'}

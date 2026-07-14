@@ -65,6 +65,7 @@ export default function WebSettingsPanel() {
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
   const logoFileRef = useRef<HTMLInputElement>(null)
+  const stampFileRef = useRef<HTMLInputElement>(null)
   const heroFileRef = useRef<HTMLInputElement>(null)
 
   const load = useCallback(async () => {
@@ -365,6 +366,68 @@ export default function WebSettingsPanel() {
               <Field label="SEO keywords" hint="Comma-separated">
                 <Input value={form.seo_keywords} onChange={(e) => patch('seo_keywords', e.target.value)} />
               </Field>
+
+              <div className="border-t border-slate-200 pt-4 space-y-4">
+                <h3 className="font-semibold text-slate-900">Certificate stamp &amp; signature</h3>
+                <p className="text-sm text-slate-600">
+                  Used on official certificates of completion. Upload a stamp image (PNG with transparent
+                  background works best).
+                </p>
+                <div className="flex items-center gap-4">
+                  <div className="relative h-20 w-20 rounded-lg border bg-white overflow-hidden">
+                    <Image
+                      src={form.certificate_stamp_url || '/images/company-stamp.png'}
+                      alt="Stamp preview"
+                      fill
+                      className="object-contain p-1"
+                      unoptimized
+                    />
+                  </div>
+                  <p className="text-sm text-slate-600 break-all">
+                    {form.certificate_stamp_url || '/images/company-stamp.png'}
+                  </p>
+                </div>
+                <Field label="Stamp image URL">
+                  <Input
+                    value={form.certificate_stamp_url}
+                    onChange={(e) => patch('certificate_stamp_url', e.target.value)}
+                  />
+                </Field>
+                <div>
+                  <Label className="text-slate-800">Upload stamp</Label>
+                  <Input
+                    ref={stampFileRef}
+                    type="file"
+                    accept="image/*"
+                    className="mt-1"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) void uploadImage(file, 'brand', (url) => patch('certificate_stamp_url', url))
+                    }}
+                  />
+                </div>
+                <Field label="Certificate logo URL" hint="Defaults to company logo when empty">
+                  <Input
+                    value={form.certificate_logo_url}
+                    onChange={(e) => patch('certificate_logo_url', e.target.value)}
+                    placeholder={form.company_logo_url}
+                  />
+                </Field>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <Field label="Signatory name">
+                    <Input
+                      value={form.certificate_signatory_name}
+                      onChange={(e) => patch('certificate_signatory_name', e.target.value)}
+                    />
+                  </Field>
+                  <Field label="Signatory title">
+                    <Input
+                      value={form.certificate_signatory_title}
+                      onChange={(e) => patch('certificate_signatory_title', e.target.value)}
+                    />
+                  </Field>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

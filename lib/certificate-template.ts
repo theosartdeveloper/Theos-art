@@ -14,12 +14,25 @@ export type CertificateData = {
   assetBaseUrl?: string
   verifyUrl?: string
   qrImageUrl?: string
+  /** Overrides — when omitted, defaults to Theos Art bundled assets. */
+  logoUrl?: string
+  stampUrl?: string
+  signatoryName?: string
+  signatoryTitle?: string
 }
 
 export function generateCertificateId(): string {
   const timestamp = Date.now().toString(36).toUpperCase()
   const random = Math.random().toString(36).substring(2, 8).toUpperCase()
   return `CERT-${timestamp}-${random}`
+}
+
+function resolveAsset(assetBaseUrl: string, pathOrUrl: string): string {
+  const value = (pathOrUrl || '').trim()
+  if (!value) return ''
+  if (/^https?:\/\//i.test(value) || value.startsWith('data:')) return value
+  const base = assetBaseUrl.replace(/\/$/, '')
+  return `${base}${value.startsWith('/') ? '' : '/'}${value}`
 }
 
 export function createCertificateHTML({
@@ -34,6 +47,10 @@ export function createCertificateHTML({
   assetBaseUrl = '',
   verifyUrl,
   qrImageUrl,
+  logoUrl: logoOverride,
+  stampUrl: stampOverride,
+  signatoryName = 'Elie BISAMAZA',
+  signatoryTitle = 'Managing Director · Theos Art Ltd',
 }: CertificateData): string {
   const isOfficial = !pendingApproval
   const formattedDate = completionDate.toLocaleDateString('en-US', {
@@ -42,8 +59,22 @@ export function createCertificateHTML({
     day: 'numeric',
   })
 
-  const logoUrl = `${assetBaseUrl}/images/energy-logics-logo-full.png`
-  const stampUrl = `${assetBaseUrl}/images/company-stamp.png`
+  const logoUrl = resolveAsset(
+    assetBaseUrl,
+    logoOverride || '/images/theos-art-logo-v2.png'
+  )
+  const stampUrl = resolveAsset(
+    assetBaseUrl,
+    stampOverride || '/images/company-stamp.png'
+  )
+  const safeName = String(signatoryName)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+  const safeTitle = String(signatoryTitle)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
 
   return `
     <!DOCTYPE html>
@@ -84,20 +115,20 @@ export function createCertificateHTML({
         .frame {
           position: absolute;
           inset: 8mm;
-          border: 3px solid #1e3a5f;
+          border: 3px solid #3a3a3a;
         }
         .frame::before {
           content: '';
           position: absolute;
           inset: 3mm;
-          border: 1px solid #b8941f;
+          border: 1px solid #f08a28;
         }
 
         .corner {
           position: absolute;
           width: 22mm;
           height: 22mm;
-          border-color: #b8941f;
+          border-color: #f08a28;
           border-style: solid;
           border-width: 0;
         }
@@ -134,11 +165,11 @@ export function createCertificateHTML({
           font-size: 58px;
           font-weight: 700;
           letter-spacing: 10px;
-          color: #1e3a5f;
+          color: #3a3a3a;
           opacity: 0.24;
           white-space: nowrap;
           text-transform: uppercase;
-          text-shadow: 0 0 1px rgba(30, 58, 95, 0.15);
+          text-shadow: 0 0 1px rgba(58, 58, 58, 0.15);
         }
         .text-watermark .wm-secondary {
           position: absolute;
@@ -149,7 +180,7 @@ export function createCertificateHTML({
           font-size: 11px;
           font-weight: 600;
           letter-spacing: 6px;
-          color: #1e3a5f;
+          color: #3a3a3a;
           opacity: 0.20;
           white-space: nowrap;
           text-transform: uppercase;
@@ -161,8 +192,8 @@ export function createCertificateHTML({
             -28deg,
             transparent,
             transparent 38mm,
-            rgba(30, 58, 95, 0.04) 38mm,
-            rgba(30, 58, 95, 0.04) 39mm
+            rgba(58, 58, 58, 0.04) 38mm,
+            rgba(58, 58, 58, 0.04) 39mm
           );
         }
 
@@ -182,7 +213,7 @@ export function createCertificateHTML({
           font-family: 'Cinzel', 'Times New Roman', serif;
           font-size: 34px;
           font-weight: 700;
-          color: #1e3a5f;
+          color: #3a3a3a;
           letter-spacing: 6px;
           margin: 6mm 0 0;
           text-transform: uppercase;
@@ -191,7 +222,7 @@ export function createCertificateHTML({
         .cert-subtitle {
           font-family: 'Montserrat', sans-serif;
           font-size: 11px;
-          color: #b8941f;
+          color: #f08a28;
           letter-spacing: 5px;
           text-transform: uppercase;
           font-weight: 600;
@@ -218,22 +249,22 @@ export function createCertificateHTML({
           height: 28mm;
           border-radius: 50%;
           object-fit: cover;
-          border: 2.5px solid #b8941f;
-          box-shadow: 0 2px 8px rgba(30, 58, 95, 0.15);
+          border: 2.5px solid #f08a28;
+          box-shadow: 0 2px 8px rgba(58, 58, 58, 0.15);
           background: #f1f5f9;
         }
 
         .recipient {
           font-family: 'Great Vibes', cursive;
           font-size: 54px;
-          color: #1e3a5f;
+          color: #3a3a3a;
           margin-top: 2mm;
           line-height: 1.05;
         }
 
         .rule {
           width: 115mm;
-          border-bottom: 2px solid #b8941f;
+          border-bottom: 2px solid #f08a28;
           margin-top: 1.5mm;
         }
 
@@ -251,7 +282,7 @@ export function createCertificateHTML({
           font-family: 'Cinzel', Georgia, serif;
           font-size: 20px;
           font-weight: 600;
-          color: #1e3a5f;
+          color: #3a3a3a;
           margin-top: 2mm;
           letter-spacing: 1px;
         }
@@ -263,27 +294,27 @@ export function createCertificateHTML({
           margin-top: 2mm;
           letter-spacing: 0.5px;
         }
-        .score-line strong { color: #1e3a5f; font-weight: 700; }
+        .score-line strong { color: #3a3a3a; font-weight: 700; }
 
         .free-upgrade-notice {
           margin: 4mm auto 0;
           max-width: 165mm;
           padding: 3mm 4mm;
-          border: 1.5px solid #b8941f;
+          border: 1.5px solid #f08a28;
           border-radius: 2mm;
-          background: rgba(184, 148, 31, 0.08);
+          background: rgba(240, 138, 40, 0.08);
           font-family: 'Montserrat', sans-serif;
           font-size: 10px;
           font-weight: 600;
           line-height: 1.55;
-          color: #1e3a5f;
+          color: #3a3a3a;
           letter-spacing: 0.2px;
         }
         .free-upgrade-notice strong {
           display: block;
           font-size: 11px;
           font-weight: 700;
-          color: #9a7b1a;
+          color: #d97706;
           text-transform: uppercase;
           letter-spacing: 0.8px;
           margin-bottom: 1mm;
@@ -343,7 +374,7 @@ export function createCertificateHTML({
           font-family: 'Cinzel', 'Times New Roman', serif;
           font-size: 22px;
           font-weight: 700;
-          color: #1e3a5f;
+          color: #3a3a3a;
           letter-spacing: 3px;
           line-height: 1.2;
           text-transform: uppercase;
@@ -430,7 +461,7 @@ export function createCertificateHTML({
           font-family: 'Montserrat', sans-serif;
           font-size: 6.5px;
           font-weight: 600;
-          color: #1e3a5f;
+          color: #3a3a3a;
           margin-top: 1mm;
           letter-spacing: 0.2px;
           text-transform: uppercase;
@@ -446,7 +477,7 @@ export function createCertificateHTML({
           font-family: 'Libre Baskerville', Georgia, serif;
           font-size: 14px;
           font-weight: 700;
-          color: #1e3a5f;
+          color: #3a3a3a;
           margin-bottom: 1.5mm;
         }
         .date-rule {
@@ -457,7 +488,7 @@ export function createCertificateHTML({
           font-family: 'Montserrat', sans-serif;
           font-size: 10px;
           font-weight: 700;
-          color: #1e3a5f;
+          color: #3a3a3a;
           letter-spacing: 1.5px;
           text-transform: uppercase;
         }
@@ -480,7 +511,7 @@ export function createCertificateHTML({
         .footer .cert-id {
           display: block;
           font-weight: 700;
-          color: #1e3a5f;
+          color: #3a3a3a;
           font-size: 11px;
           letter-spacing: 0.5px;
           margin-bottom: 0.5mm;
@@ -489,7 +520,7 @@ export function createCertificateHTML({
           font-family: 'Montserrat', monospace;
           font-size: 11.5px;
           font-weight: 700;
-          color: #0f2744;
+          color: #2c2c2c;
           background: #f1f5f9;
           padding: 0.5mm 1.5mm;
           border-radius: 1mm;
@@ -515,7 +546,7 @@ export function createCertificateHTML({
           freeCourse
             ? `<div class="text-watermark">
                 <div class="wm-repeat"></div>
-                <div class="wm-primary">Energy &amp; Logics</div>
+                <div class="wm-primary">Theos Art</div>
                 <div class="wm-secondary">Complimentary Programme Certificate</div>
               </div>`
             : ''
@@ -534,7 +565,7 @@ export function createCertificateHTML({
           <img class="logo" src="${logoUrl}" alt="Theos Art">
 
           <div class="cert-title">Certificate of Completion</div>
-          <div class="cert-subtitle">Professional Training &amp; Development</div>
+          <div class="cert-subtitle">Creative Training &amp; Studio Development</div>
 
           <div class="presented">This certificate is proudly presented to</div>
           ${
@@ -576,9 +607,9 @@ export function createCertificateHTML({
               ${isOfficial ? `<img class="sig-stamp" src="${stampUrl}" alt="Official company stamp">` : ''}
               ${
                 isOfficial
-                  ? `<div class="sig-name">Elie BISAMAZA</div>
+                  ? `<div class="sig-name">${safeName}</div>
                      <div class="sig-rule"></div>
-                     <div class="sig-org">Managing Director · Theos Art Ltd</div>`
+                     <div class="sig-org">${safeTitle}</div>`
                   : `<div class="sig-rule" style="margin-top: 18mm"></div>
                      <div class="sig-pending">Awaiting official stamp &amp; signature</div>`
               }

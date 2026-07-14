@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { requireAdminPermission } from '@/app/actions/admin-context'
 import { PERMISSIONS } from '@/lib/admin/permissions'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { sendEmail, escapeHtml, emailLayout, getAppUrl } from '@/lib/email/core'
+import { sendEmail, escapeHtml, getAppUrl } from '@/lib/email/core'
 import { COMPANY } from '@/lib/company/constants'
 
 type RecipientMode = 'single' | 'role' | 'all_students' | 'emails'
@@ -75,7 +75,18 @@ export async function POST(request: Request) {
         <a href="${escapeHtml(getAppUrl())}">${escapeHtml(getAppUrl())}</a>
       </p>
     `
-    const html = emailLayout({
+    const { brandedEmailLayout, isResendConfigured } = await import('@/lib/email/core')
+    if (!isResendConfigured()) {
+      return NextResponse.json(
+        {
+          error:
+            'Email is not configured. Set RESEND_API_KEY (and preferably EMAIL_FROM) in the server environment, then try again.',
+        },
+        { status: 503 }
+      )
+    }
+
+    const html = await brandedEmailLayout({
       title: subject,
       subtitle: COMPANY.brandName,
       bodyHtml,

@@ -1,5 +1,6 @@
 import {
   ADMIN_NOTIFICATION_EMAIL,
+  brandedEmailLayout,
   ctaButton,
   emailLayout,
   escapeHtml,
@@ -71,7 +72,7 @@ export async function sendPaymentSubmittedToAdmin(input: {
   const appUrl = getAppUrl()
   return sendEmail({
     to: ADMIN_NOTIFICATION_EMAIL,
-    subject: `New payment receipt — ${input.payerName}`,
+    subject: `New payment receipt ? ${input.payerName}`,
     replyTo: input.payerEmail,
     html: emailLayout({
       title: 'New payment receipt',
@@ -101,7 +102,7 @@ export async function sendPaymentApprovedEmail(input: {
   const appUrl = getAppUrl()
   return sendEmail({
     to: input.to,
-    subject: 'Payment approved — access activated',
+    subject: 'Payment approved ? access activated',
     html: emailLayout({
       title: 'Payment approved',
       subtitle: 'Your receipt was verified',
@@ -150,7 +151,7 @@ export async function sendPaymentRefundedEmail(input: {
 }): Promise<SendEmailResult> {
   return sendEmail({
     to: input.to,
-    subject: 'Payment refunded — access revoked',
+    subject: 'Payment refunded ? access revoked',
     html: emailLayout({
       title: 'Payment refunded',
       subtitle: input.context,
@@ -174,7 +175,7 @@ export async function sendEnrollmentAdmittedEmail(input: {
   const appUrl = getAppUrl()
   return sendEmail({
     to: input.to,
-    subject: `Enrolled — ${input.courseTitle}`,
+    subject: `Enrolled ? ${input.courseTitle}`,
     html: emailLayout({
       title: 'You are enrolled!',
       subtitle: input.courseTitle,
@@ -197,7 +198,7 @@ export async function sendEnrollmentRejectedEmail(input: {
 }): Promise<SendEmailResult> {
   return sendEmail({
     to: input.to,
-    subject: `Enrollment update — ${input.courseTitle}`,
+    subject: `Enrollment update ? ${input.courseTitle}`,
     html: emailLayout({
       title: 'Enrollment not confirmed',
       subtitle: input.courseTitle,
@@ -281,12 +282,12 @@ export async function sendSupportTicketCreatedToAdmin(input: {
   const appUrl = getAppUrl()
   const preview =
     input.description.length > 400
-      ? `${input.description.slice(0, 400)}…`
+      ? `${input.description.slice(0, 400)}?`
       : input.description
 
   return sendEmail({
     to: ADMIN_NOTIFICATION_EMAIL,
-    subject: `Support ticket — ${input.title}`,
+    subject: `Support ticket ? ${input.title}`,
     replyTo: input.requesterEmail,
     html: emailLayout({
       title: 'New support request',
@@ -313,7 +314,7 @@ export async function sendSupportTicketResponseEmail(input: {
   const appUrl = getAppUrl()
   return sendEmail({
     to: input.to,
-    subject: `Reply to your support request — ${input.ticketTitle}`,
+    subject: `Reply to your support request ? ${input.ticketTitle}`,
     html: emailLayout({
       title: 'Support team reply',
       subtitle: input.ticketTitle,
@@ -342,7 +343,7 @@ export async function sendSupportSubscriptionActivatedEmail(input: {
 
   return sendEmail({
     to: input.to,
-    subject: `Support plan active — ${input.planName}`,
+    subject: `Support plan active ? ${input.planName}`,
     html: emailLayout({
       title: 'Support plan activated',
       subtitle: input.planName,
@@ -367,7 +368,7 @@ export async function sendSupportSubscriptionRejectedEmail(input: {
 }): Promise<SendEmailResult> {
   return sendEmail({
     to: input.to,
-    subject: `Support subscription not activated — ${input.planName}`,
+    subject: `Support subscription not activated ? ${input.planName}`,
     html: emailLayout({
       title: 'Subscription not activated',
       subtitle: input.planName,
@@ -382,3 +383,75 @@ export async function sendSupportSubscriptionRejectedEmail(input: {
     }),
   })
 }
+
+export async function sendShopOrderConfirmationEmail(input: {
+  to: string
+  customerName: string
+  orderNumber: string
+  totalAmount: number
+  fulfillmentType: 'pickup' | 'delivery'
+  items: { name: string; quantity: number; lineTotal: number }[]
+}): Promise<SendEmailResult> {
+  const lines = input.items
+    .map(
+      (item) =>
+        `<li>${escapeHtml(item.name)} x ${item.quantity} ? ${item.lineTotal.toLocaleString()} RWF</li>`
+    )
+    .join('')
+  const fulfillment =
+    input.fulfillmentType === 'delivery'
+      ? 'We will contact you to arrange delivery in Kigali after payment is verified.'
+      : 'We will notify you when your order is ready for pickup in Kigali.'
+  const shopUrl = `${getAppUrl()}/shop`
+
+  return sendEmail({
+    to: input.to,
+    subject: `Order received ? ${input.orderNumber}`,
+    html: await brandedEmailLayout({
+      title: 'Thank you for your order',
+      subtitle: `Order ${input.orderNumber}`,
+      headerTone: 'success',
+      bodyHtml: `
+        <p>Dear ${escapeHtml(input.customerName)},</p>
+        <p>We received your shop order. Our team will verify your MTN MoMo payment shortly.</p>
+        <ul>${lines}</ul>
+        <p><strong>Total: ${input.totalAmount.toLocaleString()} RWF</strong></p>
+        <p>${fulfillment}</p>
+        <p class="muted">Reference: ${escapeHtml(input.orderNumber)}</p>
+        ${ctaButton('Visit the shop', shopUrl)}
+        <p><strong>${escapeHtml(COMPANY.brandName)} Team</strong></p>
+      `,
+    }),
+  })
+}
+
+export async function sendShopOrderAdminAlert(input: {
+  orderNumber: string
+  customerName: string
+  customerEmail: string
+  customerPhone: string
+  totalAmount: number
+  fulfillmentType: string
+}): Promise<SendEmailResult> {
+  const adminOrdersUrl = `${getAppUrl()}/admin/dashboard/orders`
+
+  return sendEmail({
+    to: ADMIN_NOTIFICATION_EMAIL,
+    subject: `New shop order ? ${input.orderNumber}`,
+    html: await brandedEmailLayout({
+      title: 'New shop order',
+      subtitle: input.orderNumber,
+      headerTone: 'primary',
+      bodyHtml: `
+        <p><strong>${escapeHtml(input.customerName)}</strong> placed an order for ${input.totalAmount.toLocaleString()} RWF (${escapeHtml(input.fulfillmentType)}).</p>
+        <ul>
+          <li>Email: ${escapeHtml(input.customerEmail)}</li>
+          <li>Phone: ${escapeHtml(input.customerPhone)}</li>
+          <li>Order: ${escapeHtml(input.orderNumber)}</li>
+        </ul>
+        ${ctaButton('Open admin orders', adminOrdersUrl)}
+      `,
+    }),
+  })
+}
+

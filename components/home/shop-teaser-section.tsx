@@ -6,10 +6,11 @@ import { Card, CardContent } from '@/components/ui/card'
 import { getPublishedProducts } from '@/lib/platform/queries'
 import { COMPANY } from '@/lib/company/constants'
 import { HomeSectionHeader } from '@/components/home/home-section-header'
+import { pickRandomSample } from '@/lib/utils/sample'
 
 /** Primary public offering — shop always visible on the home page. */
 export async function ShopTeaserSection() {
-  const products = (await getPublishedProducts()).slice(0, 4)
+  const products = pickRandomSample(await getPublishedProducts(), 3)
 
   return (
     <section id="shop" className="home-section home-section--compact home-section--muted">
@@ -18,7 +19,7 @@ export async function ShopTeaserSection() {
           <HomeSectionHeader
             eyebrow="Shop"
             title="Art materials & works"
-            description={`Buy original artworks and quality art materials from ${COMPANY.brandName}.`}
+            description={`A rotating selection from the ${COMPANY.brandName} shop — open any item to order.`}
             align="left"
             className="mb-0"
           />
@@ -45,9 +46,11 @@ export async function ShopTeaserSection() {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {products.map((product) => {
               const image = product.images?.[0]
+              const finalPrice =
+                product.discount != null ? product.price - product.discount : product.price
               return (
                 <Link
                   key={product.id}
@@ -55,7 +58,7 @@ export async function ShopTeaserSection() {
                   className="home-tile-link no-underline hover:no-underline"
                 >
                   <Card className="h-full border-slate-200 hover:shadow-md transition-shadow overflow-hidden">
-                    <div className="relative h-36 bg-slate-100">
+                    <div className="relative h-40 bg-slate-100">
                       {image ? (
                         <Image src={image} alt="" fill className="object-cover" unoptimized />
                       ) : (
@@ -66,11 +69,9 @@ export async function ShopTeaserSection() {
                     </div>
                     <CardContent className="p-4">
                       <p className="font-semibold text-slate-900 text-sm line-clamp-2">{product.name}</p>
-                      {product.price != null ? (
-                        <p className="text-sm text-[var(--brand-navy)] font-medium mt-1">
-                          {Number(product.price).toLocaleString()} RWF
-                        </p>
-                      ) : null}
+                      <p className="text-sm text-[var(--brand-navy)] font-medium mt-1">
+                        {Number(finalPrice).toLocaleString()} RWF
+                      </p>
                     </CardContent>
                   </Card>
                 </Link>

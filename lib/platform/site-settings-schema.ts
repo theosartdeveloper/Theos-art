@@ -20,6 +20,10 @@ export const SITE_SETTING_KEYS = [
   'company_slogan',
   'company_tagline',
   'company_logo_url',
+  'certificate_stamp_url',
+  'certificate_logo_url',
+  'certificate_signatory_name',
+  'certificate_signatory_title',
   'about_content',
   'mission_content',
   'payment_momo_code',
@@ -47,6 +51,10 @@ export type WebSettingsForm = {
   company_slogan: string
   company_tagline: string
   company_logo_url: string
+  certificate_stamp_url: string
+  certificate_logo_url: string
+  certificate_signatory_name: string
+  certificate_signatory_title: string
   about_content: string
   mission_content: string
   payment_momo_code: string
@@ -82,6 +90,10 @@ export const DEFAULT_WEB_SETTINGS: WebSettingsForm = {
   company_slogan: COMPANY.slogan,
   company_tagline: COMPANY.tagline,
   company_logo_url: COMPANY.logoUrl,
+  certificate_stamp_url: '/images/company-stamp.png',
+  certificate_logo_url: COMPANY.logoUrl,
+  certificate_signatory_name: 'Elie BISAMAZA',
+  certificate_signatory_title: `Managing Director · ${COMPANY.legalName}`,
   about_content: ABOUT_DEFAULT,
   mission_content: MISSION_DEFAULT,
   payment_momo_code: PAYMENT.momoPayCode,
@@ -146,6 +158,10 @@ export function mapSettingsToForm(
     company_slogan: rows.company_slogan ?? d.company_slogan,
     company_tagline: rows.company_tagline ?? d.company_tagline,
     company_logo_url: rows.company_logo_url ?? d.company_logo_url,
+    certificate_stamp_url: rows.certificate_stamp_url ?? d.certificate_stamp_url,
+    certificate_logo_url: rows.certificate_logo_url ?? d.certificate_logo_url,
+    certificate_signatory_name: rows.certificate_signatory_name ?? d.certificate_signatory_name,
+    certificate_signatory_title: rows.certificate_signatory_title ?? d.certificate_signatory_title,
     about_content: rows.about_content ?? d.about_content,
     mission_content: rows.mission_content ?? d.mission_content,
     payment_momo_code: rows.payment_momo_code ?? d.payment_momo_code,

@@ -125,6 +125,31 @@ export async function POST(request: Request) {
       .eq('id', order.id)
 
     const stockResult = await decrementStockForLines(lineItems, productMap)
+
+    const { sendShopOrderAdminAlert, sendShopOrderConfirmationEmail } = await import(
+      '@/lib/email/notifications'
+    )
+    void sendShopOrderConfirmationEmail({
+      to: customerEmail,
+      customerName,
+      orderNumber,
+      totalAmount,
+      fulfillmentType,
+      items: lineItems.map((line) => ({
+        name: line.product_name,
+        quantity: line.quantity,
+        lineTotal: line.line_total,
+      })),
+    })
+    void sendShopOrderAdminAlert({
+      orderNumber,
+      customerName,
+      customerEmail,
+      customerPhone,
+      totalAmount,
+      fulfillmentType,
+    })
+
     if (stockResult.error) {
       return NextResponse.json(
         {

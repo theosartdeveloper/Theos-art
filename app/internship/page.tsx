@@ -7,6 +7,7 @@ import { getPublishedCourses, getPublishedInternships } from '@/lib/platform/que
 import { getCurrentUser } from '@/app/actions/auth-service'
 import { COMPANY } from '@/lib/company/constants'
 import { isFreeProgram } from '@/lib/enrollment/program-types'
+import { CATALOG_GRID_COMFORT, CATALOG_SHELL } from '@/lib/ui/catalog-layout'
 
 export default async function InternshipPage() {
   const [internshipPrograms, legacyInternships] = await Promise.all([
@@ -19,12 +20,12 @@ export default async function InternshipPage() {
   return (
     <main className="min-h-screen bg-background">
       <SiteHeader />
-      <section className="text-on-dark bg-[var(--brand-navy)] py-14 px-4">
-        <div className="max-w-6xl mx-auto">
+      <section className="text-on-dark bg-[var(--brand-navy)] py-12">
+        <div className={CATALOG_SHELL}>
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--brand-sky)] mb-3">
             E-learning
           </p>
-          <h1 className="text-4xl font-bold mb-3 tracking-tight text-white">Internship</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold mb-3 tracking-tight text-white">Internship</h1>
           <p className="text-white/85 max-w-2xl text-lg leading-relaxed">
             Creative residency and studio internship programmes from {COMPANY.brandName} — learn beside
             practising artists in a professional studio environment.
@@ -32,7 +33,7 @@ export default async function InternshipPage() {
         </div>
       </section>
 
-      <section className="max-w-6xl mx-auto px-4 py-10 space-y-8">
+      <section className={`${CATALOG_SHELL} py-10 space-y-8`}>
         <nav className="text-sm text-slate-500">
           <Link href="/learning" className="hover:text-[var(--brand-navy)] transition-colors">
             E-learning
@@ -48,7 +49,7 @@ export default async function InternshipPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className={CATALOG_GRID_COMFORT}>
             {internshipPrograms.map((item) => {
               const enrollPath = `/student/courses/${item.id}/enroll`
               const enrollHref = isStudent
@@ -56,15 +57,15 @@ export default async function InternshipPage() {
                 : `/auth/login?redirect=${encodeURIComponent(enrollPath)}`
               const free = isFreeProgram(item.pricing)
               return (
-                <Card key={item.id} className="border-slate-200">
+                <Card key={item.id} className="border-slate-200 flex flex-col">
                   <CardHeader>
                     <CardTitle className="text-slate-900">{item.title}</CardTitle>
                     {item.duration ? (
                       <p className="text-xs uppercase tracking-wide text-slate-500">{item.duration}</p>
                     ) : null}
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <p className="text-sm text-slate-600 leading-relaxed">{item.description}</p>
+                  <CardContent className="space-y-4 flex-1 flex flex-col">
+                    <p className="text-sm text-slate-600 leading-relaxed flex-1">{item.description}</p>
                     <p className="text-sm font-semibold text-[var(--brand-navy)]">
                       {free ? 'Free' : `${Number(item.pricing ?? 0).toLocaleString()} RWF`}
                     </p>
@@ -81,7 +82,7 @@ export default async function InternshipPage() {
         {legacyInternships.length > 0 ? (
           <div className="space-y-4 pt-4">
             <h2 className="text-xl font-bold text-slate-900">More opportunities</h2>
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className={CATALOG_GRID_COMFORT}>
               {legacyInternships.map((item) => {
                 const enrollHref = isStudent
                   ? '/student/courses?track=internship'

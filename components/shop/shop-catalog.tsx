@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { AddToCartButton } from '@/components/shop/add-to-cart-button'
+import { CATALOG_GRID, CATALOG_SHELL } from '@/lib/ui/catalog-layout'
 import { cn } from '@/lib/utils'
 import type { Category, Product } from '@/types/platform'
 import { formatProductStockLabel, formatProductUnitLabel } from '@/lib/platform/products'
@@ -16,14 +17,14 @@ import { formatProductStockLabel, formatProductUnitLabel } from '@/lib/platform/
 function ProductImage({ src, alt }: { src?: string; alt: string }) {
   if (src) {
     return (
-      <div className="relative h-44 w-full bg-slate-100">
+      <div className="relative h-36 w-full bg-slate-100">
         <Image src={src} alt={alt} fill className="object-cover" unoptimized />
       </div>
     )
   }
 
   return (
-    <div className="h-44 w-full bg-slate-100 flex flex-col items-center justify-center text-slate-600 gap-2">
+    <div className="h-36 w-full bg-slate-100 flex flex-col items-center justify-center text-slate-600 gap-2">
       <Package className="h-8 w-8 opacity-60" />
       <span className="text-xs font-medium">No image</span>
     </div>
@@ -78,7 +79,7 @@ export function ShopCatalog({
   }
 
   return (
-    <section className="max-w-6xl mx-auto px-4 py-8">
+    <section className={cn(CATALOG_SHELL, 'py-8')}>
       <form onSubmit={handleSearch} className="flex gap-2 mb-6">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
@@ -119,7 +120,7 @@ export function ShopCatalog({
           </CardContent>
         </Card>
       ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className={CATALOG_GRID}>
           {products.map((product) => {
             const image = product.images?.[0]
             const finalPrice = product.discount
@@ -169,7 +170,7 @@ export function ShopCatalog({
                         variant="outline"
                         className="w-full border-slate-300 text-slate-800 hover:bg-slate-50"
                       >
-                        Details
+                        View details
                       </Button>
                     </Link>
                     <AddToCartButton
