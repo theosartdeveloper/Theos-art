@@ -113,7 +113,7 @@ export function createCertificateHTML({
 
     .frame {
       position: absolute;
-      inset: 4mm;
+      inset: 3.5mm;
       border: 2.5px solid #3a3a3a;
       pointer-events: none;
       z-index: 1;
@@ -121,7 +121,7 @@ export function createCertificateHTML({
     .frame::before {
       content: '';
       position: absolute;
-      inset: 2mm;
+      inset: 1.8mm;
       border: 1px solid #f08a28;
     }
 
@@ -181,10 +181,10 @@ export function createCertificateHTML({
       text-transform: uppercase;
     }
 
-    /* Safe content band — tighter sides so the layout fills the page */
+    /* Safe content band — wide fill so side gutters stay small */
     .shell {
       position: absolute;
-      inset: 8mm 7mm 7mm;
+      inset: 7mm 5.5mm 6mm;
       z-index: 3;
       display: flex;
       flex-direction: column;
@@ -195,36 +195,36 @@ export function createCertificateHTML({
     .header {
       flex: 0 0 auto;
       text-align: center;
-      padding-bottom: 2mm;
+      padding-bottom: 1.5mm;
     }
     .logo {
-      height: 22mm;
+      height: 26mm;
       width: auto;
-      max-width: 70mm;
+      max-width: 90mm;
       object-fit: contain;
       display: inline-block;
     }
     .logo-text {
       font-family: 'Cinzel', serif;
-      font-size: 20px;
-      font-weight: 700;
-      color: #3a3a3a;
-      letter-spacing: 2px;
-    }
-    .cert-title {
-      font-family: 'Cinzel', serif;
       font-size: 26px;
       font-weight: 700;
       color: #3a3a3a;
-      letter-spacing: 4px;
+      letter-spacing: 2.5px;
+    }
+    .cert-title {
+      font-family: 'Cinzel', serif;
+      font-size: 34px;
+      font-weight: 700;
+      color: #3a3a3a;
+      letter-spacing: 5px;
       text-transform: uppercase;
-      margin-top: 3mm;
+      margin-top: 2.5mm;
     }
     .cert-subtitle {
       font-family: 'Montserrat', sans-serif;
-      font-size: 9px;
+      font-size: 12px;
       color: #f08a28;
-      letter-spacing: 3px;
+      letter-spacing: 3.5px;
       text-transform: uppercase;
       font-weight: 600;
       margin-top: 1.5mm;
@@ -238,20 +238,21 @@ export function createCertificateHTML({
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 2mm 4mm;
+      padding: 1.5mm 2mm;
       overflow: hidden;
+      width: 100%;
     }
     .presented {
       font-family: 'Montserrat', sans-serif;
-      font-size: 10px;
+      font-size: 13px;
       color: #4a5568;
-      letter-spacing: 1.5px;
+      letter-spacing: 2px;
       text-transform: uppercase;
       font-weight: 500;
     }
     .recipient-photo {
-      width: 22mm;
-      height: 22mm;
+      width: 26mm;
+      height: 26mm;
       border-radius: 50%;
       object-fit: cover;
       border: 2px solid #f08a28;
@@ -261,59 +262,63 @@ export function createCertificateHTML({
     }
     .recipient {
       font-family: 'Great Vibes', cursive;
-      font-size: 44px;
+      font-size: 56px;
       color: #3a3a3a;
       margin-top: 1.5mm;
-      line-height: 1.1;
-      max-width: 250mm;
+      line-height: 1.08;
+      max-width: 270mm;
+      width: 100%;
       word-wrap: break-word;
     }
     .rule {
-      width: 110mm;
-      max-width: 70%;
-      border-bottom: 1.5px solid #f08a28;
-      margin: 1.5mm auto 0;
+      width: 150mm;
+      max-width: 78%;
+      border-bottom: 1.75px solid #f08a28;
+      margin: 2mm auto 0;
     }
     .achievement {
       font-family: 'Libre Baskerville', Georgia, serif;
-      font-size: 12px;
+      font-size: 15px;
       color: #2d3748;
       margin-top: 3mm;
-      line-height: 1.55;
-      max-width: 240mm;
+      line-height: 1.5;
+      max-width: 260mm;
+      width: 100%;
     }
     .program-name {
       font-family: 'Cinzel', Georgia, serif;
-      font-size: 17px;
+      font-size: 22px;
       font-weight: 600;
       color: #3a3a3a;
-      margin-top: 1.5mm;
-      letter-spacing: 0.5px;
-      max-width: 240mm;
+      margin-top: 2mm;
+      letter-spacing: 0.8px;
+      max-width: 260mm;
+      width: 100%;
       word-wrap: break-word;
     }
     .score-line {
       font-family: 'Montserrat', sans-serif;
-      font-size: 10px;
+      font-size: 13px;
       color: #4a5568;
-      margin-top: 1.5mm;
+      margin-top: 2mm;
     }
     .score-line strong { color: #3a3a3a; }
 
     .notice {
       margin: 2.5mm auto 0;
-      max-width: 180mm;
-      padding: 2mm 3mm;
+      max-width: 220mm;
+      width: 92%;
+      padding: 2.2mm 3.5mm;
       border-radius: 1.5mm;
       font-family: 'Montserrat', sans-serif;
-      font-size: 8.5px;
+      font-size: 10px;
       font-weight: 600;
       line-height: 1.4;
       text-align: left;
     }
     .notice strong {
       display: block;
-      font-size: 9px;
+      font-size: 10.5px;
       text-transform: uppercase;
       letter-spacing: 0.6px;
       margin-bottom: 0.8mm;
@@ -336,13 +341,14 @@ export function createCertificateHTML({
       flex: 0 0 auto;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      column-gap: 12mm;
+      column-gap: 8mm;
       align-items: end;
       justify-items: center;
-      padding-top: 3mm;
+      padding-top: 2.5mm;
       border-top: 1px solid #e2e8f0;
-      margin-top: 2mm;
-      min-height: 54mm;
+      margin-top: 1.5mm;
+      min-height: 52mm;
+      width: 100%;
     }
 
     .col {
@@ -352,32 +358,32 @@ export function createCertificateHTML({
       justify-content: flex-end;
       text-align: center;
       width: 100%;
-      max-width: 78mm;
+      max-width: 110mm;
       min-width: 0;
       overflow: visible;
     }
 
     .col-left { align-items: center; }
-    .col-right { align-items: center; gap: 2.8mm; }
+    .col-right { align-items: center; gap: 2.5mm; }
 
     .date-value {
       font-family: 'Libre Baskerville', Georgia, serif;
-      font-size: 12px;
+      font-size: 15px;
       font-weight: 700;
       color: #3a3a3a;
     }
     .col-rule {
-      width: 70%;
-      max-width: 48mm;
-      border-top: 1.25px solid #2d3748;
+      width: 75%;
+      max-width: 58mm;
+      border-top: 1.4px solid #2d3748;
       margin: 1.5mm 0;
     }
     .col-label {
       font-family: 'Montserrat', sans-serif;
-      font-size: 8px;
+      font-size: 10px;
       font-weight: 700;
       color: #3a3a3a;
-      letter-spacing: 1px;
+      letter-spacing: 1.1px;
       text-transform: uppercase;
     }
 
@@ -388,13 +394,13 @@ export function createCertificateHTML({
     .sig-block {
       position: relative;
       width: 100%;
-      max-width: 72mm;
-      min-height: 56mm;
+      max-width: 95mm;
+      min-height: 52mm;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 2mm 0;
+      padding: 1.5mm 0;
     }
     .sig-text {
       position: relative;
@@ -410,8 +416,8 @@ export function createCertificateHTML({
       position: absolute;
       left: 50%;
       top: 50%;
-      width: 62mm;
-      height: 62mm;
+      width: 66mm;
+      height: 66mm;
       object-fit: contain;
       opacity: 0.92;
       transform: translate(-50%, -50%) rotate(-12deg);
@@ -422,34 +428,34 @@ export function createCertificateHTML({
     }
     .sig-name {
       font-family: 'Cinzel', serif;
-      font-size: 14px;
+      font-size: 17px;
       font-weight: 700;
       color: #3a3a3a;
-      letter-spacing: 2px;
+      letter-spacing: 2.2px;
       text-transform: uppercase;
       line-height: 1.2;
       max-width: 100%;
       word-wrap: break-word;
     }
     .sig-rule {
-      width: 70%;
-      max-width: 48mm;
+      width: 75%;
+      max-width: 58mm;
       border-top: 1.5px solid #2d3748;
       margin: 2mm 0 1.5mm;
     }
     .sig-title {
       font-family: 'Montserrat', sans-serif;
-      font-size: 9px;
+      font-size: 11px;
       font-weight: 600;
       line-height: 1.35;
       color: #5a6472;
-      letter-spacing: 0.6px;
+      letter-spacing: 0.7px;
       max-width: 100%;
       word-wrap: break-word;
     }
     .sig-pending {
       font-family: 'Montserrat', sans-serif;
-      font-size: 8px;
+      font-size: 9px;
       font-weight: 600;
       color: #94a3b8;
       letter-spacing: 0.4px;
@@ -469,14 +475,14 @@ export function createCertificateHTML({
       max-width: 100%;
     }
     .qr-box img {
-      width: 20mm;
-      height: 20mm;
+      width: 24mm;
+      height: 24mm;
       display: block;
       margin: 0 auto;
     }
     .qr-label {
       font-family: 'Montserrat', sans-serif;
-      font-size: 6.5px;
+      font-size: 8px;
       font-weight: 600;
       color: #3a3a3a;
       margin-top: 1mm;
@@ -485,14 +491,14 @@ export function createCertificateHTML({
     }
     .qr-hint {
       font-family: 'Montserrat', sans-serif;
-      font-size: 5.5px;
+      font-size: 7px;
       color: #718096;
       margin-top: 0.4mm;
     }
 
     .date-stack {
       width: 100%;
-      max-width: 48mm;
+      max-width: 58mm;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -502,31 +508,31 @@ export function createCertificateHTML({
       flex: 0 0 auto;
       text-align: center;
       font-family: 'Montserrat', sans-serif;
-      font-size: 7.5px;
+      font-size: 9px;
       line-height: 1.4;
       color: #718096;
       padding-top: 2mm;
-      margin-top: 2mm;
+      margin-top: 1.5mm;
       border-top: 1px solid #e2e8f0;
     }
     .footer .cert-id {
       display: block;
       font-weight: 700;
       color: #3a3a3a;
-      font-size: 9px;
+      font-size: 11px;
       letter-spacing: 0.3px;
       margin-bottom: 0.4mm;
     }
     .footer code {
       font-family: 'Montserrat', monospace;
-      font-size: 9.5px;
+      font-size: 11px;
       background: #f1f5f9;
       padding: 0.3mm 1.2mm;
       border-radius: 0.8mm;
     }
     .footer .verify-line {
       display: block;
-      font-size: 6.5px;
+      font-size: 8px;
       color: #94a3b8;
       word-break: break-all;
       max-width: 100%;
