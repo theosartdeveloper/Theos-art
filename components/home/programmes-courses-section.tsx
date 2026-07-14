@@ -21,7 +21,7 @@ export async function ProgrammesCoursesSection() {
           <HomeSectionHeader
             eyebrow="Programmes"
             title="Creative learning"
-            description={`${COMPANY.brandName} training and internship programmes will appear here once published.`}
+            description={`Creative training and studio programmes from ${COMPANY.brandName} will appear here once published.`}
             className="mb-6"
           />
           <Link href="/learning">
@@ -42,7 +42,7 @@ export async function ProgrammesCoursesSection() {
           <HomeSectionHeader
             eyebrow="Programmes"
             title="Creative learning"
-            description={`A rotating look at open programmes from ${COMPANY.brandName}.`}
+            description={`Workshops and learning programmes to build creative skill with ${COMPANY.brandName}.`}
             align="left"
             className="mb-0"
           />

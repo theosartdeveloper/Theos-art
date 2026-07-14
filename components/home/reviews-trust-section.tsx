@@ -21,7 +21,7 @@ export async function ReviewsTrustSection({ compact = false }: { compact?: boole
           <HomeSectionHeader
             eyebrow="Reviews"
             title="What people say about us"
-            description={compact ? undefined : 'Real ratings and reviews from students, interns, and engineering clients.'}
+            description={compact ? undefined : 'Ratings and reviews from students, collectors, and studio clients.'}
             align="left"
             className="mb-0"
           />

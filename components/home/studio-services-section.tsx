@@ -43,7 +43,7 @@ export async function StudioServicesSection() {
           <HomeSectionHeader
             eyebrow="Services"
             title="Studio services"
-            description={`Tutorials, commissions, and workshops from ${COMPANY.brandName}.`}
+            description={`Commission work, private sessions, and studio services from ${COMPANY.brandName}.`}
             align="left"
             className="mb-0"
           />

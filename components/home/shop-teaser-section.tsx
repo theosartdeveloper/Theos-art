@@ -19,7 +19,7 @@ export async function ShopTeaserSection() {
           <HomeSectionHeader
             eyebrow="Shop"
             title="Art materials & works"
-            description={`A rotating selection from the ${COMPANY.brandName} shop — open any item to order.`}
+            description={`Original artworks and studio materials from ${COMPANY.brandName}, ready to order.`}
             align="left"
             className="mb-0"
           />
