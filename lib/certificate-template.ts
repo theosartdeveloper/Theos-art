@@ -125,17 +125,25 @@ export function createCertificateHTML({
       border: 1px solid #f08a28;
     }
 
+    /* Logo watermark — authenticity mark behind the certificate body */
     .watermark {
       position: absolute;
       inset: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      opacity: 0.05;
       pointer-events: none;
       z-index: 0;
+      overflow: hidden;
     }
-    .watermark img { width: 110mm; max-width: 45%; height: auto; }
+    .watermark img {
+      width: 140mm;
+      max-width: 58%;
+      height: auto;
+      opacity: 0.09;
+      transform: rotate(-18deg);
+      filter: grayscale(0.15);
+    }
 
     .text-watermark {
       position: absolute;
@@ -373,36 +381,46 @@ export function createCertificateHTML({
       text-transform: uppercase;
     }
 
-    /* Stamp covers both the director name and "Managing Director" */
+    /*
+     * Stamp overlays the director name + "Managing Director" —
+     * the text is the paper under the ink (centered under the stamp).
+     */
     .sig-block {
       position: relative;
       width: 100%;
       max-width: 72mm;
-      min-height: 48mm;
+      min-height: 56mm;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-end;
-      padding-top: 14mm;
-      padding-bottom: 1mm;
+      justify-content: center;
+      padding: 2mm 0;
+    }
+    .sig-text {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      width: 100%;
     }
     .stamp {
       position: absolute;
       left: 50%;
-      bottom: -1mm;
-      width: 58mm;
-      height: 58mm;
+      top: 50%;
+      width: 62mm;
+      height: 62mm;
       object-fit: contain;
-      opacity: 0.9;
-      transform: translateX(-50%) rotate(-12deg);
+      opacity: 0.92;
+      transform: translate(-50%, -50%) rotate(-12deg);
       mix-blend-mode: multiply;
-      filter: contrast(1.14) saturate(1.1);
-      z-index: 1;
+      filter: contrast(1.16) saturate(1.12);
+      z-index: 2;
       pointer-events: none;
     }
     .sig-name {
-      position: relative;
-      z-index: 2;
       font-family: 'Cinzel', serif;
       font-size: 14px;
       font-weight: 700;
@@ -412,19 +430,14 @@ export function createCertificateHTML({
       line-height: 1.2;
       max-width: 100%;
       word-wrap: break-word;
-      text-shadow: 0 0 6px rgba(255, 255, 255, 0.85);
     }
     .sig-rule {
-      position: relative;
-      z-index: 2;
       width: 70%;
       max-width: 48mm;
       border-top: 1.5px solid #2d3748;
       margin: 2mm 0 1.5mm;
     }
     .sig-title {
-      position: relative;
-      z-index: 2;
       font-family: 'Montserrat', sans-serif;
       font-size: 9px;
       font-weight: 600;
@@ -435,8 +448,6 @@ export function createCertificateHTML({
       word-wrap: break-word;
     }
     .sig-pending {
-      position: relative;
-      z-index: 2;
       font-family: 'Montserrat', sans-serif;
       font-size: 8px;
       font-weight: 600;
