@@ -305,30 +305,30 @@ export function createCertificateHTML({
     .score-line strong { color: #3a3a3a; }
 
     .notice {
-      margin: 2.5mm auto 0;
-      max-width: 220mm;
-      width: 92%;
-      padding: 2.2mm 3.5mm;
-      border-radius: 1.5mm;
+      margin: 2mm auto 0;
+      max-width: 140mm;
+      padding: 1.4mm 3mm;
+      border-radius: 1.2mm;
       font-family: 'Montserrat', sans-serif;
       font-size: 10px;
-      font-weight: 600;
-      line-height: 1.4;
-      text-align: left;
+      font-weight: 700;
+      line-height: 1.3;
+      text-align: center;
+      letter-spacing: 0.3px;
     }
     .notice strong {
       display: block;
-      font-size: 10.5px;
+      font-size: 10px;
       text-transform: uppercase;
-      letter-spacing: 0.6px;
-      margin-bottom: 0.8mm;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.6mm;
     }
     .notice.free {
       border: 1px solid #f08a28;
       background: rgba(240, 138, 40, 0.08);
-      color: #3a3a3a;
+      color: #d97706;
+      text-transform: none;
     }
-    .notice.free strong { color: #d97706; }
     .notice.pending {
       border: 1px solid #94a3b8;
       background: rgba(100, 116, 139, 0.1);
@@ -592,10 +592,7 @@ export function createCertificateHTML({
         </div>
         ${
           freeCourse
-            ? `<div class="notice free">
-                <strong>Complimentary certificate — watermark applied</strong>
-                Upgrade to the paid programme to receive an official certificate without watermark.
-              </div>`
+            ? `<div class="notice free">Upgrade to remove watermark</div>`
             : ''
         }
         ${
