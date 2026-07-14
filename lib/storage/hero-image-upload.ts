@@ -9,8 +9,8 @@ import {
 
 export const HERO_IMAGE_MAX_BYTES = 25 * 1024 * 1024
 
-const ALLOWED = new Map(
-  HERO_IMAGE_FILES.map((item) => [item.file, 'image/png'] as const)
+const ALLOWED = new Map<string, string>(
+  HERO_IMAGE_FILES.map((item) => [item.file, 'image/png'])
 )
 
 function contentTypeForName(name: string, fallback?: string): string {
