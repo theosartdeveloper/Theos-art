@@ -3,7 +3,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { requireAdminPermission } from '@/app/actions/admin-context'
 import { PERMISSIONS } from '@/lib/admin/permissions'
 import { requirePlatformAdmin } from '@/lib/admin/access-control'
-import { TRAINING_PROGRAMS } from '@/lib/company/constants'
+import { DEFAULT_LEARNING_PROGRAMMES } from '@/lib/company/constants'
 import { normalizeProgramType } from '@/lib/enrollment/program-types'
 import { normalizeCourseRow } from '@/lib/platform/courses'
 import { validateInstructorId } from '@/lib/admin/instructor-assignment'
@@ -134,13 +134,13 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Courses already exist. Delete or edit them instead.' }, { status: 400 })
       }
 
-      const rows = TRAINING_PROGRAMS.map((program) => ({
+      const rows = DEFAULT_LEARNING_PROGRAMMES.map((program) => ({
         title: program.title,
         description: program.summary,
         duration: 'Flexible schedule',
         difficulty: program.title,
         program: program.title,
-        program_type: 'training',
+        program_type: 'workshop',
         pricing: 0,
         status: 'published',
       }))

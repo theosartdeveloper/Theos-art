@@ -36,6 +36,7 @@ export const FOUNDER = {
     'We believe art is not only something you hang — it is something you make, share, and live with.',
 } as const
 
+/** Home / About pillars (shop + learning). */
 export const TRAINING_PROGRAMS = [
   {
     id: 'original-artworks',
@@ -60,6 +61,50 @@ export const TRAINING_PROGRAMS = [
       'Hands-on sessions and creative gatherings for learners and art communities in Kigali.',
     topics: ['Live painting', 'Community sessions', 'Creative learning', 'Studio visits'],
     href: '/learning',
+  },
+] as const
+
+/** Default Learning programmes seeded from Admin → Programs (published to /learning). */
+export const DEFAULT_LEARNING_PROGRAMMES = [
+  {
+    id: 'creative-fundamentals',
+    title: 'Creative Fundamentals',
+    summary:
+      'Beginner-friendly studio sessions covering drawing basics, colour theory, and composition. Learners enroll on the Learning page, pay via MoMo when priced, then access lessons in their portal.',
+  },
+  {
+    id: 'painting-studio',
+    title: 'Painting & Studio Practice',
+    summary:
+      'Guided painting projects for hobbyists and emerging artists. Publish with an instructor, set a price or keep free, then add lessons so enrolled students can learn step by step.',
+  },
+  {
+    id: 'workshops-events',
+    title: 'Workshops & Events',
+    summary:
+      'Scheduled creative gatherings and community sessions in Kigali. Use workshop or event programme type with a date and studio location so clients know when to join.',
+  },
+] as const
+
+/** Default Home “Services” cards (Workshops & creative learning section). */
+export const DEFAULT_STUDIO_SERVICES = [
+  {
+    title: 'Private studio tutoring',
+    description:
+      'One-to-one or small-group creative coaching at Theos Art Hub — drawing, painting, and portfolio guidance tailored to the learner.',
+    category: 'Teaching',
+  },
+  {
+    title: 'Custom artwork commissions',
+    description:
+      'Commission original pieces for homes, offices, and gifts. Brief shared with our studio; delivery timed to your project.',
+    category: 'Commissions',
+  },
+  {
+    title: 'Community workshop days',
+    description:
+      'Open creative sessions for schools, teams, and art lovers. Book a date, bring materials or use ours, and create together in Kigali.',
+    category: 'Workshops',
   },
 ] as const
 

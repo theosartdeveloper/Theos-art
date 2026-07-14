@@ -24,7 +24,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { ImageUploadField } from '@/components/admin/image-upload-field'
-import { TRAINING_PROGRAMS } from '@/lib/company/constants'
+import { DEFAULT_LEARNING_PROGRAMMES } from '@/lib/company/constants'
 import {
   PROGRAM_TYPE_LABELS,
   PROGRAM_TYPES,
@@ -76,7 +76,7 @@ const emptyForm = {
   title: '',
   description: '',
   program: '',
-  program_type: 'training' as ProgramType,
+  program_type: 'workshop' as ProgramType,
   duration: '',
   thumbnail: '',
   pricing: '0',
@@ -278,7 +278,7 @@ export default function CourseManagementTab() {
       if (!res.ok) throw new Error(data.error || 'Update failed')
 
       setEditing(null)
-      setSuccess(`"${editForm.title}" saved${editForm.instructor_id !== 'none' ? ' — lecturer assigned' : ''}`)
+      setSuccess(`"${editForm.title}" saved${editForm.instructor_id !== 'none' ? ' — instructor assigned' : ''}`)
       await load()
     } catch (err) {
       setEditError(err instanceof Error ? err.message : 'Update failed')
@@ -334,6 +334,8 @@ export default function CourseManagementTab() {
             {totalNotifications > 0 ? <AdminNotificationBadge count={totalNotifications} /> : null}
           </div>
           <p className="course-page-subtitle text-slate-700 mt-1 max-w-2xl">
+            Published programmes appear on Learning. Clients enroll, pay via MoMo when priced, then unlock lessons in their portal.
+            {' '}
             {publishedCount} published · {courses.length} total
             {totalNotifications > 0 ? ` · ${courseNotificationLabel(totalNotifications)}` : ''}
           </p>
@@ -341,7 +343,7 @@ export default function CourseManagementTab() {
         <div className="flex flex-wrap gap-2">
           {courses.length === 0 ? (
             <Button variant="outline" onClick={seedDefaults} disabled={saving}>
-              Seed 3 default programmes
+              Seed 3 studio programmes
             </Button>
           ) : null}
           <Button onClick={() => setIsCreateOpen(true)} className="bg-[var(--brand-navy)] text-white">
@@ -377,9 +379,12 @@ export default function CourseManagementTab() {
       {courses.length === 0 ? (
         <Card className="border-slate-400 bg-white shadow-sm">
           <CardContent className="pt-6 text-center space-y-3">
-            <p className="text-slate-800 font-medium">No courses created yet.</p>
+            <p className="text-slate-800 font-medium">No learning programmes yet.</p>
+            <p className="text-sm text-slate-600 max-w-md mx-auto">
+              Add Creative Fundamentals, Painting & Studio Practice, and Workshops & Events — then publish so they show on the Learning page for clients.
+            </p>
             <Button variant="outline" onClick={seedDefaults} disabled={saving}>
-              Add Embedded Systems, Industrial Control & Advanced Electrical
+              Add Creative Fundamentals, Painting & Studio Practice & Workshops
             </Button>
           </CardContent>
         </Card>
@@ -444,14 +449,14 @@ export default function CourseManagementTab() {
                 ) : null}
                 {course.instructor_id ? (
                   <p className="text-xs text-slate-600">
-                    {isMentorManagedProgramType(course.program_type) ? 'Mentor' : 'Lecturer'}:{' '}
+                    {isMentorManagedProgramType(course.program_type) ? 'Mentor' : 'Instructor'}:{' '}
                     {(
                       isMentorManagedProgramType(course.program_type) ? mentors : lecturers
                     ).find((person) => person.id === course.instructor_id)?.name ?? 'Assigned'}
                   </p>
                 ) : (
                   <p className="text-xs text-amber-700">
-                    No {isMentorManagedProgramType(course.program_type) ? 'mentor' : 'lecturer'} assigned
+                    No {isMentorManagedProgramType(course.program_type) ? 'mentor' : 'instructor'} assigned
                   </p>
                 )}
                 <p className="text-sm font-medium text-[var(--brand-navy)]">
@@ -560,7 +565,7 @@ function CourseForm({
         <Label>Description</Label>
         <Textarea
           className="mt-1"
-          placeholder="Course overview and objectives"
+          placeholder="What learners will practice and what they leave with"
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
           rows={4}
@@ -574,13 +579,13 @@ function CourseForm({
               <SelectValue placeholder="Select programme" />
             </SelectTrigger>
             <SelectContent>
-              {TRAINING_PROGRAMS.map((p) => (
+              {DEFAULT_LEARNING_PROGRAMMES.map((p) => (
                 <SelectItem key={p.id} value={p.title}>{p.title}</SelectItem>
               ))}
               <SelectItem value="custom">Other / custom</SelectItem>
             </SelectContent>
           </Select>
-          {!TRAINING_PROGRAMS.some((p) => p.title === form.program) && form.program ? (
+          {!DEFAULT_LEARNING_PROGRAMMES.some((p) => p.title === form.program) && form.program ? (
             <Input
               className="mt-2"
               placeholder="Custom programme name"
@@ -600,7 +605,7 @@ function CourseForm({
         </div>
       </div>
       <div>
-        <Label>{mentorProgram ? 'Assigned mentor' : 'Assigned lecturer'}</Label>
+        <Label>{mentorProgram ? 'Assigned mentor' : 'Assigned instructor'}</Label>
         <Select
           value={
             assignees.some((person) => person.id === form.instructor_id) || form.instructor_id === 'none'
@@ -610,7 +615,7 @@ function CourseForm({
           onValueChange={(v) => setForm({ ...form, instructor_id: v })}
         >
           <SelectTrigger className="mt-1">
-            <SelectValue placeholder={mentorProgram ? 'Select active mentor' : 'Select approved lecturer'} />
+            <SelectValue placeholder={mentorProgram ? 'Select active mentor' : 'Select approved instructor'} />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="none">— Not assigned —</SelectItem>
@@ -623,14 +628,14 @@ function CourseForm({
         </Select>
         <p className="text-xs text-slate-700 font-semibold mt-1">
           {mentorProgram
-            ? 'Career guidance and mentorship programmes are delivered by mentor accounts created in User Management.'
-            : 'Only admin-approved lecturer accounts appear here. Pending registrations must be approved under User Management first.'}
+            ? 'Portfolio guidance and mentorship are delivered by mentor accounts from User Management.'
+            : 'Only admin-approved instructor accounts appear here. Pending registrations must be approved under User Management first.'}
         </p>
         {assignees.length === 0 ? (
           <p className="text-xs text-amber-800 font-bold mt-1">
             {mentorProgram
               ? 'No active mentors yet — create mentor accounts in User Management.'
-              : 'No active lecturers yet — approve lecturer registrations in User Management.'}
+              : 'No active instructors yet — approve instructor registrations in User Management.'}
           </p>
         ) : null}
       </div>

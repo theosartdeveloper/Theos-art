@@ -40,7 +40,9 @@ export default function ServiceManagement() {
   const [editing, setEditing] = useState<Service | null>(null)
   const [editForm, setEditForm] = useState(emptyForm)
   const [isLoading, setIsLoading] = useState(false)
+  const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
 
   const loadServices = async () => {
     try {
@@ -55,6 +57,27 @@ export default function ServiceManagement() {
   useEffect(() => {
     loadServices()
   }, [])
+
+  const seedDefaults = async () => {
+    setSaving(true)
+    setError('')
+    setSuccess('')
+    try {
+      const res = await fetch('/api/admin/services', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ seedDefaults: true }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to seed services')
+      setSuccess('Added 3 studio services — they stay published so they show on the Home page.')
+      await loadServices()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to seed services')
+    } finally {
+      setSaving(false)
+    }
+  }
 
   const handleAddService = async () => {
     if (!form.title || !form.description) {
@@ -144,10 +167,24 @@ export default function ServiceManagement() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Services</h1>
-        <p className="text-slate-600 mt-1">Manage engineering services with images and publish status.</p>
+      <div className="flex flex-wrap justify-between items-start gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">Services</h1>
+          <p className="text-slate-600 mt-1 max-w-2xl">
+            Published services appear on the Home page under Workshops & creative learning — marketing
+            cards for tutoring, commissions, and studio sessions. For enrollable courses with lessons
+            and MoMo pay, use Programs instead.
+          </p>
+        </div>
+        {services.length === 0 ? (
+          <Button variant="outline" onClick={seedDefaults} disabled={saving}>
+            Seed 3 studio services
+          </Button>
+        ) : null}
       </div>
+
+      {error ? <p className="text-sm text-destructive">{error}</p> : null}
+      {success ? <p className="text-sm text-green-800 font-medium">{success}</p> : null}
 
       <Card>
         <CardHeader>
@@ -158,7 +195,7 @@ export default function ServiceManagement() {
             <Label>Title</Label>
             <Input
               className="mt-1"
-              placeholder="Service title"
+              placeholder="e.g. Private studio tutoring"
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
             />
@@ -167,7 +204,7 @@ export default function ServiceManagement() {
             <Label>Description</Label>
             <Textarea
               className="mt-1"
-              placeholder="Description"
+              placeholder="How clients book or experience this offering"
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
             />
@@ -176,7 +213,7 @@ export default function ServiceManagement() {
             <Label>Category</Label>
             <Input
               className="mt-1"
-              placeholder="Category"
+              placeholder="Teaching, Commissions, Workshops…"
               value={form.category}
               onChange={(e) => setForm({ ...form, category: e.target.value })}
             />
@@ -195,10 +232,9 @@ export default function ServiceManagement() {
               onChange={(e) => setForm({ ...form, is_published: e.target.checked })}
             />
             <label htmlFor="publish-new" className="text-sm">
-              Publish immediately
+              Publish immediately (shows on Home)
             </label>
           </div>
-          {error ? <p className="text-sm text-destructive">{error}</p> : null}
           <Button onClick={handleAddService} disabled={isLoading} className="w-full bg-[#1e3a5f]">
             <Plus className="w-4 h-4 mr-2" />
             Add service
@@ -213,7 +249,16 @@ export default function ServiceManagement() {
         <CardContent>
           <div className="grid md:grid-cols-2 gap-4">
             {services.length === 0 ? (
-              <p className="text-slate-600 col-span-full">No services created yet.</p>
+              <div className="col-span-full text-center space-y-3 py-4">
+                <p className="text-slate-800 font-medium">No studio services yet.</p>
+                <p className="text-sm text-slate-600 max-w-md mx-auto">
+                  Seed tutoring, commissions, and workshop day cards — or create your own. Publish so
+                  visitors see them on Home.
+                </p>
+                <Button variant="outline" onClick={seedDefaults} disabled={saving}>
+                  Add tutoring, commissions & workshop days
+                </Button>
+              </div>
             ) : (
               services.map((service) => (
                 <div key={service.id} className="border border-border rounded-lg overflow-hidden">
@@ -292,6 +337,7 @@ export default function ServiceManagement() {
               <Label>Category</Label>
               <Input
                 className="mt-1"
+                placeholder="Teaching, Commissions, Workshops…"
                 value={editForm.category}
                 onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
               />
@@ -310,7 +356,7 @@ export default function ServiceManagement() {
                 onChange={(e) => setEditForm({ ...editForm, is_published: e.target.checked })}
               />
               <label htmlFor="publish-edit" className="text-sm">
-                Published
+                Published (visible on Home)
               </label>
             </div>
           </div>
@@ -319,7 +365,7 @@ export default function ServiceManagement() {
               Cancel
             </Button>
             <Button onClick={handleUpdate} disabled={isLoading} className="bg-[#1e3a5f]">
-              Save changes
+              Save
             </Button>
           </DialogFooter>
         </DialogContent>

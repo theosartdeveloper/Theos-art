@@ -11,13 +11,13 @@ export const PROGRAM_TYPES = [
 export type ProgramType = (typeof PROGRAM_TYPES)[number]
 
 export const PROGRAM_TYPE_LABELS: Record<ProgramType, string> = {
-  training: 'Training',
-  internship: 'Internship',
+  training: 'Studio programme',
+  internship: 'Creative residency',
   mentorship: 'Mentorship',
-  career_guidance: 'Career guidance',
+  career_guidance: 'Portfolio guidance',
   workshop: 'Workshop',
-  webinar: 'Public webinar',
-  event: 'Event',
+  webinar: 'Online session',
+  event: 'Art event',
 }
 
 export const STUDENT_TRACKS = [
