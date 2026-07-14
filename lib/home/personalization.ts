@@ -109,15 +109,15 @@ export function resolveHomeHeroCtas(
     return {
       primaryLabel: `Go to ${personalization.portal.label.toLowerCase()}`,
       primaryUrl: personalization.portal.href,
-      secondaryLabel: 'Explore Library',
-      secondaryUrl: '/library',
+      secondaryLabel: 'Art Gallery',
+      secondaryUrl: '/art-gallery',
     }
   }
 
   return {
-    primaryLabel: 'Create account',
-    primaryUrl: '/auth/register',
-    secondaryLabel: 'Browse programmes',
-    secondaryUrl: '/learning',
+    primaryLabel: heroDefaults?.primaryLabel?.trim() || 'Create account',
+    primaryUrl: heroDefaults?.primaryUrl?.trim() || '/auth/register',
+    secondaryLabel: 'Art Gallery',
+    secondaryUrl: '/art-gallery',
   }
 }

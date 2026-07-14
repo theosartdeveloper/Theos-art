@@ -98,10 +98,10 @@ export const DEFAULT_WEB_SETTINGS: WebSettingsForm = {
     subtitle:
       'Original artworks and quality art materials in Kigali — create, collect, and supply your studio.',
     background_image: '/hero/playlist',
-    cta_primary_label: 'Browse shop',
-    cta_primary_url: '/shop',
-    cta_secondary_label: 'About us',
-    cta_secondary_url: '/about',
+    cta_primary_label: 'Create account',
+    cta_primary_url: '/auth/register',
+    cta_secondary_label: 'Art Gallery',
+    cta_secondary_url: '/art-gallery',
   },
 }
 
