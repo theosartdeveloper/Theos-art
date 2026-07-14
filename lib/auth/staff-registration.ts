@@ -13,10 +13,10 @@ export function isLoginAllowedStatus(status: string | null | undefined): boolean
 export function loginBlockedMessage(status: string, role: string): string {
   if (status === 'pending_approval') {
     if (role === 'lecturer' || role === 'instructor') {
-      return 'Your lecturer account is awaiting admin approval. An administrator must activate your account and set permissions before you can sign in.'
+      return 'Your instructor account is awaiting admin approval. An administrator must activate your account and set permissions before you can sign in.'
     }
     if (role === 'engineer') {
-      return 'Your engineer account is awaiting admin approval. An administrator must activate your account before you can sign in.'
+      return 'Your artist account is awaiting admin approval. An administrator must activate your account before you can sign in.'
     }
     return 'Your account is awaiting admin approval. Please contact the administrator.'
   }

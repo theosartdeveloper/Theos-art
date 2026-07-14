@@ -11,7 +11,7 @@ Through our Theos Art Hub platform, we offer studio pieces, supplies, and commun
   ('company_phone_display', '+250 783 086 093'),
   ('company_whatsapp', '250783086093'),
   ('company_address', '342G+JX, Kigali, Rwanda'),
-  ('company_logo_url', '/images/theos-art-logo.png'),
+  ('company_logo_url', '/images/theos-art-logo-v2.png'),
   ('payment_momo_code', '581661'),
   ('payment_account_name', 'THEOSART LTD'),
   ('payment_method_label', 'MTN Mobile Money (MoMo Pay)'),

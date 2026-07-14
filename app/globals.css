@@ -54,10 +54,10 @@
   --sidebar-ring: oklch(0.75 0.2 80); /* Gold */
 
   /* Public site brand (Energy & Logics Engineering Hub) */
-  --brand-navy: #111111;
-  --brand-navy-deep: #0a0a0a;
-  --brand-sky: #f05a1a;
-  --brand-orange: #f05a1a;
+  --brand-navy: #3a3a3a;
+  --brand-navy-deep: #2c2c2c;
+  --brand-sky: #f08a28;
+  --brand-orange: #f08a28;
 }
 
 .dark {

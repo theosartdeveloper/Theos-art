@@ -18,6 +18,7 @@ import { COMPANY } from '@/lib/company/constants'
 const PRIMARY_NAV = [
   { href: '/', label: 'Home' },
   { href: '/shop', label: 'Shop' },
+  { href: '/learning', label: 'Learning' },
   { href: '/art-gallery', label: 'Art Gallery' },
   { href: '/about', label: 'About' },
 ] as const
@@ -39,16 +40,16 @@ function BrandMark({
   compact?: boolean
 }) {
   return (
-    <div className="bg-white rounded-md p-1 shrink-0 shadow-sm border border-white/80">
+    <div className="bg-white rounded-md p-1.5 shrink-0 shadow-sm border border-white/80">
       <Image
         src={logoUrl}
         alt={`${COMPANY.brandName} logo`}
-        width={compact ? 40 : 120}
-        height={compact ? 40 : 48}
+        width={compact ? 40 : 140}
+        height={compact ? 40 : 56}
         className={
           compact
             ? 'rounded object-contain h-9 w-9'
-            : 'rounded object-contain h-10 w-auto max-h-11 max-w-[140px]'
+            : 'rounded object-contain h-11 w-auto max-h-12 max-w-[150px]'
         }
         priority
         unoptimized
@@ -181,15 +182,9 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
         </div>
       </div>
 
-      <div className="lg:hidden flex w-full items-center justify-between gap-3 px-4 py-2">
-        <div className="flex items-center gap-2 min-w-0">
-          <MobileNavSheet logoUrl={logoUrl} open={mobileOpen} onOpenChange={setMobileOpen} />
-          <Link href="/" className="flex items-center gap-2 no-underline hover:no-underline min-w-0">
-            <BrandMark logoUrl={logoUrl} compact />
-            <span className="font-bold text-sm text-white truncate">{COMPANY.brandName}</span>
-          </Link>
-        </div>
-
+      {/* Mobile: menu + login only — brand mark lives in the slide-out sidebar */}
+      <div className="lg:hidden flex w-full items-center justify-between gap-3 px-4 py-2.5">
+        <MobileNavSheet logoUrl={logoUrl} open={mobileOpen} onOpenChange={setMobileOpen} />
         <div className="site-header-mobile-auth flex items-center shrink-0">
           <Link href="/auth/login" className="no-underline hover:no-underline">
             <Button

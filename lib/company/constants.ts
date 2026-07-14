@@ -10,7 +10,7 @@ export const COMPANY = {
   phoneDisplay: '+250 783 086 093',
   whatsapp: '250783086093',
   address: '342G+JX, Kigali, Rwanda',
-  logoUrl: '/images/theos-art-logo.png',
+  logoUrl: '/images/theos-art-logo-v2.png',
   region: 'East Africa',
   timezone: 'Central Africa Time (CAT, UTC+2)',
   /** Canonical public site URL used on certificates and QR codes */

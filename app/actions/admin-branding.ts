@@ -6,7 +6,7 @@ import { PERMISSIONS } from '@/lib/admin/permissions'
 
 export async function getSiteBranding() {
   await requireAdminPermission(PERMISSIONS.SETTINGS_MANAGE)
-  if (!supabaseAdmin) return { logoUrl: '/images/theos-art-logo.png' }
+  if (!supabaseAdmin) return { logoUrl: '/images/theos-art-logo-v2.png' }
 
   const { data } = await supabaseAdmin
     .from('site_settings')
@@ -14,7 +14,7 @@ export async function getSiteBranding() {
     .eq('key', 'company_logo_url')
     .maybeSingle()
 
-  return { logoUrl: data?.value || '/images/theos-art-logo.png' }
+  return { logoUrl: data?.value || '/images/theos-art-logo-v2.png' }
 }
 
 export async function updateCompanyLogo(logoUrl: string) {

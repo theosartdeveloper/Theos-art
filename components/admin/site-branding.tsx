@@ -13,7 +13,7 @@ type Props = {
   initialLogoUrl?: string
 }
 
-export default function SiteBrandingPanel({ initialLogoUrl = '/images/energy-logics-logo.png' }: Props) {
+export default function SiteBrandingPanel({ initialLogoUrl = '/images/theos-art-logo-v2.png' }: Props) {
   const [logoUrl, setLogoUrl] = useState(initialLogoUrl)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')

@@ -14,14 +14,14 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import Link from 'next/link'
-import { AlertCircle, CheckCircle2, Cpu, GraduationCap } from 'lucide-react'
+import { AlertCircle, CheckCircle2, GraduationCap, Palette } from 'lucide-react'
 import { COMPANY } from '@/lib/company/constants'
 import { SiteHeader } from '@/components/layout/site-header'
 import { cn } from '@/lib/utils'
 
-type LoginRole = 'student' | 'lecturer' | 'engineer' | 'admin' | 'mentor'
+type LoginRole = 'student' | 'lecturer' | 'engineer' | 'admin' | 'mentor' | 'instructor'
 type PublicRole = 'student' | 'engineer'
-type StaffRole = 'lecturer' | 'mentor' | 'admin'
+type StaffRole = 'lecturer' | 'admin'
 
 const PUBLIC_ROLES: {
   value: PublicRole
@@ -29,17 +29,16 @@ const PUBLIC_ROLES: {
   icon: typeof GraduationCap
 }[] = [
   { value: 'student', label: 'Student', icon: GraduationCap },
-  { value: 'engineer', label: 'Engineer', icon: Cpu },
+  { value: 'engineer', label: 'Artist', icon: Palette },
 ]
 
 const STAFF_ROLES: { value: StaffRole; label: string }[] = [
-  { value: 'lecturer', label: 'Lecturer' },
-  { value: 'mentor', label: 'Mentor' },
+  { value: 'lecturer', label: 'Instructor' },
   { value: 'admin', label: 'Administrator' },
 ]
 
 function isStaffRole(value: string): value is StaffRole {
-  return value === 'lecturer' || value === 'mentor' || value === 'admin'
+  return value === 'lecturer' || value === 'admin'
 }
 
 function isPublicRole(value: string): value is PublicRole {
@@ -69,6 +68,15 @@ function LoginForm() {
   const staffActive = isStaffRole(role)
 
   const applyRoleFromParam = (roleParam: string) => {
+    // Mentor stays wired in DB/auth but is not shown on this form
+    if (roleParam === 'mentor') {
+      setRole('lecturer')
+      return
+    }
+    if (roleParam === 'instructor') {
+      setRole('lecturer')
+      return
+    }
     if (isPublicRole(roleParam) || isStaffRole(roleParam)) {
       setRole(roleParam)
     }

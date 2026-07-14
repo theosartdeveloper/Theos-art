@@ -12,7 +12,7 @@ INSERT INTO site_settings (key, value) VALUES
   ('company_address', '342G+JX, Kigali, Rwanda'),
   ('company_slogan', 'Art that speaks'),
   ('company_tagline', 'Original artworks and quality art materials in Kigali, Rwanda.'),
-  ('company_logo_url', '/images/theos-art-logo.png'),
+  ('company_logo_url', '/images/theos-art-logo-v2.png'),
   ('payment_momo_code', '581661'),
   ('payment_account_name', 'THEOSART LTD'),
   ('payment_method_label', 'MTN Mobile Money (MoMo Pay)'),

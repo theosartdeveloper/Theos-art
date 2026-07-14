@@ -212,7 +212,7 @@ function RegisterForm() {
               type="button"
               className="flex w-full items-center justify-center gap-1 text-sm text-slate-500 hover:text-slate-800 py-1"
             >
-              {role === 'student' ? 'Register as lecturer or engineer' : `Account type: ${role}`}
+              {role === 'student' ? 'Register as instructor or artist' : `Account type: ${role}`}
               <ChevronDown
                 className={`h-4 w-4 transition-transform ${showOtherRoles ? 'rotate-180' : ''}`}
               />
@@ -223,9 +223,9 @@ function RegisterForm() {
               </p>
               {(
                 [
-                  ['student', 'Student', 'Enroll in courses and programmes'],
-                  ['lecturer', 'Lecturer', 'Teaching — admin approval required'],
-                  ['engineer', 'Engineer', 'Community & support — admin approval required'],
+                  ['student', 'Student', 'Enroll in workshops and programmes'],
+                  ['lecturer', 'Instructor', 'Teaching — admin approval required'],
+                  ['engineer', 'Artist', 'Studio community & support — admin approval required'],
                 ] as const
               ).map(([value, title, desc]) => (
                 <button

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 
-const DEFAULT_LOGO = '/images/energy-logics-logo.png'
+const DEFAULT_LOGO = '/images/theos-art-logo-v2.png'
 
 export async function GET() {
   try {

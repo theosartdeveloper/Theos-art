@@ -33,6 +33,8 @@ export type AdminNavItem = {
   icon: AdminNavIconName
   permission: Permission
   description?: string
+  /** When false, item stays in nav config (wired) but is hidden from admin UI. */
+  uiVisible?: boolean
 }
 
 export type AdminNavGroup = {
@@ -70,7 +72,7 @@ export const ADMIN_NAV: AdminNavGroup[] = [
       },
       {
         id: 'lecturers',
-        label: 'Lecturers',
+        label: 'Instructors',
         href: '/admin/dashboard/lecturers',
         icon: 'user-cog',
         permission: PERMISSIONS.USERS_VIEW,
@@ -78,11 +80,11 @@ export const ADMIN_NAV: AdminNavGroup[] = [
       },
       {
         id: 'engineers',
-        label: 'Engineers',
+        label: 'Artists',
         href: '/admin/dashboard/engineers',
         icon: 'hard-hat',
         permission: PERMISSIONS.USERS_VIEW,
-        description: 'Engineering support accounts and subscriptions',
+        description: 'Artist accounts and studio support',
       },
       {
         id: 'users',
@@ -103,7 +105,7 @@ export const ADMIN_NAV: AdminNavGroup[] = [
   },
   {
     id: 'admissions',
-    label: 'Admissions & payments',
+    label: 'Learning admissions',
     items: [
       {
         id: 'applications',
@@ -145,7 +147,7 @@ export const ADMIN_NAV: AdminNavGroup[] = [
   },
   {
     id: 'commerce',
-    label: 'Products & sales',
+    label: 'Shop',
     items: [
       {
         id: 'products',
@@ -196,7 +198,7 @@ export const ADMIN_NAV: AdminNavGroup[] = [
   },
   {
     id: 'learning',
-    label: 'Learning & delivery',
+    label: 'Learning',
     items: [
       {
         id: 'courses',
@@ -232,7 +234,7 @@ export const ADMIN_NAV: AdminNavGroup[] = [
   },
   {
     id: 'public',
-    label: 'Public website',
+    label: 'Home & Art Gallery',
     items: [
       {
         id: 'announcements',
@@ -267,11 +269,11 @@ export const ADMIN_NAV: AdminNavGroup[] = [
       },
       {
         id: 'energy-library',
-        label: 'Theos Art Library',
+        label: 'Art Gallery',
         href: '/admin/dashboard/energy-library',
         icon: 'book-open',
         permission: PERMISSIONS.CONTENT_ANNOUNCEMENTS,
-        description: 'Public gallery, books, and culture on /library',
+        description: 'Public gallery, books, and culture on /art-gallery',
       },
       {
         id: 'engineering-analytics',
@@ -394,15 +396,8 @@ export const ADMIN_MOBILE_HUBS: AdminMobileHub[] = [
     groupIds: ['overview'],
   },
   {
-    id: 'people',
-    label: 'People',
-    href: '/admin/dashboard/students',
-    icon: 'users',
-    groupIds: ['people'],
-  },
-  {
     id: 'commerce',
-    label: 'Products',
+    label: 'Shop',
     href: '/admin/dashboard/products',
     icon: 'shopping-bag',
     groupIds: ['commerce'],
@@ -412,21 +407,48 @@ export const ADMIN_MOBILE_HUBS: AdminMobileHub[] = [
     label: 'Learning',
     href: '/admin/dashboard/courses',
     icon: 'book-open',
-    groupIds: ['learning'],
+    groupIds: ['learning', 'admissions', 'people'],
   },
   {
     id: 'public',
-    label: 'Public',
-    href: '/admin/dashboard/announcements',
+    label: 'Gallery',
+    href: '/admin/dashboard/energy-library',
     icon: 'globe',
-    groupIds: ['public', 'admissions', 'support', 'system'],
+    groupIds: ['public'],
   },
 ]
+
+/**
+ * Theos Art admin sidebar: only Learning / Shop / Art Gallery / Home-related items.
+ * All other ADMIN_NAV entries stay defined for future use (findNavItem, deep links).
+ */
+const THEOS_ART_ADMIN_VISIBLE_IDS = new Set([
+  'overview',
+  'students',
+  'enrollments',
+  'payments',
+  'certificates',
+  'products',
+  'stock',
+  'orders',
+  'categories',
+  'courses',
+  'announcements',
+  'energy-library',
+  'services',
+  'reviews',
+  'settings',
+])
 
 export function filterAdminNav(permissions: string[] | undefined): AdminNavGroup[] {
   return ADMIN_NAV.map((group) => ({
     ...group,
-    items: group.items.filter((item) => hasPermission(permissions, item.permission)),
+    items: group.items.filter(
+      (item) =>
+        THEOS_ART_ADMIN_VISIBLE_IDS.has(item.id) &&
+        item.uiVisible !== false &&
+        hasPermission(permissions, item.permission)
+    ),
   })).filter((group) => group.items.length > 0)
 }
 
