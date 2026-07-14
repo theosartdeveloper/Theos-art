@@ -1,3 +1,5 @@
+import { promises as fs } from 'fs'
+import path from 'path'
 import { Resend } from 'resend'
 import { COMPANY } from '@/lib/company/constants'
 import { getCompanyLogoUrl } from '@/lib/platform/branding'
@@ -9,6 +11,9 @@ export const EMAIL_FROM =
 
 export const ADMIN_NOTIFICATION_EMAIL =
   process.env.ADMIN_NOTIFICATION_EMAIL?.trim() || COMPANY.email
+
+/** Content-ID for the company logo embedded in every branded email. */
+export const EMAIL_LOGO_CID = 'theos-art-logo'
 
 export function isResendConfigured(): boolean {
   return Boolean(process.env.RESEND_API_KEY?.trim())
@@ -30,11 +35,58 @@ export function absolutePublicUrl(pathOrUrl: string): string {
 
 export type SendEmailResult = { success: boolean; error?: unknown; skipped?: boolean }
 
+type LogoAttachment = {
+  filename: string
+  contentId: string
+  content?: Buffer
+  path?: string
+}
+
+async function resolveLogoAttachment(preferredUrl?: string): Promise<LogoAttachment | null> {
+  const localFile = path.join(process.cwd(), 'public', 'images', 'theos-art-logo-v2.png')
+
+  // Prefer bundling the file so clients don't need to fetch a remote URL
+  try {
+    const content = await fs.readFile(localFile)
+    if (content.length > 0) {
+      return {
+        filename: 'theos-art-logo.png',
+        contentId: EMAIL_LOGO_CID,
+        content,
+      }
+    }
+  } catch {
+    // fall through to remote / custom logo
+  }
+
+  let logoUrl = preferredUrl?.trim() || ''
+  if (!logoUrl) {
+    try {
+      logoUrl = await getCompanyLogoUrl()
+    } catch {
+      logoUrl = COMPANY.logoUrl
+    }
+  }
+
+  const absolute = absolutePublicUrl(logoUrl || COMPANY.logoUrl)
+  if (!absolute) return null
+
+  // Let Resend fetch and embed the hosted logo
+  return {
+    filename: 'theos-art-logo.png',
+    contentId: EMAIL_LOGO_CID,
+    path: absolute,
+  }
+}
+
 export async function sendEmail(input: {
   to: string | string[]
   subject: string
   html: string
   replyTo?: string
+  /** When true (default), embed company logo as CID if the HTML references it. */
+  embedLogo?: boolean
+  logoUrl?: string
 }): Promise<SendEmailResult> {
   const recipients = (Array.isArray(input.to) ? input.to : [input.to]).filter(Boolean)
   if (!recipients.length) {
@@ -46,6 +98,9 @@ export async function sendEmail(input: {
     return { success: false, skipped: true, error: 'RESEND_API_KEY not configured' }
   }
 
+  const embedLogo = input.embedLogo !== false && input.html.includes(`cid:${EMAIL_LOGO_CID}`)
+  const logoAttachment = embedLogo ? await resolveLogoAttachment(input.logoUrl) : null
+
   try {
     const { error } = await resend.emails.send({
       from: EMAIL_FROM,
@@ -53,6 +108,19 @@ export async function sendEmail(input: {
       subject: input.subject,
       html: input.html,
       ...(input.replyTo ? { reply_to: input.replyTo } : {}),
+      ...(logoAttachment
+        ? {
+            attachments: [
+              {
+                filename: logoAttachment.filename,
+                contentId: logoAttachment.contentId,
+                ...(logoAttachment.content
+                  ? { content: logoAttachment.content }
+                  : { path: logoAttachment.path }),
+              },
+            ],
+          }
+        : {}),
     })
     if (error) {
       console.error('[email] Send failed:', input.subject, error)
@@ -78,7 +146,10 @@ export function emailLayout(options: {
   subtitle?: string
   bodyHtml: string
   headerTone?: 'primary' | 'neutral' | 'success' | 'warning'
-  /** Absolute or site-relative logo URL shown in the email header. */
+  /**
+   * Optional absolute/relative logo URL used only as a downloadable attachment source.
+   * The visible `<img>` always uses the CID so clients do not hot-link the website.
+   */
   logoUrl?: string
 }): string {
   const headerColors = {
@@ -89,7 +160,13 @@ export function emailLayout(options: {
   }
   const headerBg = headerColors[options.headerTone ?? 'primary']
   const year = new Date().getFullYear()
-  const logoSrc = absolutePublicUrl(options.logoUrl || COMPANY.logoUrl)
+
+  // White plate behind the logo — brand mark stays readable on the dark header,
+  // and CID embedding avoids broken remote hotlinks in Gmail/Outlook.
+  const logoBlock = `
+        <div style="margin:0 auto 16px;display:inline-block;background:#ffffff;padding:10px 16px;border-radius:10px;line-height:0;">
+          <img src="cid:${EMAIL_LOGO_CID}" alt="${escapeHtml(COMPANY.brandName)}" width="140" height="44" style="display:block;max-width:140px;max-height:44px;width:auto;height:auto;border:0;outline:none;">
+        </div>`
 
   return `<!DOCTYPE html>
 <html>
@@ -100,7 +177,6 @@ export function emailLayout(options: {
       body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; line-height: 1.6; color: #1e293b; margin: 0; background: #f1f5f9; }
       .container { max-width: 600px; margin: 0 auto; padding: 20px; }
       .header { background: ${headerBg}; color: white; padding: 28px 24px; text-align: center; border-radius: 8px 8px 0 0; }
-      .logo { max-height: 52px; max-width: 180px; margin: 0 auto 14px; display: block; object-fit: contain; }
       .content { background: #ffffff; padding: 28px 24px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 8px 8px; }
       .footer { text-align: center; padding: 20px; font-size: 12px; color: #64748b; }
       .button { background: #f08a28; color: white !important; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block; margin: 16px 0; font-weight: 600; }
@@ -114,11 +190,7 @@ export function emailLayout(options: {
   <body>
     <div class="container">
       <div class="header">
-        ${
-          logoSrc
-            ? `<img class="logo" src="${escapeHtml(logoSrc)}" alt="${escapeHtml(COMPANY.brandName)}" width="160" height="52">`
-            : ''
-        }
+        ${logoBlock}
         <h1>${escapeHtml(options.title)}</h1>
         ${options.subtitle ? `<p class="subtitle">${escapeHtml(options.subtitle)}</p>` : ''}
       </div>
@@ -135,7 +207,7 @@ export function emailLayout(options: {
 </html>`
 }
 
-/** Same as emailLayout but injects the live company logo from site settings when available. */
+/** Same as emailLayout but records the live company logo URL for CID attachment embedding. */
 export async function brandedEmailLayout(
   options: Omit<Parameters<typeof emailLayout>[0], 'logoUrl'> & { logoUrl?: string }
 ): Promise<string> {
@@ -147,6 +219,7 @@ export async function brandedEmailLayout(
       logoUrl = COMPANY.logoUrl
     }
   }
+  // HTML always uses cid:; logoUrl is resolved again in sendEmail for the attachment payload.
   return emailLayout({ ...options, logoUrl })
 }
 
