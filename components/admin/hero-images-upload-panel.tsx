@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/progress'
 import { HERO_IMAGE_FILES } from '@/lib/media/hero-images'
 import { HERO_IMAGE_MAX_BYTES } from '@/lib/storage/hero-image-upload'
+import { uploadHeroFileWithFallback } from '@/lib/admin/direct-upload'
 import { CheckCircle2, ImageIcon, Upload } from 'lucide-react'
 
 type ImageStatus = {
@@ -17,42 +18,6 @@ type ImageStatus = {
 
 function formatMb(bytes: number): string {
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`
-}
-
-function uploadWithProgress(
-  signedUrl: string,
-  file: File,
-  contentType: string,
-  onProgress: (percent: number) => void,
-  signal: AbortSignal
-): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest()
-    xhr.open('PUT', signedUrl)
-    xhr.setRequestHeader('Content-Type', contentType)
-
-    xhr.upload.onprogress = (event) => {
-      if (event.lengthComputable && event.total > 0) {
-        onProgress(Math.round((event.loaded / event.total) * 100))
-      }
-    }
-
-    xhr.onload = () => {
-      if (xhr.status >= 200 && xhr.status < 300) {
-        resolve()
-        return
-      }
-      const detail = xhr.responseText?.slice(0, 200)
-      reject(new Error(detail ? `Upload failed (${xhr.status}): ${detail}` : `Upload failed (${xhr.status})`))
-    }
-
-    xhr.onerror = () => reject(new Error('Network error during upload'))
-    xhr.onabort = () => reject(new Error('Upload cancelled'))
-
-    const onAbort = () => xhr.abort()
-    signal.addEventListener('abort', onAbort, { once: true })
-    xhr.send(file)
-  })
 }
 
 async function applyHeroMedia(mode: 'images' | 'videos') {
@@ -141,13 +106,15 @@ export function HeroImagesUploadPanel({
           throw new Error(signData.hint ? `${signData.error} — ${signData.hint}` : signData.error || `Could not sign ${file}`)
         }
 
-        await uploadWithProgress(
-          signData.signedUrl,
-          blob,
-          signData.contentType || blob.type || 'image/png',
-          setProgressPercent,
-          abortRef.current.signal
-        )
+        await uploadHeroFileWithFallback({
+          signedUrl: signData.signedUrl,
+          file: blob,
+          slotName: file,
+          contentType: signData.contentType || blob.type || 'image/png',
+          proxyEndpoint: '/api/admin/hero-images',
+          onProgress: setProgressPercent,
+          signal: abortRef.current.signal,
+        })
         ok += 1
       }
 

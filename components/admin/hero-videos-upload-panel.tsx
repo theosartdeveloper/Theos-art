@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/progress'
 import { HERO_VIDEO_FILES } from '@/lib/media/hero-videos'
 import { HERO_VIDEO_MAX_BYTES } from '@/lib/storage/hero-video-upload'
+import { uploadHeroFileWithFallback } from '@/lib/admin/direct-upload'
 import { CheckCircle2, Upload, Video } from 'lucide-react'
 
 type VideoStatus = {
@@ -17,43 +18,6 @@ type VideoStatus = {
 
 function formatMb(bytes: number): string {
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`
-}
-
-function uploadWithProgress(
-  signedUrl: string,
-  file: File,
-  contentType: string,
-  onProgress: (percent: number) => void,
-  signal: AbortSignal
-): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest()
-    xhr.open('PUT', signedUrl)
-    xhr.setRequestHeader('Content-Type', contentType)
-
-    xhr.upload.onprogress = (event) => {
-      if (event.lengthComputable && event.total > 0) {
-        onProgress(Math.round((event.loaded / event.total) * 100))
-      }
-    }
-
-    xhr.onload = () => {
-      if (xhr.status >= 200 && xhr.status < 300) {
-        resolve()
-        return
-      }
-      const detail = xhr.responseText?.slice(0, 200)
-      reject(new Error(detail ? `Upload failed (${xhr.status}): ${detail}` : `Upload failed (${xhr.status})`))
-    }
-
-    xhr.onerror = () => reject(new Error('Network error during upload — check your connection and try again'))
-    xhr.onabort = () => reject(new Error('Upload cancelled'))
-
-    const onAbort = () => xhr.abort()
-    signal.addEventListener('abort', onAbort, { once: true })
-
-    xhr.send(file)
-  })
 }
 
 async function applyHeroMedia(mode: 'images' | 'videos') {
@@ -160,13 +124,15 @@ export function HeroVideosUploadPanel({
           throw new Error(`No upload URL returned for ${file}`)
         }
 
-        await uploadWithProgress(
-          signData.signedUrl,
-          blob,
-          signData.contentType || blob.type || 'application/octet-stream',
-          setProgressPercent,
-          abortRef.current.signal
-        )
+        await uploadHeroFileWithFallback({
+          signedUrl: signData.signedUrl,
+          file: blob,
+          slotName: file,
+          contentType: signData.contentType || blob.type || 'application/octet-stream',
+          proxyEndpoint: '/api/admin/hero-videos',
+          onProgress: setProgressPercent,
+          signal: abortRef.current.signal,
+        })
         ok += 1
       }
 
@@ -202,7 +168,9 @@ export function HeroVideosUploadPanel({
           <p className="text-sm text-slate-600 mt-1">
             Upload replaces the previous clip on media storage and{' '}
             <strong>automatically switches</strong> the homepage to{' '}
-            <code className="text-xs">/videos/playlist</code> with a fresh cache version (no stale media).
+            <code className="text-xs">/videos/playlist</code> with a fresh cache version.
+            If upload fails with a CORS / blocked message, update Cloudflare R2 CORS using{' '}
+            <code className="text-xs">scripts/43-r2-cors.json</code> (include this site&apos;s origin).
           </p>
           <p className="text-xs text-slate-500 mt-1">
             Max {formatMb(HERO_VIDEO_MAX_BYTES)} per file. MP4 is recommended over MOV.

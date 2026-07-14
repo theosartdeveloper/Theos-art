@@ -37,21 +37,26 @@ Hero videos and large lesson files upload with **presigned PUT** from the browse
 
 Bucket → **Settings** → **CORS policy** → paste `scripts/43-r2-cors.json`.
 
-Add your Vercel production URL and `http://localhost:3000` for local admin uploads. Example:
+This file includes `www.theosartltd.com`, `theosart.com`, localhost, and `*` so admin uploads from Vercel or a custom domain are not blocked. Without matching CORS, the admin UI shows a generic **network error** during video upload.
+
+Add your live admin origin if it is different. Example:
 
 ```json
 [
   {
     "AllowedOrigins": [
+      "https://www.theosartltd.com",
+      "https://theosartltd.com",
       "https://www.theosart.com",
       "https://theosart.com",
       "https://your-project.vercel.app",
-      "http://localhost:3000"
+      "http://localhost:3000",
+      "*"
     ],
-    "AllowedMethods": ["GET", "PUT", "HEAD"],
+    "AllowedMethods": ["GET", "PUT", "HEAD", "POST"],
     "AllowedHeaders": ["*"],
-    "ExposeHeaders": ["ETag"],
-    "MaxAgeSeconds": 3600
+    "ExposeHeaders": ["ETag", "Content-Type"],
+    "MaxAgeSeconds": 86400
   }
 ]
 ```

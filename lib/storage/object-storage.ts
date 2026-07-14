@@ -138,12 +138,18 @@ export async function createSignedPutUrl(
 
   if (isR2Configured()) {
     const client = getR2Client()
+    // Do NOT sign Content-Type into the URL. Signing it forces the browser to send the
+    // exact header; any mismatch (or CORS blocking that header) shows up as a
+    // generic "Network error" on XMLHttpRequest. Object type is still set by the
+    // Content-Type header the client sends on PUT.
     const command = new PutObjectCommand({
       Bucket: getR2BucketName(),
       Key: normalized,
-      ContentType: contentType,
     })
-    const signedUrl = await getSignedUrl(client, command, { expiresIn: expiresInSeconds })
+    const signedUrl = await getSignedUrl(client, command, {
+      expiresIn: expiresInSeconds,
+      unsignableHeaders: new Set(['content-type', 'content-length']),
+    })
     return {
       signedUrl,
       publicUrl: getPublicUrl(normalized),
@@ -162,6 +168,9 @@ export async function createSignedPutUrl(
   if (error || !data?.signedUrl) {
     throw new Error(error?.message ?? 'Could not create upload URL')
   }
+
+  // Quiet unused param when using Supabase path
+  void contentType
 
   return {
     signedUrl: data.signedUrl,

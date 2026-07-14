@@ -1,13 +1,17 @@
 [
   {
     "AllowedOrigins": [
+      "https://www.theosartltd.com",
+      "https://theosartltd.com",
       "https://www.theosart.com",
       "https://theosart.com",
-      "http://localhost:3000"
+      "http://localhost:3000",
+      "http://127.0.0.1:3000",
+      "*"
     ],
-    "AllowedMethods": ["GET", "PUT", "HEAD"],
+    "AllowedMethods": ["GET", "PUT", "HEAD", "POST"],
     "AllowedHeaders": ["*"],
-    "ExposeHeaders": ["ETag"],
-    "MaxAgeSeconds": 3600
+    "ExposeHeaders": ["ETag", "Content-Type"],
+    "MaxAgeSeconds": 86400
   }
 ]
