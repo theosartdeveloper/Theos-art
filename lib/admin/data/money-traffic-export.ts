@@ -2,6 +2,12 @@ import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import type { FinancialSummary } from '@/lib/admin/data/financial-analytics'
 import { COMPANY } from '@/lib/company/constants'
+import {
+  companyLetterheadRows,
+  drawReportFooter,
+  drawReportHeader,
+  loadReportLogoDataUrl,
+} from '@/lib/admin/data/report-branding'
 
 function escapeCsv(value: string | number): string {
   return `"${String(value).replace(/"/g, '""')}"`
@@ -34,9 +40,10 @@ export function moneyTrafficFileStamp(data: FinancialSummary): string {
 
 /** Excel-compatible SpreadsheetML (.xls) — opens in Excel / Google Sheets without extra packages. */
 export function buildMoneyTrafficExcelXml(data: FinancialSummary): string {
+  const letterhead = companyLetterheadRows()
   const summaryRows: Array<[string, string | number]> = [
+    ['Report', 'Money traffic & shop sales'],
     ['Report range', rangeLabel(data)],
-    ['Generated', new Date().toLocaleString()],
     ['Total website revenue', data.totalRevenue],
     ['E-learning revenue', data.learningRevenue],
     ['Support revenue', data.supportRevenue],
@@ -73,12 +80,12 @@ export function buildMoneyTrafficExcelXml(data: FinancialSummary): string {
     return `<Worksheet ss:Name="${escapeXml(name)}"><Table><Row>${headerXml}</Row>${bodyXml}</Table></Worksheet>`
   }
 
-  const summarySheet = sheet(
-    'Summary',
-    ['Metric', 'Value'],
-    summaryRows.map(([m, v]) => [m, v])
-  )
+  const coverRows = [
+    ...letterhead.map((r) => (r.length === 1 ? [r[0]!, ''] : [r[0] ?? '', r[1] ?? ''])),
+    ...summaryRows,
+  ]
 
+  const summarySheet = sheet('Summary', ['Metric', 'Value'], coverRows)
   const productSheet = sheet(
     'Product sales',
     ['Product', 'Units sold', 'Revenue', 'COGS', 'Profit', 'Stock', 'Cost price', 'Retail price'],
@@ -93,13 +100,11 @@ export function buildMoneyTrafficExcelXml(data: FinancialSummary): string {
       p.retailPrice,
     ])
   )
-
   const dailySheet = sheet(
     'Daily traffic',
     ['Date', 'Shop', 'E-learning', 'Support', 'Total'],
     data.dailyTraffic.map((d) => [d.date, d.shopRevenue, d.learningRevenue, d.supportRevenue, d.total])
   )
-
   const ordersSheet = sheet(
     'Recent orders',
     ['Order', 'Customer', 'Amount', 'Payment', 'Channel', 'Date', 'Profit'],
@@ -127,9 +132,9 @@ ${ordersSheet}
 
 export function buildMoneyTrafficCsv(data: FinancialSummary): string {
   const lines: Array<Array<string | number>> = [
-    ['Theos Art — Money traffic & shop sales'],
+    ...companyLetterheadRows(),
+    ['Money traffic & shop sales'],
     ['Range', rangeLabel(data)],
-    ['Generated', new Date().toLocaleString()],
     [],
     ['Metric', 'Value (RWF unless noted)'],
     ['Total website revenue', data.totalRevenue],
@@ -181,17 +186,14 @@ export function downloadMoneyTrafficCsv(data: FinancialSummary) {
   URL.revokeObjectURL(url)
 }
 
-export function downloadMoneyTrafficPdf(data: FinancialSummary) {
+export async function downloadMoneyTrafficPdf(data: FinancialSummary) {
   const doc = new jsPDF()
-  const generated = new Date().toLocaleString()
-
-  doc.setFontSize(16)
-  doc.text(`${COMPANY.brandName} — Money traffic`, 14, 18)
-  doc.setFontSize(10)
-  doc.setTextColor(100)
-  doc.text(`Range: ${rangeLabel(data)}`, 14, 26)
-  doc.text(`Generated: ${generated}`, 14, 32)
-  doc.setTextColor(0)
+  const logoDataUrl = await loadReportLogoDataUrl()
+  const startY = drawReportHeader(doc, {
+    title: 'Money traffic & shop sales',
+    subtitle: `Report range: ${rangeLabel(data)}`,
+    logoDataUrl,
+  })
 
   autoTable(doc, {
     head: [['Metric', 'Value']],
@@ -211,15 +213,16 @@ export function downloadMoneyTrafficPdf(data: FinancialSummary) {
       ['Out of stock', String(data.outOfStockCount)],
       ['Pending receipts', String(data.pendingPaymentsCount)],
     ],
-    startY: 38,
+    startY,
     theme: 'striped',
     headStyles: { fillColor: [58, 58, 58] },
     styles: { fontSize: 9 },
+    margin: { left: 14, right: 14 },
   })
 
   const afterSummary = (doc as jsPDF & { lastAutoTable?: { finalY: number } }).lastAutoTable
     ?.finalY
-  const y2 = (afterSummary ?? 38) + 10
+  const y2 = (afterSummary ?? startY) + 10
 
   autoTable(doc, {
     head: [['Product', 'Units', 'Revenue', 'COGS', 'Profit', 'Stock']],
@@ -235,7 +238,14 @@ export function downloadMoneyTrafficPdf(data: FinancialSummary) {
     theme: 'striped',
     headStyles: { fillColor: [240, 138, 40] },
     styles: { fontSize: 8 },
+    margin: { left: 14, right: 14 },
   })
+
+  const pageCount = doc.getNumberOfPages()
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i)
+    drawReportFooter(doc, i, pageCount)
+  }
 
   doc.save(`theos-art-money-traffic-${moneyTrafficFileStamp(data)}.pdf`)
 }
