@@ -19,7 +19,7 @@ import { COMPANY } from '@/lib/company/constants'
 import { SiteHeader } from '@/components/layout/site-header'
 import { cn } from '@/lib/utils'
 
-type LoginRole = 'student' | 'lecturer' | 'engineer' | 'admin' | 'mentor' | 'instructor'
+type LoginRole = 'student' | 'lecturer' | 'engineer' | 'admin' | 'mentor'
 type PublicRole = 'student' | 'engineer'
 type StaffRole = 'lecturer' | 'admin'
 
