@@ -124,10 +124,11 @@ async function countLowStockProducts(): Promise<number> {
   if (!supabaseAdmin) return 0
   const { data, error } = await supabaseAdmin
     .from('products')
-    .select('stock, low_stock_threshold')
-    .eq('status', 'active')
+    .select('stock, low_stock_threshold, status')
+    .neq('status', 'archived')
   if (error || !data) return 0
   return data.filter((row) => {
+    if (String(row.status) === 'draft') return false
     const stock = Number(row.stock ?? 0)
     const threshold = Number(row.low_stock_threshold ?? 5)
     return stock > 0 && stock <= threshold

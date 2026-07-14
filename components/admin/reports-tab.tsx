@@ -121,7 +121,10 @@ export function ReportsTab({ initialData }: { initialData?: AdminReportData }) {
         <div>
           <h3 className="text-lg font-semibold">Admin Reports & Analytics</h3>
           <p className="text-sm text-slate-600 mt-1">
-            Metrics aligned with the dashboard overview and per-programme notifications.
+            Metrics aligned with the dashboard overview and per-programme notifications.{' '}
+            <a href="/admin/dashboard/financial" className="text-[var(--brand-navy)] underline font-medium">
+              Sales &amp; money traffic (Excel / PDF)
+            </a>
           </p>
         </div>
         <DropdownMenu>

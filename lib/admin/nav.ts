@@ -181,11 +181,11 @@ export const ADMIN_NAV: AdminNavGroup[] = [
       },
       {
         id: 'financial',
-        label: 'Financial overview',
+        label: 'Sales & money traffic',
         href: '/admin/dashboard/financial',
         icon: 'bar-chart',
         permission: PERMISSIONS.REPORTS_VIEW,
-        description: 'Revenue, profit, and sales by channel — separate from e-learning',
+        description: 'Revenue, shop profit/loss, stock value — Excel & PDF download',
       },
       {
         id: 'categories',
@@ -445,6 +445,8 @@ const THEOS_ART_ADMIN_VISIBLE_IDS = new Set([
   'products',
   'stock',
   'orders',
+  'pos',
+  'financial',
   'categories',
   'courses',
   'announcements',
@@ -453,6 +455,7 @@ const THEOS_ART_ADMIN_VISIBLE_IDS = new Set([
   'reviews',
   'settings',
   'communications',
+  'reports',
   'security',
 ])
 

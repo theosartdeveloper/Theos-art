@@ -12,7 +12,7 @@ export async function GET() {
 
     const { data, error } = await supabaseAdmin
       .from('products')
-      .select('id, name, sku, stock, low_stock_threshold, status, price')
+      .select('id, name, sku, stock, low_stock_threshold, status, price, discount, cost_price')
       .order('name')
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })

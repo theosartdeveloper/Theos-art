@@ -15,6 +15,8 @@ type StockRow = {
   low_stock_threshold: number | null
   status: string
   price: number
+  discount?: number | null
+  cost_price?: number | null
 }
 
 export default function StockManagement() {
@@ -64,6 +66,21 @@ export default function StockManagement() {
     return rows.filter((row) => Number(draft[row.id]?.stock ?? row.stock ?? 0) <= 0).length
   }, [rows, draft])
 
+  const inventoryAtCost = useMemo(() => {
+    return rows.reduce((sum, row) => {
+      const stock = Number(draft[row.id]?.stock ?? row.stock ?? 0)
+      return sum + stock * Number(row.cost_price ?? 0)
+    }, 0)
+  }, [rows, draft])
+
+  const inventoryAtRetail = useMemo(() => {
+    return rows.reduce((sum, row) => {
+      const stock = Number(draft[row.id]?.stock ?? row.stock ?? 0)
+      const retail = Math.max(0, Number(row.price ?? 0) - Number(row.discount ?? 0))
+      return sum + stock * retail
+    }, 0)
+  }, [rows, draft])
+
   const handleSave = async () => {
     setSaving(true)
     setError('')
@@ -111,7 +128,7 @@ export default function StockManagement() {
         </Button>
       </div>
 
-      <div className="grid sm:grid-cols-3 gap-4">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-slate-600">Products tracked</CardTitle>
@@ -130,6 +147,22 @@ export default function StockManagement() {
           </CardHeader>
           <CardContent className="text-2xl font-bold text-destructive">{outOfStockCount}</CardContent>
         </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-slate-600">Value at cost</CardTitle>
+          </CardHeader>
+          <CardContent className="text-xl font-bold">
+            {Math.round(inventoryAtCost).toLocaleString()} RWF
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-slate-600">Value at retail</CardTitle>
+          </CardHeader>
+          <CardContent className="text-xl font-bold">
+            {Math.round(inventoryAtRetail).toLocaleString()} RWF
+          </CardContent>
+        </Card>
       </div>
 
       {message ? <p className="text-sm text-green-700">{message}</p> : null}
@@ -145,6 +178,8 @@ export default function StockManagement() {
                   <th className="p-3 font-medium">SKU</th>
                   <th className="p-3 font-medium">Status</th>
                   <th className="p-3 font-medium">Stock</th>
+                  <th className="p-3 font-medium">Cost</th>
+                  <th className="p-3 font-medium">Stock value</th>
                   <th className="p-3 font-medium">Low-stock alert at</th>
                   <th className="p-3 font-medium">Level</th>
                 </tr>
@@ -153,6 +188,7 @@ export default function StockManagement() {
                 {rows.map((row) => {
                   const stock = Number(draft[row.id]?.stock ?? row.stock ?? 0)
                   const threshold = Number(draft[row.id]?.threshold ?? row.low_stock_threshold ?? 5)
+                  const cost = Number(row.cost_price ?? 0)
                   const level =
                     stock <= 0 ? 'out' : stock <= threshold ? 'low' : 'ok'
 
@@ -175,6 +211,10 @@ export default function StockManagement() {
                           }
                         />
                       </td>
+                      <td className="p-3 text-slate-700">{cost.toLocaleString()} RWF</td>
+                      <td className="p-3 text-slate-900 font-medium">
+                        {Math.round(stock * cost).toLocaleString()} RWF
+                      </td>
                       <td className="p-3">
                         <Input
                           type="number"
@@ -191,14 +231,15 @@ export default function StockManagement() {
                       </td>
                       <td className="p-3">
                         {level === 'out' ? (
-                          <Badge variant="destructive">Out of stock</Badge>
+                          <Badge variant="destructive" className="gap-1">
+                            <AlertTriangle className="h-3 w-3" /> Out
+                          </Badge>
                         ) : level === 'low' ? (
-                          <Badge className="bg-amber-100 text-amber-800">
-                            <AlertTriangle className="h-3 w-3 mr-1" />
-                            Low
+                          <Badge className="bg-amber-100 text-amber-900 gap-1">
+                            <AlertTriangle className="h-3 w-3" /> Low
                           </Badge>
                         ) : (
-                          <Badge className="bg-green-100 text-green-700">In stock</Badge>
+                          <Badge className="bg-emerald-100 text-emerald-900">OK</Badge>
                         )}
                       </td>
                     </tr>

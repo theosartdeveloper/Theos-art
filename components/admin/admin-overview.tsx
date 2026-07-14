@@ -109,6 +109,24 @@ function buildStudioHubs(stats: AdminStats, permissions: string[]): HubCard[] {
           href: '/admin/dashboard/orders',
         }
       : null,
+    hasPermission(permissions, PERMISSIONS.REPORTS_VIEW)
+      ? {
+          id: 'sales',
+          title: 'Sales & money traffic',
+          description: 'Profit, loss, stock value — download Excel or PDF.',
+          icon: CreditCard,
+          href: '/admin/dashboard/financial',
+        }
+      : null,
+    hasPermission(permissions, PERMISSIONS.REPORTS_VIEW)
+      ? {
+          id: 'reports',
+          title: 'Platform reports',
+          description: 'Users, programmes, and operations summary exports.',
+          icon: BookOpen,
+          href: '/admin/dashboard/reports',
+        }
+      : null,
     hasPermission(permissions, PERMISSIONS.CONTENT_ANNOUNCEMENTS)
       ? {
           id: 'gallery',
