@@ -238,10 +238,11 @@ export const ADMIN_NAV: AdminNavGroup[] = [
     items: [
       {
         id: 'announcements',
-        label: 'Announcements',
+        label: 'Art Events & news',
         href: '/admin/dashboard/announcements',
         icon: 'megaphone',
         permission: PERMISSIONS.CONTENT_ANNOUNCEMENTS,
+        description: 'Homepage Art Events and Announcements',
       },
       {
         id: 'engineering-articles',

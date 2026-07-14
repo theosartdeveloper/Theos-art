@@ -19,14 +19,20 @@ type BrowseOptions = {
   limit?: number
 }
 
-function applyBrowseFilters<T extends { eq: (col: string, val: string) => T }>(
-  query: T,
-  options?: BrowseOptions
-) {
+function applyBrowseFilters<
+  T extends {
+    eq: (col: string, val: string) => T
+    in: (col: string, vals: string[]) => T
+  }
+>(query: T, options?: BrowseOptions) {
   let next = query
   if (options?.pillar) next = next.eq('pillar', options.pillar)
   if (options?.cultureType) next = next.eq('culture_type', options.cultureType)
-  if (options?.galleryType) next = next.eq('gallery_type', options.galleryType)
+  if (options?.galleryType === 'studio_project') {
+    next = next.in('gallery_type', ['studio_project', 'engineering_project'])
+  } else if (options?.galleryType) {
+    next = next.eq('gallery_type', options.galleryType)
+  }
   if (options?.language) next = next.eq('language', options.language)
   return next
 }
@@ -131,7 +137,7 @@ export async function loadFeaturedCultureItems(limit = 3): Promise<EnergyLibrary
 export async function loadFeaturedEngineeringProjects(limit = 6): Promise<EnergyLibraryItem[]> {
   return loadPublishedLibraryItems({
     pillar: 'gallery',
-    galleryType: 'engineering_project',
+    galleryType: 'studio_project',
     limit,
   })
 }

@@ -61,7 +61,9 @@ function parseCultureType(value?: string): LibraryCultureType | undefined {
 }
 
 function parseGalleryType(value?: string): LibraryGalleryType | undefined {
-  if (value === 'photo' || value === 'engineering_project') return value
+  if (value === 'photo' || value === 'studio_project' || value === 'engineering_project') {
+    return value === 'engineering_project' ? 'studio_project' : value
+  }
   return undefined
 }
 
@@ -139,7 +141,7 @@ export default async function LibraryPage({ searchParams }: PageProps) {
                 <p className="text-sm text-slate-600">{t.projectsSubtitle}</p>
               </div>
               <Link
-                href={buildLibraryHref({ category: 'gallery', gallery: 'engineering_project' })}
+                href={buildLibraryHref({ category: 'gallery', gallery: 'studio_project' })}
                 className="text-sm font-medium text-[var(--brand-navy)] underline"
               >
                 {t.viewAllProjects}
@@ -258,7 +260,7 @@ export default async function LibraryPage({ searchParams }: PageProps) {
                       : 'border-slate-300 text-slate-700'
                   }`}
                 >
-                  {type.id === 'engineering_project' ? t.engineeringProject : t.photosEvents}
+                  {type.id === 'studio_project' ? t.engineeringProject : t.photosEvents}
                 </Link>
               ))}
             </div>

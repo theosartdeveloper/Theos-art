@@ -26,7 +26,8 @@ export async function StudioAnnouncementsSection() {
             <div className="bg-slate-50 px-5 py-10 sm:px-8 text-center">
               <Megaphone className="h-8 w-8 text-slate-300 mx-auto mb-3" />
               <p className="text-sm text-slate-600">
-                Studio announcements will appear here once published by an administrator.
+                Studio announcements will appear here once published under{' '}
+                <span className="font-medium text-slate-800">Admin → Art Events & news</span>.
               </p>
             </div>
           ) : (

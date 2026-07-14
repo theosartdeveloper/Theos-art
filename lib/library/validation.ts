@@ -1,4 +1,4 @@
-import type { LibraryGalleryType, LibraryPillar } from '@/lib/library/items'
+import type { LibraryPillar } from '@/lib/library/items'
 import { canSetLibraryPrice } from '@/lib/library/access'
 
 export function validateLibraryItemPayload(payload: Record<string, unknown>) {
@@ -17,10 +17,10 @@ export function validateLibraryItemPayload(payload: Record<string, unknown>) {
     if (images.length === 0 && !cover) {
       return 'Gallery items require at least one image'
     }
-    const galleryType = String(payload.gallery_type ?? 'photo') as LibraryGalleryType
-    if (galleryType === 'engineering_project') {
+    const galleryType = String(payload.gallery_type ?? 'photo')
+    if (galleryType === 'studio_project' || galleryType === 'engineering_project') {
       const description = String(payload.description ?? '').trim()
-      if (!description) return 'Engineering projects require a short description'
+      if (!description) return 'Studio projects require a short description'
     }
   }
 

@@ -120,8 +120,8 @@ function buildStudioHubs(stats: AdminStats, permissions: string[]): HubCard[] {
     hasPermission(permissions, PERMISSIONS.CONTENT_ANNOUNCEMENTS)
       ? {
           id: 'announcements',
-          title: 'Announcements & events',
-          description: 'Homepage news and studio updates visitors see first.',
+          title: 'Art Events & Announcements',
+          description: 'Publish homepage art events and studio news visitors see first.',
           icon: Megaphone,
           href: '/admin/dashboard/announcements',
           stat: `${stats.announcements} published`,

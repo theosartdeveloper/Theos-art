@@ -15,6 +15,7 @@ import {
   LIBRARY_PILLARS,
   libraryStatusBadgeClass,
   libraryStatusLabel,
+  normalizeGalleryType,
   pillarLabel,
   slugifyLibraryTitle,
   type EnergyLibraryItem,
@@ -93,14 +94,18 @@ export default function EnergyLibraryManagement() {
     if (url) setForm((f) => ({ ...f, file_url: url }))
   }
 
-  const uploadGalleryImage = async (file: File) => {
-    const url = await uploadFile(file, 'energy-library')
-    if (url) {
-      setForm((f) => ({
-        ...f,
-        gallery_images: [...f.gallery_images, url],
-        cover_image_url: f.cover_image_url || url,
-      }))
+  const uploadGalleryImages = async (files: FileList | File[]) => {
+    const list = Array.from(files)
+    if (list.length === 0) return
+    for (const file of list) {
+      const url = await uploadFile(file, 'energy-library')
+      if (url) {
+        setForm((f) => ({
+          ...f,
+          gallery_images: [...f.gallery_images, url],
+          cover_image_url: f.cover_image_url || url,
+        }))
+      }
     }
   }
 
@@ -167,7 +172,7 @@ export default function EnergyLibraryManagement() {
       description: item.description ?? '',
       pillar: item.pillar,
       culture_type: item.culture_type ?? '',
-      gallery_type: item.gallery_type ?? 'photo',
+      gallery_type: normalizeGalleryType(item.gallery_type) ?? 'photo',
       project_team: item.project_team ?? '',
       project_year: item.project_year ? String(item.project_year) : '',
       tech_stack: item.tech_stack.join(', '),
@@ -272,7 +277,8 @@ export default function EnergyLibraryManagement() {
                 ))}
               </select>
               <p className="text-xs text-slate-500">
-                Engineering projects are admin-uploaded showcases in the public Gallery.
+                Studio projects showcase finished works and creative process. Photos & events cover
+                openings, visits, and studio life.
               </p>
             </div>
           ) : null}
@@ -325,18 +331,18 @@ export default function EnergyLibraryManagement() {
             />
           </div>
 
-          {form.pillar === 'gallery' && form.gallery_type === 'engineering_project' ? (
+          {form.pillar === 'gallery' && form.gallery_type === 'studio_project' ? (
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label>Project team</Label>
+                <Label>Artists / team</Label>
                 <Input
                   value={form.project_team}
                   onChange={(e) => setForm((f) => ({ ...f, project_team: e.target.value }))}
-                  placeholder="e.g. Solar capstone team 2025"
+                  placeholder="e.g. Theos Art studio team"
                 />
               </div>
               <div className="space-y-2">
-                <Label>Project year</Label>
+                <Label>Year</Label>
                 <Input
                   type="number"
                   value={form.project_year}
@@ -344,11 +350,11 @@ export default function EnergyLibraryManagement() {
                 />
               </div>
               <div className="space-y-2 sm:col-span-2">
-                <Label>Technologies (comma-separated)</Label>
+                <Label>Materials & mediums (comma-separated)</Label>
                 <Input
                   value={form.tech_stack}
                   onChange={(e) => setForm((f) => ({ ...f, tech_stack: e.target.value }))}
-                  placeholder="PVsyst, Arduino, SCADA"
+                  placeholder="Acrylic, canvas, charcoal"
                 />
               </div>
               <div className="space-y-2 sm:col-span-2">
@@ -356,7 +362,7 @@ export default function EnergyLibraryManagement() {
                 <Textarea
                   value={form.body}
                   onChange={(e) => setForm((f) => ({ ...f, body: e.target.value }))}
-                  placeholder="Problem, approach, results, and lessons learned."
+                  placeholder="Concept, process, and what viewers should notice."
                 />
               </div>
             </div>
@@ -378,27 +384,43 @@ export default function EnergyLibraryManagement() {
           />
 
           {form.pillar === 'gallery' ? (
-            <div className="space-y-3">
-              <Label>Gallery images</Label>
+            <div className="space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <div>
+                <Label>Gallery pictures (multiple)</Label>
+                <p className="text-xs text-slate-600 mt-1">
+                  Select several images at once. All of them appear on the Art Gallery item page.
+                  The first upload becomes the cover if none is set.
+                </p>
+              </div>
               <Input
                 ref={galleryFileRef}
                 type="file"
                 accept="image/*"
+                multiple
                 disabled={uploading}
                 onChange={(e) => {
-                  const file = e.target.files?.[0]
-                  if (file) void uploadGalleryImage(file)
+                  const files = e.target.files
+                  if (files?.length) {
+                    void uploadGalleryImages(files).finally(() => {
+                      e.target.value = ''
+                    })
+                  }
                 }}
               />
               {form.gallery_images.length > 0 ? (
-                <ul className="space-y-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {form.gallery_images.map((url, index) => (
-                    <li key={`${url}-${index}`} className="flex items-center gap-2 text-sm">
-                      <span className="truncate flex-1 text-slate-600">{url}</span>
+                    <div
+                      key={`${url}-${index}`}
+                      className="relative aspect-[4/3] overflow-hidden rounded-md border bg-white"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={url} alt="" className="h-full w-full object-cover" />
                       <Button
                         type="button"
-                        variant="outline"
+                        variant="secondary"
                         size="sm"
+                        className="absolute bottom-2 right-2 h-7 text-xs"
                         onClick={() =>
                           setForm((f) => ({
                             ...f,
@@ -408,11 +430,11 @@ export default function EnergyLibraryManagement() {
                       >
                         Remove
                       </Button>
-                    </li>
+                    </div>
                   ))}
-                </ul>
+                </div>
               ) : (
-                <p className="text-xs text-slate-500">Upload one or more images for the gallery.</p>
+                <p className="text-xs text-slate-500">No gallery pictures yet — upload one or more.</p>
               )}
             </div>
           ) : null}

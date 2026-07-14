@@ -85,9 +85,9 @@ export default async function LibraryItemPage({ params }: PageProps) {
           {item.author_name ? (
             <p className="text-sm text-slate-500">By {item.author_name}</p>
           ) : null}
-          {isEngineeringProject(item) ? (
+              {isEngineeringProject(item) ? (
             <div className="flex flex-wrap gap-3 text-sm text-slate-600">
-              {item.project_team ? <span>Team: {item.project_team}</span> : null}
+              {item.project_team ? <span>Artists: {item.project_team}</span> : null}
               {item.project_year ? <span>Year: {item.project_year}</span> : null}
             </div>
           ) : null}

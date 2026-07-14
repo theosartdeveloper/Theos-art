@@ -45,7 +45,7 @@ const emptyForm = {
   type: 'news',
 }
 
-export default function AnnouncementManagementTab() {
+export default function AnnouncementManagementTab({ embedded = false }: { embedded?: boolean }) {
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
@@ -156,10 +156,24 @@ export default function AnnouncementManagementTab() {
     <div className="space-y-6">
       <div className="flex justify-between items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Announcements</h1>
-          <p className="text-slate-600 mt-1">Share news and updates with images on the homepage.</p>
+          {embedded ? (
+            <>
+              <h2 className="text-xl font-bold text-slate-900">Announcements</h2>
+              <p className="text-slate-600 mt-1 text-sm max-w-2xl">
+                Published announcements appear on the homepage <strong>Announcements</strong> section.
+                Add a title, short message, and optional image, then set status to Published.
+              </p>
+            </>
+          ) : (
+            <>
+              <h1 className="text-2xl font-bold">Announcements</h1>
+              <p className="text-slate-600 mt-1">
+                Share news and updates with images on the homepage Announcements section.
+              </p>
+            </>
+          )}
         </div>
-        <Button onClick={() => setIsCreateOpen(true)} className="bg-[#1e3a5f]">
+        <Button onClick={() => setIsCreateOpen(true)} className="bg-[var(--brand-navy)]">
           <Plus className="w-4 h-4 mr-2" />
           Create announcement
         </Button>

@@ -26,7 +26,8 @@ export async function ArtEventsSection() {
             <div className="bg-slate-50 px-5 py-10 sm:px-8 text-center">
               <CalendarDays className="h-8 w-8 text-slate-300 mx-auto mb-3" />
               <p className="text-sm text-slate-600">
-                Upcoming art events will appear here once an administrator uploads and publishes them.
+                Upcoming art events will appear here once an administrator publishes them under{' '}
+                <span className="font-medium text-slate-800">Admin → Art Events & news</span>.
               </p>
             </div>
           ) : (
