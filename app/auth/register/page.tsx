@@ -212,7 +212,11 @@ function RegisterForm() {
               type="button"
               className="flex w-full items-center justify-center gap-1 text-sm text-slate-500 hover:text-slate-800 py-1"
             >
-              {role === 'student' ? 'Register as instructor or artist' : `Account type: ${role}`}
+              {role === 'student'
+                ? 'Register as instructor or artist'
+                : `Account type: ${
+                    role === 'lecturer' ? 'Instructor' : role === 'engineer' ? 'Artist' : 'Student'
+                  }`}
               <ChevronDown
                 className={`h-4 w-4 transition-transform ${showOtherRoles ? 'rotate-180' : ''}`}
               />

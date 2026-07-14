@@ -89,12 +89,12 @@ export function EngineersRegistryPanel() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-slate-600">
-          {rows.length} engineer{rows.length === 1 ? '' : 's'} · subscription payments in{' '}
+          {rows.length} artist{rows.length === 1 ? '' : 's'} · subscription payments in{' '}
           <Link
             href="/admin/dashboard/engineer-subscriptions"
             className="text-[var(--brand-navy)] underline-offset-2 hover:underline"
           >
-            Engineer subscriptions
+            Artist subscriptions
           </Link>
         </p>
         <div className="flex gap-2 w-full sm:w-auto">
@@ -121,10 +121,10 @@ export function EngineersRegistryPanel() {
       ) : null}
 
       {loading ? (
-        <p className="text-sm text-slate-600">Loading engineers…</p>
+        <p className="text-sm text-slate-600">Loading artists…</p>
       ) : rows.length === 0 ? (
         <Card className="border-slate-200 bg-white">
-          <CardContent className="py-10 text-center text-slate-600">No engineers found.</CardContent>
+          <CardContent className="py-10 text-center text-slate-600">No artists found.</CardContent>
         </Card>
       ) : (
         <>
@@ -186,7 +186,7 @@ export function EngineersRegistryPanel() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50 text-left text-slate-800">
-                  <th className="py-3 px-4 font-semibold">Engineer</th>
+                  <th className="py-3 px-4 font-semibold">Artist</th>
                   <th className="py-3 px-4 font-semibold">Phone</th>
                   <th className="py-3 px-4 font-semibold">Account</th>
                   <th className="py-3 px-4 font-semibold">Support plan</th>

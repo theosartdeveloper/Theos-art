@@ -53,6 +53,56 @@ export async function approveStaffAccountMutation(
   return { success: true }
 }
 
+export async function rejectStaffAccountMutation(
+  id: string,
+  reason?: string
+): Promise<{ success: boolean; error?: string }> {
+  if (!supabaseAdmin) return { success: false, error: 'Database not configured' }
+
+  const { data: user, error: fetchError } = await supabaseAdmin
+    .from('users')
+    .select('id, email, first_name, last_name, role, status')
+    .eq('id', id)
+    .maybeSingle()
+
+  if (fetchError || !user) {
+    return { success: false, error: fetchError?.message ?? 'User not found' }
+  }
+
+  if (user.status !== 'pending_approval') {
+    return { success: false, error: 'Only pending accounts can be rejected' }
+  }
+
+  const { error } = await supabaseAdmin
+    .from('users')
+    .update({
+      status: 'inactive',
+      permissions: [],
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+
+  if (error) return { success: false, error: error.message }
+
+  if (user.email) {
+    try {
+      const { sendStaffRejectedEmail } = await import('@/lib/email/notifications')
+      const fullName =
+        [user.first_name, user.last_name].filter(Boolean).join(' ').trim() || user.email
+      void sendStaffRejectedEmail({
+        to: user.email,
+        fullName,
+        role: String(user.role),
+        reason: reason?.trim() || undefined,
+      })
+    } catch (emailError) {
+      console.error('[rejectStaffAccount] email failed:', emailError)
+    }
+  }
+
+  return { success: true }
+}
+
 export async function updateUserStatusMutation(
   id: string,
   status: 'active' | 'inactive' | 'suspended' | 'pending_approval'

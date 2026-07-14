@@ -7,8 +7,8 @@ export default function EngineersManagement() {
   return (
     <div className="space-y-6">
       <AdminSectionHeader
-        title="Engineers"
-        description="Engineering support staff — subscription status, open tickets, and account management."
+        title="Artists"
+        description="Artist accounts, studio community access, and related support — approve new requests under Staff & accounts."
       />
       <EngineersRegistryPanel />
     </div>

@@ -7,8 +7,8 @@ export default function LecturersManagement() {
   return (
     <div className="space-y-6">
       <AdminSectionHeader
-        title="Lecturers"
-        description="Teaching staff who deliver programmes through the classroom portal. Review assignments and account status."
+        title="Instructors"
+        description="Teaching staff who deliver programmes through the instructor portal. Approve new instructor accounts under Staff & accounts → Pending approval."
       />
       <LecturersRegistryPanel />
     </div>

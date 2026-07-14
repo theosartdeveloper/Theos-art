@@ -30,10 +30,26 @@ import {
   FileSpreadsheet,
 } from 'lucide-react'
 
-function StatRow({ label, value, accent }: { label: string; value: number | string; accent?: string }) {
+function StatRow({
+  label,
+  value,
+  accent,
+  href,
+}: {
+  label: string
+  value: number | string
+  accent?: string
+  href?: string
+}) {
   return (
     <li className="flex justify-between gap-4">
-      <span className="text-slate-600">{label}</span>
+      {href ? (
+        <a href={href} className={`underline-offset-2 hover:underline ${accent ?? 'text-slate-600'}`}>
+          {label}
+        </a>
+      ) : (
+        <span className="text-slate-600">{label}</span>
+      )}
       <span className={`font-semibold shrink-0 ${accent ?? ''}`}>{value}</span>
     </li>
   )
@@ -271,9 +287,14 @@ export function ReportsTab({ initialData }: { initialData?: AdminReportData }) {
                 <ul className="space-y-3">
                   <StatRow label="Total registered" value={stats.users} />
                   <StatRow label="Students" value={stats.students} accent="text-green-600" />
-                  <StatRow label="Lecturers" value={stats.lecturers} />
-                  <StatRow label="Engineers" value={stats.engineers} />
-                  <StatRow label="Staff awaiting approval" value={stats.pendingStaffApprovals} accent="text-amber-600" />
+                  <StatRow label="Instructors" value={stats.lecturers} />
+                  <StatRow label="Artists" value={stats.engineers} />
+                  <StatRow
+                    label="Staff awaiting approval"
+                    value={stats.pendingStaffApprovals}
+                    accent="text-amber-600"
+                    href="/admin/dashboard/users?status=pending_approval"
+                  />
                 </ul>
               </CardContent>
             </Card>

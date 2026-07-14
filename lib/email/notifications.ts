@@ -220,22 +220,25 @@ export async function sendStaffRegistrationPendingToAdmin(input: {
   role: string
 }): Promise<SendEmailResult> {
   const appUrl = getAppUrl()
+  const { staffRoleLabel } = await import('@/lib/auth/staff-role-label')
+  const roleLabel = staffRoleLabel(input.role)
   return sendEmail({
     to: ADMIN_NOTIFICATION_EMAIL,
-    subject: `New ${input.role} account pending approval`,
+    subject: `New ${roleLabel} account pending approval`,
     replyTo: input.email,
     html: emailLayout({
-      title: 'Staff registration pending',
-      subtitle: `${input.role} account`,
+      title: 'Account pending approval',
+      subtitle: `${roleLabel} registration`,
       headerTone: 'warning',
       bodyHtml: `
-        <p>A new staff account is waiting for admin approval.</p>
+        <p>A new <strong>${escapeHtml(roleLabel)}</strong> account is waiting for admin approval.</p>
         <ul>
           <li><strong>Name:</strong> ${escapeHtml(input.fullName)}</li>
           <li><strong>Email:</strong> ${escapeHtml(input.email)}</li>
-          <li><strong>Role:</strong> ${escapeHtml(input.role)}</li>
+          <li><strong>Role:</strong> ${escapeHtml(roleLabel)}</li>
         </ul>
-        ${ctaButton('Review users', `${appUrl}/admin/dashboard/users`)}
+        <p>Open Staff &amp; accounts, filter <strong>Pending approval</strong>, then Approve or Reject.</p>
+        ${ctaButton('Review pending accounts', `${appUrl}/admin/dashboard/users?status=pending_approval`)}
       `,
     }),
   })
@@ -247,6 +250,8 @@ export async function sendStaffApprovedEmail(input: {
   role: string
 }): Promise<SendEmailResult> {
   const appUrl = getAppUrl()
+  const { staffRoleLabel } = await import('@/lib/auth/staff-role-label')
+  const roleLabel = staffRoleLabel(input.role)
   const dashboard =
     input.role === 'lecturer' || input.role === 'instructor' || input.role === 'mentor'
       ? `${appUrl}/lecturer/dashboard`
@@ -256,16 +261,42 @@ export async function sendStaffApprovedEmail(input: {
 
   return sendEmail({
     to: input.to,
-    subject: 'Your account has been approved',
+    subject: `Your ${roleLabel} account has been approved`,
     html: emailLayout({
       title: 'Account approved',
       subtitle: `Welcome to ${COMPANY.platformName}`,
       headerTone: 'success',
       bodyHtml: `
         <p>Dear ${escapeHtml(input.fullName)},</p>
-        <p>Your <span class="highlight">${escapeHtml(input.role)}</span> account has been approved. You can now sign in and access your dashboard.</p>
+        <p>Your <span class="highlight">${escapeHtml(roleLabel)}</span> account has been approved. You can now sign in and open your dashboard.</p>
         ${ctaButton('Sign in', `${appUrl}/auth/login`)}
         <p class="muted">Dashboard: <a href="${escapeHtml(dashboard)}">${escapeHtml(dashboard)}</a></p>
+        <p><strong>${escapeHtml(COMPANY.brandName)} Team</strong></p>
+      `,
+    }),
+  })
+}
+
+export async function sendStaffRejectedEmail(input: {
+  to: string
+  fullName: string
+  role: string
+  reason?: string
+}): Promise<SendEmailResult> {
+  const { staffRoleLabel } = await import('@/lib/auth/staff-role-label')
+  const roleLabel = staffRoleLabel(input.role)
+  return sendEmail({
+    to: input.to,
+    subject: `Your ${roleLabel} account request was not approved`,
+    html: emailLayout({
+      title: 'Account not approved',
+      subtitle: roleLabel,
+      headerTone: 'warning',
+      bodyHtml: `
+        <p>Dear ${escapeHtml(input.fullName)},</p>
+        <p>Your request for a <span class="highlight">${escapeHtml(roleLabel)}</span> account was not approved at this time.</p>
+        ${input.reason ? `<p><strong>Note:</strong> ${escapeHtml(input.reason)}</p>` : ''}
+        <p>You may contact ${escapeHtml(COMPANY.email)} if you have questions, or register again later.</p>
         <p><strong>${escapeHtml(COMPANY.brandName)} Team</strong></p>
       `,
     }),

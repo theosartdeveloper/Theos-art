@@ -439,6 +439,9 @@ const THEOS_ART_NAV_GROUP_ORDER = [
 const THEOS_ART_ADMIN_VISIBLE_IDS = new Set([
   'overview',
   'students',
+  'lecturers',
+  'engineers',
+  'users',
   'enrollments',
   'payments',
   'certificates',

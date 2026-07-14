@@ -10,13 +10,13 @@ export type UserRole =
 export type LegacyRole = 'student' | 'lecturer' | 'engineer' | 'admin'
 
 export const ROLE_LABELS: Record<string, string> = {
-  registered: 'Registered User',
-  student: 'Registered User',
+  registered: 'Student',
+  student: 'Student',
   mentor: 'Mentor',
   instructor: 'Instructor',
   lecturer: 'Instructor',
-  support_staff: 'Engineering Support',
-  engineer: 'Engineering Support',
+  support_staff: 'Studio support',
+  engineer: 'Artist',
   admin: 'Administrator',
 }
 

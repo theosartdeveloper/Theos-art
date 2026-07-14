@@ -7,6 +7,7 @@ import {
   approveStaffAccountMutation,
   createUserMutation,
   deleteUserMutation,
+  rejectStaffAccountMutation,
   resetUserPasswordMutation,
   updateUserMutation,
   updateUserStatusMutation,
@@ -40,6 +41,7 @@ type UserActionBody = {
   password?: string
   newPassword?: string
   role?: AdminUserRole
+  reason?: string
 }
 
 export async function PATCH(request: NextRequest) {
@@ -59,6 +61,18 @@ export async function PATCH(request: NextRequest) {
           return NextResponse.json({ error: result.error ?? 'Approval failed' }, { status: 400 })
         }
         return NextResponse.json({ success: true, message: 'Account approved and activated' })
+      }
+
+      case 'reject': {
+        await requireAdminPermission(PERMISSIONS.USERS_ACTIVATE)
+        const result = await rejectStaffAccountMutation(
+          id,
+          typeof body.reason === 'string' ? body.reason : undefined
+        )
+        if (!result.success) {
+          return NextResponse.json({ error: result.error ?? 'Rejection failed' }, { status: 400 })
+        }
+        return NextResponse.json({ success: true, message: 'Account rejected' })
       }
 
       case 'status': {

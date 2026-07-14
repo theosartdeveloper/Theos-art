@@ -163,7 +163,7 @@ export function LecturersRegistryPanel() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50 text-left text-slate-800">
-                  <th className="py-3 px-4 font-semibold">Lecturer</th>
+                  <th className="py-3 px-4 font-semibold">Instructor</th>
                   <th className="py-3 px-4 font-semibold">Phone</th>
                   <th className="py-3 px-4 font-semibold">Account</th>
                   <th className="py-3 px-4 font-semibold">Programmes</th>

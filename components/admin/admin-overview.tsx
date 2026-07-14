@@ -84,6 +84,17 @@ function buildActionAlerts(stats: AdminStats, permissions: string[]): ActionAler
     })
   }
 
+  if (stats.pendingStaffApprovals > 0 && hasPermission(permissions, PERMISSIONS.USERS_VIEW)) {
+    alerts.push({
+      id: 'staff-approvals',
+      title: 'Instructor & artist approvals',
+      description: 'New instructor or artist account requests waiting for activation.',
+      count: stats.pendingStaffApprovals,
+      href: '/admin/dashboard/users?status=pending_approval',
+      cta: 'Review accounts',
+    })
+  }
+
   return alerts
 }
 
@@ -326,7 +337,7 @@ export function AdminOverview({
           <CardContent className="flex items-center gap-3 py-4">
             <Sparkles className="h-5 w-5 text-emerald-700 shrink-0" />
             <p className="text-sm text-slate-800">
-              Studio is clear — no pending MoMo receipts, low-stock alerts, or certificate approvals.
+              Studio is clear — no pending MoMo receipts, staff approvals, low-stock alerts, or certificate approvals.
             </p>
           </CardContent>
         </Card>

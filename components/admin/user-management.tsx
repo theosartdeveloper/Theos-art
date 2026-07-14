@@ -26,7 +26,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { Plus, Trash2, Edit2, KeyRound, Ban, CheckCircle2, ShieldCheck } from 'lucide-react'
+import { Plus, Trash2, Edit2, KeyRound, Ban, CheckCircle2, ShieldCheck, XCircle } from 'lucide-react'
 import Link from 'next/link'
 import { ROLE_LABELS } from '@/types/platform'
 
@@ -100,9 +100,9 @@ function UserManagementTab() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [busyUserId, setBusyUserId] = useState<string | null>(null)
-  const [search, setSearch] = useState('')
-  const [debouncedSearch, setDebouncedSearch] = useState('')
-  const [roleFilter, setRoleFilter] = useState('all')
+  const [search, setSearch] = useState(() => searchParams.get('search') ?? '')
+  const [debouncedSearch, setDebouncedSearch] = useState(() => searchParams.get('search') ?? '')
+  const [roleFilter, setRoleFilter] = useState(() => searchParams.get('role') ?? 'all')
   const [statusFilter, setStatusFilter] = useState<StatusFilter>(() =>
     parseStatusFilter(searchParams.get('status'))
   )
@@ -266,12 +266,16 @@ function UserManagementTab() {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-2xl font-bold">User Management</h1>
+        <h1 className="text-2xl font-bold">Staff &amp; accounts</h1>
         <p className="text-slate-600 mt-1">
-          Create, edit, and approve accounts. Lecturer and engineer self-registrations stay{' '}
-          <strong>pending approval</strong> until you activate them. Adjust permissions under{' '}
-          <Link href="/admin/dashboard/roles" className="text-[var(--brand-navy)] underline">
-            Roles &amp; permissions
+          Approve <strong>Instructor</strong> and <strong>Artist</strong> self-registrations, create
+          accounts, and manage status. Pending users cannot sign in until you approve them.{' '}
+          <Link
+            href="/admin/dashboard/users?status=pending_approval"
+            className="text-[var(--brand-navy)] underline"
+            onClick={() => setStatusFilter('pending_approval')}
+          >
+            View pending approvals
           </Link>
           .
         </p>
@@ -280,7 +284,8 @@ function UserManagementTab() {
       {statusFilter === 'pending_approval' && users.length > 0 && (
         <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-slate-800">
           <strong>{users.length}</strong> account{users.length === 1 ? '' : 's'} waiting for approval.
-          Use <strong>Approve &amp; activate</strong> to grant sign-in access and default role permissions.
+          Use <strong>Approve</strong> to activate sign-in (and email them), or <strong>Reject</strong>{' '}
+          to decline the request.
         </div>
       )}
 
@@ -413,22 +418,49 @@ function UserManagementTab() {
                       <TableCell className="text-right">
                         <div className="flex gap-1 justify-end flex-wrap items-center">
                           {user.status === 'pending_approval' ? (
-                            <Button
-                              size="sm"
-                              variant="default"
-                              className="bg-green-700 hover:bg-green-800 text-white h-8"
-                              disabled={busyUserId === user.id}
-                              onClick={() =>
-                                runAction(
-                                  user.id,
-                                  () => patchUser({ action: 'approve', id: user.id }),
-                                  `${[user.first_name, user.last_name].filter(Boolean).join(' ') || user.email} approved`
-                                )
-                              }
-                            >
-                              <ShieldCheck className="w-4 h-4 mr-1" />
-                              {busyUserId === user.id ? 'Approving…' : 'Approve'}
-                            </Button>
+                            <>
+                              <Button
+                                size="sm"
+                                variant="default"
+                                className="bg-green-700 hover:bg-green-800 text-white h-8"
+                                disabled={busyUserId === user.id}
+                                onClick={() =>
+                                  runAction(
+                                    user.id,
+                                    () => patchUser({ action: 'approve', id: user.id }),
+                                    `${[user.first_name, user.last_name].filter(Boolean).join(' ') || user.email} approved`
+                                  )
+                                }
+                              >
+                                <ShieldCheck className="w-4 h-4 mr-1" />
+                                {busyUserId === user.id ? 'Approving…' : 'Approve'}
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-8 border-rose-200 text-rose-800 hover:bg-rose-50"
+                                disabled={busyUserId === user.id}
+                                onClick={() => {
+                                  const reason = window.prompt(
+                                    'Optional note for the applicant (leave blank for none):'
+                                  )
+                                  if (reason === null) return
+                                  void runAction(
+                                    user.id,
+                                    () =>
+                                      patchUser({
+                                        action: 'reject',
+                                        id: user.id,
+                                        reason: reason.trim() || undefined,
+                                      }),
+                                    `${[user.first_name, user.last_name].filter(Boolean).join(' ') || user.email} rejected`
+                                  )
+                                }}
+                              >
+                                <XCircle className="w-4 h-4 mr-1" />
+                                Reject
+                              </Button>
+                            </>
                           ) : null}
                           <Button
                             size="sm"
