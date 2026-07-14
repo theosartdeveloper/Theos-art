@@ -176,7 +176,7 @@ export function createCertificateHTML({
     /* Safe content band — keep clear of the decorative frame */
     .shell {
       position: absolute;
-      inset: 14mm 18mm 12mm;
+      inset: 14mm 14mm 12mm;
       z-index: 3;
       display: flex;
       flex-direction: column;
@@ -323,17 +323,18 @@ export function createCertificateHTML({
     }
     .notice.pending strong { color: #475569; }
 
-    /* Bottom band — two columns (authority left, QR + date right) */
+    /* Bottom band — equal two columns (authority left, QR + date right) */
     .bottom {
       flex: 0 0 auto;
       display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 8mm;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 12mm;
       align-items: end;
+      justify-items: center;
       padding-top: 3mm;
       border-top: 1px solid #e2e8f0;
       margin-top: 2mm;
-      min-height: 48mm;
+      min-height: 54mm;
     }
 
     .col {
@@ -342,13 +343,14 @@ export function createCertificateHTML({
       align-items: center;
       justify-content: flex-end;
       text-align: center;
+      width: 100%;
+      max-width: 78mm;
       min-width: 0;
-      max-width: 100%;
-      overflow: hidden;
+      overflow: visible;
     }
 
     .col-left { align-items: center; }
-    .col-right { align-items: center; gap: 2.5mm; }
+    .col-right { align-items: center; gap: 2.8mm; }
 
     .date-value {
       font-family: 'Libre Baskerville', Georgia, serif;
@@ -357,8 +359,8 @@ export function createCertificateHTML({
       color: #3a3a3a;
     }
     .col-rule {
-      width: 72%;
-      max-width: 55mm;
+      width: 70%;
+      max-width: 48mm;
       border-top: 1.25px solid #2d3748;
       margin: 1.5mm 0;
     }
@@ -371,27 +373,28 @@ export function createCertificateHTML({
       text-transform: uppercase;
     }
 
-    /* Stamp sits on top of the Managing Director name */
+    /* Stamp covers both the director name and "Managing Director" */
     .sig-block {
       position: relative;
       width: 100%;
-      max-width: 95mm;
-      min-height: 42mm;
+      max-width: 72mm;
+      min-height: 48mm;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-end;
-      padding-top: 12mm;
+      padding-top: 14mm;
+      padding-bottom: 1mm;
     }
     .stamp {
       position: absolute;
       left: 50%;
-      top: 40%;
-      width: 48mm;
-      height: 48mm;
+      bottom: -1mm;
+      width: 58mm;
+      height: 58mm;
       object-fit: contain;
       opacity: 0.9;
-      transform: translate(-50%, -50%) rotate(-12deg);
+      transform: translateX(-50%) rotate(-12deg);
       mix-blend-mode: multiply;
       filter: contrast(1.14) saturate(1.1);
       z-index: 1;
@@ -401,7 +404,7 @@ export function createCertificateHTML({
       position: relative;
       z-index: 2;
       font-family: 'Cinzel', serif;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
       color: #3a3a3a;
       letter-spacing: 2px;
@@ -415,7 +418,7 @@ export function createCertificateHTML({
       position: relative;
       z-index: 2;
       width: 70%;
-      max-width: 60mm;
+      max-width: 48mm;
       border-top: 1.5px solid #2d3748;
       margin: 2mm 0 1.5mm;
     }
@@ -478,7 +481,7 @@ export function createCertificateHTML({
 
     .date-stack {
       width: 100%;
-      max-width: 58mm;
+      max-width: 48mm;
       display: flex;
       flex-direction: column;
       align-items: center;

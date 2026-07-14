@@ -435,14 +435,11 @@ export async function sendShopOrderConfirmationEmail(input: {
       : 'We will notify you when your order is ready for pickup in Kigali.'
   const shopUrl = `${getAppUrl()}/shop`
 
-  return sendEmail({
-    to: input.to,
-    subject: `Order received ? ${input.orderNumber}`,
-    html: await brandedEmailLayout({
-      title: 'Thank you for your order',
-      subtitle: `Order ${input.orderNumber}`,
-      headerTone: 'success',
-      bodyHtml: `
+  const { html, logoUrl } = await brandedEmailLayout({
+    title: 'Thank you for your order',
+    subtitle: `Order ${input.orderNumber}`,
+    headerTone: 'success',
+    bodyHtml: `
         <p>Dear ${escapeHtml(input.customerName)},</p>
         <p>We received your shop order. Our team will verify your MTN MoMo payment shortly.</p>
         <ul>${lines}</ul>
@@ -452,7 +449,13 @@ export async function sendShopOrderConfirmationEmail(input: {
         ${ctaButton('Visit the shop', shopUrl)}
         <p><strong>${escapeHtml(COMPANY.brandName)} Team</strong></p>
       `,
-    }),
+  })
+
+  return sendEmail({
+    to: input.to,
+    subject: `Order received ? ${input.orderNumber}`,
+    html,
+    logoUrl,
   })
 }
 
@@ -466,14 +469,11 @@ export async function sendShopOrderAdminAlert(input: {
 }): Promise<SendEmailResult> {
   const adminOrdersUrl = `${getAppUrl()}/admin/dashboard/orders`
 
-  return sendEmail({
-    to: ADMIN_NOTIFICATION_EMAIL,
-    subject: `New shop order ? ${input.orderNumber}`,
-    html: await brandedEmailLayout({
-      title: 'New shop order',
-      subtitle: input.orderNumber,
-      headerTone: 'primary',
-      bodyHtml: `
+  const { html, logoUrl } = await brandedEmailLayout({
+    title: 'New shop order',
+    subtitle: input.orderNumber,
+    headerTone: 'primary',
+    bodyHtml: `
         <p><strong>${escapeHtml(input.customerName)}</strong> placed an order for ${input.totalAmount.toLocaleString()} RWF (${escapeHtml(input.fulfillmentType)}).</p>
         <ul>
           <li>Email: ${escapeHtml(input.customerEmail)}</li>
@@ -482,7 +482,13 @@ export async function sendShopOrderAdminAlert(input: {
         </ul>
         ${ctaButton('Open admin orders', adminOrdersUrl)}
       `,
-    }),
+  })
+
+  return sendEmail({
+    to: ADMIN_NOTIFICATION_EMAIL,
+    subject: `New shop order ? ${input.orderNumber}`,
+    html,
+    logoUrl,
   })
 }
 

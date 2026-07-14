@@ -40,18 +40,80 @@ export type SendEmailResult = { success: boolean; error?: unknown; skipped?: boo
 type LogoAttachment = {
   filename: string
   contentId: string
+  contentType: string
   content?: Buffer
   path?: string
 }
 
-async function fetchLogoBuffer(url: string): Promise<Buffer | null> {
+function extensionForContentType(contentType: string): string {
+  const type = contentType.toLowerCase()
+  if (type.includes('jpeg') || type.includes('jpg')) return 'jpg'
+  if (type.includes('webp')) return 'webp'
+  if (type.includes('gif')) return 'gif'
+  if (type.includes('svg')) return 'svg'
+  return 'png'
+}
+
+function sniffImageContentType(buffer: Buffer): string | null {
+  if (buffer.length < 12) return null
+  if (buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) return 'image/jpeg'
+  if (
+    buffer[0] === 0x89 &&
+    buffer[1] === 0x50 &&
+    buffer[2] === 0x4e &&
+    buffer[3] === 0x47
+  ) {
+    return 'image/png'
+  }
+  if (buffer[0] === 0x47 && buffer[1] === 0x49 && buffer[2] === 0x46) return 'image/gif'
+  if (
+    buffer.toString('ascii', 0, 4) === 'RIFF' &&
+    buffer.toString('ascii', 8, 12) === 'WEBP'
+  ) {
+    return 'image/webp'
+  }
+  if (buffer.toString('utf8', 0, 5).includes('<?xml') || buffer.toString('utf8', 0, 4) === '<svg') {
+    return 'image/svg+xml'
+  }
+  return null
+}
+
+async function fetchLogoBytes(
+  url: string
+): Promise<{ buffer: Buffer; contentType: string; filename: string } | null> {
   try {
-    const res = await fetch(url, { cache: 'force-cache' })
-    if (!res.ok) return null
+    const res = await fetch(url, {
+      cache: 'no-store',
+      headers: { Accept: 'image/*,*/*;q=0.8' },
+      redirect: 'follow',
+    })
+    if (!res.ok) {
+      console.warn('[email] Logo fetch failed:', res.status, url)
+      return null
+    }
     const ab = await res.arrayBuffer()
-    if (!ab.byteLength) return null
-    return Buffer.from(ab)
-  } catch {
+    const buffer = Buffer.from(ab)
+    if (buffer.byteLength < 64 || buffer.byteLength > 4_500_000) {
+      console.warn('[email] Logo buffer size rejected:', buffer.byteLength, url)
+      return null
+    }
+
+    const headerType = (res.headers.get('content-type') || '').split(';')[0].trim().toLowerCase()
+    const sniffed = sniffImageContentType(buffer)
+    if (headerType.startsWith('image/')) {
+      const contentType = sniffed || headerType
+      const ext = extensionForContentType(contentType)
+      return { buffer, contentType, filename: `theos-art-logo.${ext}` }
+    }
+    if (sniffed) {
+      const ext = extensionForContentType(sniffed)
+      return { buffer, contentType: sniffed, filename: `theos-art-logo.${ext}` }
+    }
+
+    console.warn('[email] Logo response was not an image:', headerType || 'unknown', url)
+    return null
+  } catch (error) {
+    console.warn('[email] Logo fetch error:', url, error)
     return null
   }
 }
@@ -66,21 +128,23 @@ async function resolveLogoAttachment(preferredUrl?: string): Promise<LogoAttachm
     }
   }
 
-  // Prefer downloading the live company / R2 logo into a Buffer for reliable CID embedding
   const absolute = absolutePublicUrl(logoUrl)
   if (absolute && isAbsoluteMediaUrl(absolute)) {
-    const content = await fetchLogoBuffer(absolute)
-    if (content) {
+    const downloaded = await fetchLogoBytes(absolute)
+    if (downloaded) {
       return {
-        filename: 'theos-art-logo.png',
+        filename: downloaded.filename,
         contentId: EMAIL_LOGO_CID,
-        content,
+        contentType: downloaded.contentType,
+        content: downloaded.buffer,
       }
     }
-    // Fall back to Resend path fetch if our server cannot reach the URL
+    // Resend can pull a public HTTPS URL when our runtime cannot reach R2
+    const ext = absolute.match(/\.(jpe?g|png|webp|gif|svg)(?:\?|$)/i)?.[1]?.toLowerCase() || 'png'
     return {
-      filename: 'theos-art-logo.png',
+      filename: `theos-art-logo.${ext === 'jpeg' ? 'jpg' : ext}`,
       contentId: EMAIL_LOGO_CID,
+      contentType: `image/${ext === 'jpg' || ext === 'jpeg' ? 'jpeg' : ext}`,
       path: absolute,
     }
   }
@@ -93,6 +157,7 @@ async function resolveLogoAttachment(preferredUrl?: string): Promise<LogoAttachm
       return {
         filename: 'theos-art-logo.png',
         contentId: EMAIL_LOGO_CID,
+        contentType: 'image/png',
         content,
       }
     }
@@ -122,16 +187,18 @@ export async function sendEmail(input: {
     return { success: false, skipped: true, error: 'RESEND_API_KEY not configured' }
   }
 
-  const embedLogo = input.embedLogo !== false && input.html.includes(`cid:${EMAIL_LOGO_CID}`)
-  const logoAttachment = embedLogo ? await resolveLogoAttachment(input.logoUrl) : null
+  const needsLogo = input.embedLogo !== false && input.html.includes(`cid:${EMAIL_LOGO_CID}`)
+  const logoAttachment = needsLogo ? await resolveLogoAttachment(input.logoUrl) : null
 
+  let html = input.html
   const attachments =
     logoAttachment?.content
       ? [
           {
             filename: logoAttachment.filename,
             contentId: logoAttachment.contentId,
-            content: logoAttachment.content.toString('base64'),
+            contentType: logoAttachment.contentType,
+            content: logoAttachment.content,
           },
         ]
       : logoAttachment?.path
@@ -139,17 +206,35 @@ export async function sendEmail(input: {
             {
               filename: logoAttachment.filename,
               contentId: logoAttachment.contentId,
+              contentType: logoAttachment.contentType,
               path: logoAttachment.path,
             },
           ]
         : undefined
+
+  // If CID attach failed, fall back to the live public logo URL so the header is not blank
+  if (needsLogo && !attachments) {
+    let fallback = pickUsableMediaUrl(input.logoUrl)
+    if (!fallback) {
+      try {
+        fallback = await getCompanyLogoUrl()
+      } catch {
+        fallback = ''
+      }
+    }
+    const absoluteFallback = absolutePublicUrl(fallback)
+    if (absoluteFallback) {
+      html = html.split(`cid:${EMAIL_LOGO_CID}`).join(absoluteFallback)
+      console.warn('[email] Logo CID unavailable — using public URL fallback')
+    }
+  }
 
   try {
     const { error } = await resend.emails.send({
       from: EMAIL_FROM,
       to: recipients,
       subject: input.subject,
-      html: input.html,
+      html,
       ...(input.replyTo ? { reply_to: input.replyTo } : {}),
       ...(attachments ? { attachments } : {}),
     })
@@ -239,7 +324,7 @@ export function emailLayout(options: {
 /** Resolves live company logo then builds HTML (CID attachment resolved again in sendEmail). */
 export async function brandedEmailLayout(
   options: Omit<Parameters<typeof emailLayout>[0], 'logoUrl'> & { logoUrl?: string }
-): Promise<string> {
+): Promise<{ html: string; logoUrl: string }> {
   let logoUrl = pickUsableMediaUrl(options.logoUrl)
   if (!logoUrl) {
     try {
@@ -248,7 +333,10 @@ export async function brandedEmailLayout(
       logoUrl = ''
     }
   }
-  return emailLayout({ ...options, logoUrl })
+  return {
+    html: emailLayout({ ...options, logoUrl }),
+    logoUrl,
+  }
 }
 
 export function ctaButton(label: string, href: string): string {

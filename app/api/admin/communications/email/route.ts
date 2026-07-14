@@ -86,7 +86,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const html = await brandedEmailLayout({
+    const { html, logoUrl } = await brandedEmailLayout({
       title: subject,
       subtitle: COMPANY.brandName,
       bodyHtml,
@@ -96,6 +96,7 @@ export async function POST(request: Request) {
       to: recipients,
       subject,
       html,
+      logoUrl,
       replyTo: session.user.email,
     })
 
