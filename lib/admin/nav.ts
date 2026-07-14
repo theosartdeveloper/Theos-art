@@ -46,15 +46,15 @@ export type AdminNavGroup = {
 export const ADMIN_NAV: AdminNavGroup[] = [
   {
     id: 'overview',
-    label: 'Overview',
+    label: 'Art Studio',
     items: [
       {
         id: 'overview',
-        label: 'Dashboard',
+        label: 'Studio dashboard',
         href: '/admin/dashboard',
         icon: 'layout-dashboard',
         permission: PERMISSIONS.REPORTS_VIEW,
-        description: 'Platform snapshot and action items',
+        description: 'Shop, gallery, and workshop snapshot',
       },
     ],
   },
@@ -390,7 +390,7 @@ export type AdminMobileHub = {
 export const ADMIN_MOBILE_HUBS: AdminMobileHub[] = [
   {
     id: 'overview',
-    label: 'Home',
+    label: 'Studio',
     href: '/admin/dashboard',
     icon: 'layout-dashboard',
     groupIds: ['overview'],
@@ -403,20 +403,32 @@ export const ADMIN_MOBILE_HUBS: AdminMobileHub[] = [
     groupIds: ['commerce'],
   },
   {
-    id: 'learning',
-    label: 'Learning',
-    href: '/admin/dashboard/courses',
-    icon: 'book-open',
-    groupIds: ['learning', 'admissions', 'people'],
-  },
-  {
     id: 'public',
     label: 'Gallery',
     href: '/admin/dashboard/energy-library',
     icon: 'globe',
     groupIds: ['public'],
   },
+  {
+    id: 'learning',
+    label: 'Learning',
+    href: '/admin/dashboard/courses',
+    icon: 'book-open',
+    groupIds: ['admissions', 'learning', 'people'],
+  },
 ]
+
+/** Sidebar group order for Theos Art admin (hidden groups stay wired but unused). */
+const THEOS_ART_NAV_GROUP_ORDER = [
+  'overview',
+  'commerce',
+  'public',
+  'admissions',
+  'learning',
+  'people',
+  'support',
+  'system',
+] as const
 
 /**
  * Theos Art admin sidebar: only Learning / Shop / Art Gallery / Home-related items.
@@ -441,7 +453,7 @@ const THEOS_ART_ADMIN_VISIBLE_IDS = new Set([
 ])
 
 export function filterAdminNav(permissions: string[] | undefined): AdminNavGroup[] {
-  return ADMIN_NAV.map((group) => ({
+  const filtered = ADMIN_NAV.map((group) => ({
     ...group,
     items: group.items.filter(
       (item) =>
@@ -450,6 +462,12 @@ export function filterAdminNav(permissions: string[] | undefined): AdminNavGroup
         hasPermission(permissions, item.permission)
     ),
   })).filter((group) => group.items.length > 0)
+
+  return filtered.sort((a, b) => {
+    const ai = THEOS_ART_NAV_GROUP_ORDER.indexOf(a.id as (typeof THEOS_ART_NAV_GROUP_ORDER)[number])
+    const bi = THEOS_ART_NAV_GROUP_ORDER.indexOf(b.id as (typeof THEOS_ART_NAV_GROUP_ORDER)[number])
+    return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi)
+  })
 }
 
 export function findNavItem(section: string): AdminNavItem | undefined {
