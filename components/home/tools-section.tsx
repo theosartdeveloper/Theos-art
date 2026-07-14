@@ -1,50 +1,35 @@
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+import { Palette } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ENGINEERING_TOOL_CATEGORIES } from '@/lib/engineering/tool-categories'
+import { COMPANY } from '@/lib/company/constants'
 import { HomeSectionHeader } from '@/components/home/home-section-header'
 
+/** Home teaser — studio tools placeholder (engineering calculators removed). */
 export function ToolsSection() {
   return (
-    <section id="tools" className="home-section home-section--white">
-      <div className="max-w-6xl mx-auto">
+    <section id="tools" className="home-section home-section--compact home-section--muted">
+      <div className="max-w-6xl mx-auto text-center">
         <HomeSectionHeader
-          eyebrow="Engineering tools"
-          title="Free calculators for the field"
-          description="Electrical, installation, embedded, and solar helpers — built for students and technicians in our programmes. No login required."
+          eyebrow="Tools"
+          title="Studio tools"
+          description={`Creative helpers for artists and learners from ${COMPANY.brandName} are coming soon.`}
+          className="mb-6"
         />
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {ENGINEERING_TOOL_CATEGORIES.map((cat) => {
-            const Icon = cat.icon
-            return (
-              <Card key={cat.id} className="border-slate-200 h-full hover:shadow-md transition-shadow">
-                <CardHeader className="pb-2">
-                  <div className="w-10 h-10 rounded-lg bg-[var(--brand-navy)]/10 flex items-center justify-center mb-2">
-                    <Icon className="h-5 w-5 text-[var(--brand-navy)]" />
-                  </div>
-                  <CardTitle className="text-lg text-slate-900">{cat.title}</CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-col gap-4">
-                  <p className="text-sm text-slate-600 flex-1">{cat.summary}</p>
-                  <Link href={`/tools#${cat.id}`} className="no-underline hover:no-underline">
-                    <Button variant="outline" className="w-full text-slate-800 border-slate-300 group">
-                      Open tools
-                      <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            )
-          })}
+        <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[var(--brand-navy)]/10 mb-4">
+          <Palette className="h-6 w-6 text-[var(--brand-navy)]" />
         </div>
-
-        <div className="text-center mt-10">
+        <p className="text-sm text-slate-600 max-w-md mx-auto mb-6">
+          New studio utilities will be published here. In the meantime, explore the shop and programmes.
+        </p>
+        <div className="flex flex-wrap justify-center gap-3">
+          <Link href="/shop">
+            <Button className="bg-[var(--brand-orange)] text-white hover:bg-[var(--brand-orange)]/90">
+              Visit shop
+            </Button>
+          </Link>
           <Link href="/tools">
-            <Button className="bg-[var(--brand-navy)] text-white hover:bg-[var(--brand-navy)]/90">
-              View all engineering tools
-              <ArrowRight className="ml-2 h-4 w-4" />
+            <Button variant="outline" className="text-slate-800 border-slate-300">
+              Open tools
             </Button>
           </Link>
         </div>

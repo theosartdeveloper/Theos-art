@@ -2,11 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { getStudentPortalData } from '@/app/actions/student-learning'
 import { StudentPortalShell } from '@/components/student/student-portal-shell'
-import { EngineeringToolsPanel } from '@/components/student/engineering-tools-panel'
-import { Card, CardContent } from '@/components/ui/card'
+import { StudioToolsPlaceholder } from '@/components/tools/studio-tools-placeholder'
 
 export default function StudentToolsPage() {
   const router = useRouter()
@@ -37,16 +35,7 @@ export default function StudentToolsPage() {
 
   return (
     <StudentPortalShell userName={userName}>
-      <EngineeringToolsPanel />
-      <Card className="mt-8 border-slate-200 bg-slate-50">
-        <CardContent className="py-4 text-sm text-slate-600">
-          Need human help on a live project?{' '}
-          <Link href="/engineering-support" className="text-[var(--brand-navy)] font-medium underline">
-            Engineering support
-          </Link>{' '}
-          includes community Q&amp;A and optional paid engineer review.
-        </CardContent>
-      </Card>
+      <StudioToolsPlaceholder showBrowseCta />
     </StudentPortalShell>
   )
 }

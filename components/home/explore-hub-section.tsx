@@ -2,9 +2,9 @@ import Link from 'next/link'
 import {
   BookOpen,
   Briefcase,
-  Calculator,
   GraduationCap,
   Library,
+  Palette,
   Users,
 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
@@ -16,8 +16,8 @@ const EXPLORE_TILES = [
   { href: '/internship', label: 'Internship', icon: Briefcase },
   { href: '/career', label: 'Career', icon: Users },
   { href: '/library', label: 'Library', icon: Library },
-  { href: '/engineering', label: 'Field Notes', icon: BookOpen },
-  { href: '/tools', label: 'Tools', icon: Calculator },
+  { href: '/art-gallery', label: 'Art Gallery', icon: BookOpen },
+  { href: '/tools', label: 'Studio tools', icon: Palette },
 ] as const
 
 export function ExploreHubSection() {

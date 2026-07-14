@@ -31,7 +31,7 @@ const nav = [
   { id: 'calendar', href: '/student/calendar', label: 'Calendar', icon: CalendarClock },
   { id: 'grades', href: '/student/dashboard?tab=grades', label: 'Grades', icon: BarChart3, tab: 'grades' },
   { id: 'webinars', href: '/student/dashboard?tab=webinars', label: 'Webinars', icon: Video, tab: 'webinars' },
-  { id: 'tools', href: '/student/tools', label: 'Tools', icon: Calculator },
+  { id: 'tools', href: '/student/tools', label: 'Studio tools', icon: Calculator },
   { id: 'library', href: '/student/library', label: 'Library', icon: Library },
   {
     id: 'announcements',
