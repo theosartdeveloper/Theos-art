@@ -22,11 +22,16 @@ export function isR2Configured(): boolean {
   )
 }
 
+/** True when R2 credentials and a public base URL are both available. */
+export function isR2Ready(): boolean {
+  return isR2Configured() && Boolean(getMediaPublicBaseUrl())
+}
+
 export function getR2BucketName(): string {
   return process.env.R2_BUCKET_NAME?.trim() || 'platform-media'
 }
 
-/** Public CDN base, e.g. https://media.theosart.com */
+/** Public CDN / r2.dev base, e.g. https://media.theosart.com or https://pub-xxx.r2.dev */
 export function getMediaPublicBaseUrl(): string | null {
   const base =
     process.env.R2_PUBLIC_BASE_URL?.trim() ||
@@ -56,7 +61,12 @@ function getR2Client(): S3Client {
 export function getPublicUrl(path: string): string {
   const normalized = path.replace(/^\//, '')
   const mediaBase = getMediaPublicBaseUrl()
-  if (isR2Configured() && mediaBase) {
+  if (isR2Configured()) {
+    if (!mediaBase) {
+      throw new Error(
+        'R2 credentials are set but R2_PUBLIC_BASE_URL / NEXT_PUBLIC_R2_PUBLIC_BASE_URL is missing. See scripts/43-r2-setup.md'
+      )
+    }
     return `${mediaBase}/${normalized}`
   }
   if (!supabaseAdmin) {
@@ -236,6 +246,9 @@ export function storageConfigured(): boolean {
 }
 
 export function storageConfigHint(): string {
-  if (isR2Configured()) return 'Files are stored on Cloudflare R2.'
-  return 'Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME, and R2_PUBLIC_BASE_URL in Vercel.'
+  if (isR2Ready()) return 'Files are stored on Cloudflare R2.'
+  if (isR2Configured()) {
+    return 'R2 credentials found — add R2_PUBLIC_BASE_URL and NEXT_PUBLIC_R2_PUBLIC_BASE_URL (custom domain or pub-*.r2.dev), then redeploy. See scripts/43-r2-setup.md'
+  }
+  return 'Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME, and R2_PUBLIC_BASE_URL in Vercel. See scripts/43-r2-setup.md'
 }

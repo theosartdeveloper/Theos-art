@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { getPublishedCourses, getPublishedInternships } from '@/lib/platform/queries'
 import { getCurrentUser } from '@/app/actions/auth-service'
+import { COMPANY } from '@/lib/company/constants'
 import { isFreeProgram } from '@/lib/enrollment/program-types'
 
 export default async function InternshipPage() {
@@ -14,44 +15,68 @@ export default async function InternshipPage() {
   ])
   const user = await getCurrentUser()
   const isStudent = user?.role === 'student' || user?.role === 'registered'
+  const isLecturer = user?.role === 'lecturer' || user?.role === 'mentor'
 
   return (
     <main className="min-h-screen bg-background">
       <SiteHeader />
       <section className="text-on-dark bg-[var(--brand-navy)] py-12 px-4">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-4xl font-bold mb-2 text-white">Internship Portal</h1>
-          <p className="text-white/85">
-            Apply for engineering internships through your student account. Free programmes unlock instantly;
-            paid programmes require MoMo verification.
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--brand-sky)] mb-2">
+            E-learning
+          </p>
+          <h1 className="text-4xl font-bold mb-2 text-white">Internship</h1>
+          <p className="text-white/85 max-w-2xl">
+            Creative residency and studio internship programmes from {COMPANY.brandName}. Students enroll
+            with a student account; instructors mentor admitted interns from the lecturer portal.
           </p>
         </div>
       </section>
 
       <section className="max-w-6xl mx-auto px-4 py-10 space-y-8">
-        <p className="text-sm text-slate-600">
+        <div className="flex flex-wrap gap-2 text-sm">
+          <Link href="/learning" className="text-[var(--brand-navy)] underline font-medium">
+            E-learning hub
+          </Link>
+          <span className="text-slate-400">·</span>
           {isStudent ? (
-            <>
-              Browse and enroll from{' '}
-              <Link href="/student/courses?track=internship" className="text-[var(--brand-navy)] font-medium underline">
-                internship programmes in your portal
-              </Link>
-              .
-            </>
+            <Link
+              href="/student/courses?track=internship"
+              className="text-[var(--brand-navy)] underline font-medium"
+            >
+              My internship portal
+            </Link>
           ) : (
-            <>
-              <Link href="/auth/login?redirect=%2Fstudent%2Fcourses%3Ftrack%3Dinternship" className="text-[var(--brand-navy)] font-medium underline">
-                Log in
-              </Link>{' '}
-              to enroll in internship programmes.
-            </>
+            <Link
+              href="/auth/login?role=student&redirect=%2Fstudent%2Fcourses%3Ftrack%3Dinternship"
+              className="text-[var(--brand-navy)] underline font-medium"
+            >
+              Student login
+            </Link>
           )}
-        </p>
+          <span className="text-slate-400">·</span>
+          {isLecturer ? (
+            <Link href="/lecturer/dashboard" className="text-[var(--brand-navy)] underline font-medium">
+              Lecturer portal
+            </Link>
+          ) : (
+            <Link
+              href="/auth/login?role=lecturer&redirect=%2Flecturer%2Fdashboard"
+              className="text-[var(--brand-navy)] underline font-medium"
+            >
+              Instructor login
+            </Link>
+          )}
+        </div>
 
         {internshipPrograms.length === 0 ? (
           <Card>
-            <CardContent className="py-10 text-center text-slate-600">
-              No internship programmes published yet. Admins can create them under Programs with type Internship.
+            <CardContent className="py-10 text-center text-slate-600 space-y-2">
+              <p>No internship programmes published yet.</p>
+              <p className="text-sm">
+                Admin creates them under Programs with type Internship / Creative residency, assigns an
+                instructor, then publishes.
+              </p>
             </CardContent>
           </Card>
         ) : (
@@ -60,7 +85,7 @@ export default async function InternshipPage() {
               const enrollPath = `/student/courses/${item.id}/enroll`
               const enrollHref = isStudent
                 ? enrollPath
-                : `/auth/login?redirect=${encodeURIComponent(enrollPath)}`
+                : `/auth/login?role=student&redirect=${encodeURIComponent(enrollPath)}`
               const free = isFreeProgram(item.pricing)
               return (
                 <Card key={item.id} className="border-slate-200">
@@ -75,7 +100,7 @@ export default async function InternshipPage() {
                     </p>
                     <Link href={enrollHref}>
                       <Button className="bg-[var(--brand-navy)] text-white">
-                        {isStudent ? (free ? 'Enroll free' : 'Enroll') : 'Log in to enroll'}
+                        {isStudent ? (free ? 'Enroll free' : 'Enroll') : 'Student login to enroll'}
                       </Button>
                     </Link>
                   </CardContent>
@@ -88,9 +113,6 @@ export default async function InternshipPage() {
         {legacyInternships.length > 0 ? (
           <div className="space-y-4">
             <h2 className="text-xl font-bold text-slate-900">Additional listings</h2>
-            <p className="text-sm text-slate-600">
-              Log in to enroll through your student account — same process as other internship programmes.
-            </p>
             <div className="grid md:grid-cols-2 gap-6">
               {legacyInternships.map((item) => (
                 <Card key={item.id}>
@@ -105,10 +127,10 @@ export default async function InternshipPage() {
                   <CardContent>
                     <p className="text-sm text-slate-600 mb-3">{item.description}</p>
                     <Link
-                      href={`/auth/login?redirect=${encodeURIComponent('/student/courses?track=internship')}`}
+                      href={`/auth/login?role=student&redirect=${encodeURIComponent('/student/courses?track=internship')}`}
                     >
                       <Button variant="outline" className="text-slate-800 border-slate-300">
-                        Log in to apply
+                        Student login to apply
                       </Button>
                     </Link>
                   </CardContent>

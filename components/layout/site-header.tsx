@@ -19,12 +19,14 @@ const PRIMARY_NAV = [
   { href: '/', label: 'Home' },
   { href: '/shop', label: 'Shop' },
   { href: '/art-gallery', label: 'Art Gallery' },
-  { href: '/learning', label: 'Learning' },
+  { href: '/learning', label: 'E-learning' },
+  { href: '/trainings', label: 'Trainings' },
+  { href: '/internship', label: 'Internship' },
   { href: '/about', label: 'About' },
 ] as const
 
 const headerNavButtonClass =
-  'text-white hover:bg-white/15 hover:text-white focus-visible:ring-white/40 h-9 px-3 text-sm font-medium'
+  'text-white hover:bg-white/15 hover:text-white focus-visible:ring-white/40 h-9 px-2 xl:px-3 text-sm font-medium'
 
 const desktopHeaderInnerClass =
   'hidden lg:grid lg:grid-cols-[auto_1fr_auto] lg:items-center lg:gap-6 max-w-7xl mx-auto w-full px-6 xl:px-8 py-2.5'

@@ -2,7 +2,8 @@
   {
     "AllowedOrigins": [
       "https://www.theosart.com",
-      "https://theosart.com"
+      "https://theosart.com",
+      "http://localhost:3000"
     ],
     "AllowedMethods": ["GET", "PUT", "HEAD"],
     "AllowedHeaders": ["*"],
