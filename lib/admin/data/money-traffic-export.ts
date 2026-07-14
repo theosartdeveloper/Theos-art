@@ -126,7 +126,7 @@ ${ordersSheet}
 }
 
 export function buildMoneyTrafficCsv(data: FinancialSummary): string {
-  const lines: string[][] = [
+  const lines: Array<Array<string | number>> = [
     ['Theos Art — Money traffic & shop sales'],
     ['Range', rangeLabel(data)],
     ['Generated', new Date().toLocaleString()],
