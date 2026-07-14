@@ -1,4 +1,4 @@
-const CACHE = 'energy-logics-static-v3'
+const CACHE = 'theos-art-static-v4'
 
 self.addEventListener('install', () => {
   self.skipWaiting()
@@ -26,15 +26,32 @@ function isDocumentRequest(request) {
   )
 }
 
+/** Never cache-first hero media — uploads overwrite the same filenames. */
+function isHeroMediaRequest(url) {
+  return (
+    url.pathname.startsWith('/hero/') ||
+    url.pathname.startsWith('/videos/') ||
+    url.pathname.includes('/hero/')
+  )
+}
+
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return
 
   const url = new URL(event.request.url)
   if (url.origin !== self.location.origin) return
 
-  if (isDocumentRequest(event.request)) {
+  if (isDocumentRequest(event.request) || isHeroMediaRequest(url)) {
     event.respondWith(
-      fetch(event.request).catch(() => caches.match(event.request))
+      fetch(event.request)
+        .then((response) => {
+          if (isHeroMediaRequest(url) && response.ok) {
+            const copy = response.clone()
+            caches.open(CACHE).then((cache) => cache.put(event.request, copy)).catch(() => {})
+          }
+          return response
+        })
+        .catch(() => caches.match(event.request))
     )
     return
   }

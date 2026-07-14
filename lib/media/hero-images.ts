@@ -1,3 +1,5 @@
+import { withHeroMediaVersion } from '@/lib/media/hero-cache'
+
 /** Hero still-image definitions (filename only — base URL resolved at runtime). */
 export const HERO_IMAGE_FILES = [
   { file: 'hero-01.png', label: 'Studio mentorship' },
@@ -17,8 +19,8 @@ export const HERO_IMAGE_SECONDS = 5
 
 /**
  * Resolve public URL base for hero images.
- * Default: local `/hero`. When R2/CDN is ready, set
- * `NEXT_PUBLIC_HERO_IMAGES_BASE_URL` or `NEXT_PUBLIC_R2_PUBLIC_BASE_URL` (+ `/hero`).
+ * Prefer R2/CDN whenever a public media base is configured (same as videos),
+ * so admin uploads replace what the homepage actually loads.
  */
 export function getHeroImagesBaseUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_HERO_IMAGES_BASE_URL?.trim()
@@ -27,18 +29,22 @@ export function getHeroImagesBaseUrl(): string {
   const r2Base =
     process.env.NEXT_PUBLIC_R2_PUBLIC_BASE_URL?.trim() ||
     process.env.R2_PUBLIC_BASE_URL?.trim()
-  // Only use R2 for images when explicitly opted in (local PNGs ship with the repo).
-  if (r2Base && process.env.NEXT_PUBLIC_HERO_USE_R2 === 'true') {
+  if (r2Base) {
     return `${r2Base.replace(/\/$/, '')}/hero`
+  }
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim()
+  if (supabaseUrl) {
+    return `${supabaseUrl.replace(/\/$/, '')}/storage/v1/object/public/platform-media/hero`
   }
 
   return '/hero'
 }
 
-export function getHeroImagePlaylist(): HeroImageSlide[] {
+export function getHeroImagePlaylist(version?: string | null): HeroImageSlide[] {
   const base = getHeroImagesBaseUrl()
   return HERO_IMAGE_FILES.map((item) => ({
-    src: `${base}/${item.file}`,
+    src: withHeroMediaVersion(`${base}/${item.file}`, version),
     label: item.label,
   }))
 }

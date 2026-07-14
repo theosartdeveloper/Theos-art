@@ -4,11 +4,11 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/progress'
-import { HERO_VIDEO_FILES } from '@/lib/media/hero-videos'
-import { HERO_VIDEO_MAX_BYTES } from '@/lib/storage/hero-video-upload'
-import { CheckCircle2, Upload, Video } from 'lucide-react'
+import { HERO_IMAGE_FILES } from '@/lib/media/hero-images'
+import { HERO_IMAGE_MAX_BYTES } from '@/lib/storage/hero-image-upload'
+import { CheckCircle2, ImageIcon, Upload } from 'lucide-react'
 
-type VideoStatus = {
+type ImageStatus = {
   file: string
   label: string
   url: string
@@ -46,12 +46,11 @@ function uploadWithProgress(
       reject(new Error(detail ? `Upload failed (${xhr.status}): ${detail}` : `Upload failed (${xhr.status})`))
     }
 
-    xhr.onerror = () => reject(new Error('Network error during upload — check your connection and try again'))
+    xhr.onerror = () => reject(new Error('Network error during upload'))
     xhr.onabort = () => reject(new Error('Upload cancelled'))
 
     const onAbort = () => xhr.abort()
     signal.addEventListener('abort', onAbort, { once: true })
-
     xhr.send(file)
   })
 }
@@ -68,12 +67,12 @@ async function applyHeroMedia(mode: 'images' | 'videos') {
   return data as { version: string; background_image?: string; message?: string }
 }
 
-export function HeroVideosUploadPanel({
+export function HeroImagesUploadPanel({
   onPlaylistReady,
 }: {
   onPlaylistReady?: (background: string) => void
 }) {
-  const [status, setStatus] = useState<VideoStatus[]>([])
+  const [status, setStatus] = useState<ImageStatus[]>([])
   const [files, setFiles] = useState<Record<string, File | null>>({})
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
@@ -87,12 +86,12 @@ export function HeroVideosUploadPanel({
     setLoading(true)
     setError('')
     try {
-      const res = await fetch('/api/admin/hero-videos', { credentials: 'same-origin' })
+      const res = await fetch('/api/admin/hero-images', { credentials: 'same-origin' })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Failed to check videos')
+      if (!res.ok) throw new Error(data.error || 'Failed to check images')
       setStatus(Array.isArray(data.files) ? data.files : [])
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to check videos')
+      setError(err instanceof Error ? err.message : 'Failed to check images')
     } finally {
       setLoading(false)
     }
@@ -102,30 +101,18 @@ export function HeroVideosUploadPanel({
     void loadStatus()
   }, [loadStatus])
 
-  const cancelUpload = () => {
-    abortRef.current?.abort()
-    abortRef.current = null
-    setUploading(false)
-    setProgressLabel('')
-    setProgressPercent(0)
-    setError('Upload cancelled.')
-  }
-
   const handleUpload = async () => {
-    const selected = HERO_VIDEO_FILES.filter(({ file }) => files[file])
+    const selected = HERO_IMAGE_FILES.filter(({ file }) => files[file])
       .map(({ file, label }) => ({ file, label, blob: files[file]! }))
-      .sort((a, b) => a.blob.size - b.blob.size)
 
     if (!selected.length) {
-      setError('Select at least one video file to upload.')
+      setError('Select at least one image (save as hero-01.png … hero-05.png slots).')
       return
     }
 
     for (const { file, blob } of selected) {
-      if (blob.size > HERO_VIDEO_MAX_BYTES) {
-        setError(
-          `${file} is ${formatMb(blob.size)} — max is ${formatMb(HERO_VIDEO_MAX_BYTES)}. Compress or use a smaller file.`
-        )
+      if (blob.size > HERO_IMAGE_MAX_BYTES) {
+        setError(`${file} is ${formatMb(blob.size)} — max is ${formatMb(HERO_IMAGE_MAX_BYTES)}.`)
         return
       }
     }
@@ -139,55 +126,47 @@ export function HeroVideosUploadPanel({
 
     try {
       for (const { file, label, blob } of selected) {
-        setProgressLabel(`Uploading ${label} (${formatMb(blob.size)})…`)
+        setProgressLabel(`Uploading ${label}…`)
         setProgressPercent(0)
 
-        const signRes = await fetch('/api/admin/hero-videos/sign', {
+        const signRes = await fetch('/api/admin/hero-images/sign', {
           method: 'POST',
           credentials: 'same-origin',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ file, size: blob.size }),
+          body: JSON.stringify({ file, size: blob.size, contentType: blob.type }),
           signal: abortRef.current.signal,
         })
         const signData = await signRes.json()
         if (!signRes.ok) {
-          throw new Error(
-            signData.hint ? `${signData.error} — ${signData.hint}` : signData.error || `Could not sign ${file}`
-          )
-        }
-
-        if (!signData.signedUrl) {
-          throw new Error(`No upload URL returned for ${file}`)
+          throw new Error(signData.hint ? `${signData.error} — ${signData.hint}` : signData.error || `Could not sign ${file}`)
         }
 
         await uploadWithProgress(
           signData.signedUrl,
           blob,
-          signData.contentType || blob.type || 'application/octet-stream',
+          signData.contentType || blob.type || 'image/png',
           setProgressPercent,
           abortRef.current.signal
         )
         ok += 1
       }
 
-      const applied = await applyHeroMedia('videos')
+      const applied = await applyHeroMedia('images')
       setMessage(
-        `Uploaded ${ok} video(s). ${applied.message || 'Homepage cache refreshed.'} Hard-refresh the home page if needed.`
+        `Uploaded ${ok} image(s). ${applied.message || 'Homepage cache refreshed.'} Hard-refresh the home page if needed.`
       )
-      setProgressLabel('')
-      setProgressPercent(0)
-      onPlaylistReady?.(applied.background_image || '/videos/playlist')
+      onPlaylistReady?.(applied.background_image || '/hero/playlist')
       await loadStatus()
       setFiles({})
     } catch (err) {
       if (!(err instanceof DOMException && err.name === 'AbortError')) {
         setError(err instanceof Error ? err.message : 'Upload failed')
       }
-      setProgressLabel('')
-      setProgressPercent(0)
     } finally {
       abortRef.current = null
       setUploading(false)
+      setProgressLabel('')
+      setProgressPercent(0)
     }
   }
 
@@ -196,20 +175,17 @@ export function HeroVideosUploadPanel({
   return (
     <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-4">
       <div className="flex items-start gap-3">
-        <Video className="h-5 w-5 text-[var(--brand-navy)] shrink-0 mt-0.5" />
+        <ImageIcon className="h-5 w-5 text-[var(--brand-navy)] shrink-0 mt-0.5" />
         <div>
-          <p className="font-semibold text-slate-900">Hero video playlist</p>
+          <p className="font-semibold text-slate-900">Hero image playlist</p>
           <p className="text-sm text-slate-600 mt-1">
-            Upload replaces the previous clip on media storage and{' '}
-            <strong>automatically switches</strong> the homepage to{' '}
-            <code className="text-xs">/videos/playlist</code> with a fresh cache version (no stale media).
-          </p>
-          <p className="text-xs text-slate-500 mt-1">
-            Max {formatMb(HERO_VIDEO_MAX_BYTES)} per file. MP4 is recommended over MOV.
+            Replace the rotating stills (<code className="text-xs">hero-01.png</code> …{' '}
+            <code className="text-xs">hero-05.png</code>). Upload overwrites the previous file and
+            refreshes the homepage cache automatically.
           </p>
           {!loading ? (
             <p className="text-xs text-slate-500 mt-1">
-              {uploadedCount} of {HERO_VIDEO_FILES.length} videos on media storage
+              {uploadedCount} of {HERO_IMAGE_FILES.length} images on media storage
             </p>
           ) : null}
         </div>
@@ -232,14 +208,14 @@ export function HeroVideosUploadPanel({
       ) : null}
 
       <div className="space-y-3">
-        {HERO_VIDEO_FILES.map(({ file, label }) => {
+        {HERO_IMAGE_FILES.map(({ file, label }) => {
           const picked = files[file]
           return (
             <div key={file}>
               <Label className="text-slate-800 text-sm">{label}</Label>
               <input
                 type="file"
-                accept="video/mp4,video/quicktime,.mp4,.mov"
+                accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp"
                 className="mt-1 block w-full text-sm text-slate-700 file:mr-3 file:rounded-md file:border-0 file:bg-[var(--brand-navy)] file:px-3 file:py-1.5 file:text-white file:text-sm"
                 disabled={uploading}
                 onChange={(e) => {
@@ -259,11 +235,7 @@ export function HeroVideosUploadPanel({
       {uploading ? (
         <div className="space-y-2">
           {progressLabel ? <p className="text-sm text-slate-700">{progressLabel}</p> : null}
-          <Progress
-            value={progressPercent}
-            className="h-2 bg-slate-200 [&_[data-slot=progress-indicator]]:bg-[var(--brand-navy)]"
-          />
-          <p className="text-xs text-slate-500">{progressPercent}% — do not close this page</p>
+          <Progress value={progressPercent} className="h-2 bg-slate-200 [&_[data-slot=progress-indicator]]:bg-[var(--brand-navy)]" />
         </div>
       ) : null}
 
@@ -282,13 +254,8 @@ export function HeroVideosUploadPanel({
           className="bg-[var(--brand-navy)] text-white"
         >
           <Upload className="h-4 w-4 mr-2" />
-          {uploading ? 'Uploading…' : 'Upload videos & refresh homepage'}
+          {uploading ? 'Uploading…' : 'Upload images & refresh homepage'}
         </Button>
-        {uploading ? (
-          <Button type="button" variant="outline" onClick={cancelUpload}>
-            Cancel
-          </Button>
-        ) : null}
         <Button type="button" variant="outline" onClick={() => void loadStatus()} disabled={loading || uploading}>
           Refresh status
         </Button>

@@ -14,6 +14,7 @@ import {
 } from '@/lib/platform/site-settings-schema'
 import { Building2, CreditCard, Globe, Home, ImageIcon, Save, User } from 'lucide-react'
 import { HeroVideosUploadPanel } from '@/components/admin/hero-videos-upload-panel'
+import { HeroImagesUploadPanel } from '@/components/admin/hero-images-upload-panel'
 
 function Field({
   label,
@@ -231,20 +232,27 @@ export default function WebSettingsPanel() {
               </Field>
               <Field
                 label="Background image or video URL"
-                hint="Use /videos/playlist for the 4-video rotation (loads from R2 when NEXT_PUBLIC_R2_PUBLIC_BASE_URL is set on Vercel)"
+                hint="Use /hero/playlist for rotating stills, /videos/playlist for rotating videos, or a single media URL. Playlist uploads below apply this automatically."
               >
                 <Input value={form.hero.background_image} onChange={(e) => patchHero('background_image', e.target.value)} />
               </Field>
 
+              <HeroImagesUploadPanel
+                onPlaylistReady={(background) => {
+                  patchHero('background_image', background)
+                  setMessage('Hero images updated and homepage cache refreshed. Visit the home page to confirm.')
+                }}
+              />
+
               <HeroVideosUploadPanel
-                onPlaylistReady={() => {
-                  patchHero('background_image', '/videos/playlist')
-                  setMessage('Videos uploaded — background set to /videos/playlist. Click Save all settings.')
+                onPlaylistReady={(background) => {
+                  patchHero('background_image', background)
+                  setMessage('Hero videos updated and homepage cache refreshed. Visit the home page to confirm.')
                 }}
               />
 
               <div>
-                <Label className="text-slate-800">Upload hero image or video</Label>
+                <Label className="text-slate-800">Upload a single hero image or video</Label>
                 <Input
                   ref={heroFileRef}
                   type="file"
@@ -252,11 +260,26 @@ export default function WebSettingsPanel() {
                   className="mt-1"
                   onChange={(e) => {
                     const file = e.target.files?.[0]
-                    if (file) void uploadImage(file, 'hero', (url) => patchHero('background_image', url))
+                    if (file) {
+                      void uploadImage(file, 'hero', async (url) => {
+                        patchHero('background_image', url)
+                        try {
+                          await fetch('/api/admin/hero-media/apply', {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ mode: null }),
+                          })
+                        } catch {
+                          // version bump best-effort; Save all settings still persists the URL
+                        }
+                        setMessage('Single hero media uploaded. Click Save all settings to publish the new URL.')
+                      })
+                    }
                   }}
                 />
                 <p className="text-xs text-slate-500 mt-1">
-                  Large hero videos: add to <code className="text-xs">public/videos/</code> and set URL to e.g. /videos/hero.mp4 or /videos/playlist.
+                  For rotating galleries, prefer the playlist uploaders above so fixed slots are replaced and cache is busted.
                 </p>
               </div>
               <div className="grid md:grid-cols-2 gap-4">

@@ -6,6 +6,8 @@ import { HeroImageRotator } from '@/components/home/hero-image-rotator'
 import { HeroBackgroundMedia } from '@/components/home/hero-background-media'
 import { getHeroVideoPlaylist } from '@/lib/media/hero-videos'
 import { getHeroImagePlaylist } from '@/lib/media/hero-images'
+import { isHeroImagePlaylistMode, isHeroVideoPlaylistMode, withHeroMediaVersion } from '@/lib/media/hero-cache'
+import { loadHeroMediaVersion } from '@/lib/media/hero-media-version'
 import { COMPANY } from '@/lib/company/constants'
 import type { HeroContent } from '@/types/platform'
 import { loadHomePersonalization, resolveHomeHeroCtas } from '@/lib/home/personalization'
@@ -23,23 +25,12 @@ const defaultHero: HeroContent = {
   is_active: true,
 }
 
-function useHeroImagePlaylist(background: string | null | undefined): boolean {
-  if (!background?.trim()) return true
-  const value = background.trim()
-  if (value === '/hero/playlist' || value === '/hero') return true
-  if (value === '/hero-laboratory.jpg') return true
-  return false
-}
-
-function useHeroVideoPlaylist(background: string | null | undefined): boolean {
-  if (!background?.trim()) return false
-  const value = background.trim()
-  if (value === '/videos/playlist' || value === '/videos') return true
-  return false
-}
-
 export async function HomeHeroSection({ fullViewport = false }: { fullViewport?: boolean }) {
-  const [hero, personalization] = await Promise.all([getActiveHero(), loadHomePersonalization()])
+  const [hero, personalization, mediaVersion] = await Promise.all([
+    getActiveHero(),
+    loadHomePersonalization(),
+    loadHeroMediaVersion(),
+  ])
   const resolvedHero = hero ?? defaultHero
   const ctas = resolveHomeHeroCtas(personalization, {
     primaryLabel: resolvedHero.cta_primary_label,
@@ -47,10 +38,14 @@ export async function HomeHeroSection({ fullViewport = false }: { fullViewport?:
     secondaryLabel: resolvedHero.cta_secondary_label,
     secondaryUrl: resolvedHero.cta_secondary_url,
   })
-  const showImages = useHeroImagePlaylist(resolvedHero.background_image)
-  const showVideos = !showImages && useHeroVideoPlaylist(resolvedHero.background_image)
-  const imagePlaylist = getHeroImagePlaylist()
-  const videoPlaylist = getHeroVideoPlaylist()
+  const showImages = isHeroImagePlaylistMode(resolvedHero.background_image)
+  const showVideos =
+    !showImages && isHeroVideoPlaylistMode(resolvedHero.background_image)
+  const imagePlaylist = getHeroImagePlaylist(mediaVersion)
+  const videoPlaylist = getHeroVideoPlaylist(mediaVersion)
+  const singleSrc = resolvedHero.background_image
+    ? withHeroMediaVersion(resolvedHero.background_image, mediaVersion)
+    : null
 
   return (
     <section
@@ -66,8 +61,8 @@ export async function HomeHeroSection({ fullViewport = false }: { fullViewport?:
         <div className="absolute inset-0">
           <HeroVideoRotator playlist={videoPlaylist} />
         </div>
-      ) : resolvedHero.background_image ? (
-        <HeroBackgroundMedia src={resolvedHero.background_image} alt={resolvedHero.title} />
+      ) : singleSrc ? (
+        <HeroBackgroundMedia src={singleSrc} alt={resolvedHero.title} />
       ) : null}
       <div className="absolute inset-0 z-[1] bg-black/55 md:bg-black/45" aria-hidden />
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-8 pb-10 sm:pb-12 lg:pb-0 pt-24 sm:pt-28 lg:pt-[calc(var(--site-header-h)+2rem)]">

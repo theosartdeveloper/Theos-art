@@ -1,3 +1,5 @@
+import { withHeroMediaVersion } from '@/lib/media/hero-cache'
+
 /** Hero video file definitions (filename only — base URL resolved at runtime). */
 export const HERO_VIDEO_FILES = [
   { file: 'e-learning.mp4', type: 'video/mp4', label: 'E-learning' },
@@ -53,10 +55,10 @@ export function getHeroVideosBaseUrl(): string {
   return '/videos'
 }
 
-export function getHeroVideoPlaylist(): HeroVideoSlide[] {
+export function getHeroVideoPlaylist(version?: string | null): HeroVideoSlide[] {
   const base = getHeroVideosBaseUrl()
   return HERO_VIDEO_FILES.map((item) => ({
-    src: `${base}/${item.file}`,
+    src: withHeroMediaVersion(`${base}/${item.file}`, version),
     type: item.type,
     label: item.label,
     tone: 'tone' in item ? item.tone : undefined,
