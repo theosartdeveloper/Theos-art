@@ -101,6 +101,25 @@ export async function sendEmail(input: {
   const embedLogo = input.embedLogo !== false && input.html.includes(`cid:${EMAIL_LOGO_CID}`)
   const logoAttachment = embedLogo ? await resolveLogoAttachment(input.logoUrl) : null
 
+  const attachments =
+    logoAttachment?.content
+      ? [
+          {
+            filename: logoAttachment.filename,
+            contentId: logoAttachment.contentId,
+            content: logoAttachment.content.toString('base64'),
+          },
+        ]
+      : logoAttachment?.path
+        ? [
+            {
+              filename: logoAttachment.filename,
+              contentId: logoAttachment.contentId,
+              path: logoAttachment.path,
+            },
+          ]
+        : undefined
+
   try {
     const { error } = await resend.emails.send({
       from: EMAIL_FROM,
@@ -108,19 +127,7 @@ export async function sendEmail(input: {
       subject: input.subject,
       html: input.html,
       ...(input.replyTo ? { reply_to: input.replyTo } : {}),
-      ...(logoAttachment
-        ? {
-            attachments: [
-              {
-                filename: logoAttachment.filename,
-                contentId: logoAttachment.contentId,
-                ...(logoAttachment.content
-                  ? { content: logoAttachment.content }
-                  : { path: logoAttachment.path }),
-              },
-            ],
-          }
-        : {}),
+      ...(attachments ? { attachments } : {}),
     })
     if (error) {
       console.error('[email] Send failed:', input.subject, error)
