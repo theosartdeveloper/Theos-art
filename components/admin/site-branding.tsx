@@ -103,13 +103,13 @@ export default function SiteBrandingPanel({ initialLogoUrl = '/images/theos-art-
         {message && <p className="text-sm text-green-700">{message}</p>}
 
         <div className="flex gap-2">
-          <Button onClick={handleSave} disabled={uploading} className="bg-[#1e3a5f]">
+          <Button onClick={handleSave} disabled={uploading} className="bg-[var(--brand-navy)] hover:bg-[var(--brand-navy)]/90">
             Save logo
           </Button>
           <Button
             type="button"
             variant="outline"
-            onClick={() => setLogoUrl('/images/energy-logics-logo.png')}
+            onClick={() => setLogoUrl('/images/theos-art-logo-v2.png')}
           >
             Reset to bundled logo
           </Button>
