@@ -5,6 +5,9 @@ const BRAND_CHARCOAL: [number, number, number] = [58, 58, 58]
 const BRAND_ORANGE: [number, number, number] = [240, 138, 40]
 const MUTED: [number, number, number] = [100, 116, 139]
 
+/** Display form for reports (no protocol). */
+export const REPORT_SITE_DISPLAY = 'www.theosartltd.com'
+
 let cachedLogoDataUrl: string | null | undefined
 
 /** Load company logo as a data URL for reliable PDF embedding. */
@@ -45,13 +48,16 @@ export async function loadReportLogoDataUrl(): Promise<string | null> {
 }
 
 export type ReportHeaderOptions = {
+  /** Report name shown top-right in the brand bar (e.g. Money traffic & shop sales). */
   title: string
+  /** Primary meta line under the logo (e.g. report range). */
   subtitle?: string
   logoDataUrl?: string | null
 }
 
 /**
  * Draws a professional letterhead on the first page.
+ * Logo + company name left; report title right; range / location / contacts under the logo.
  * Returns the Y position where content should start.
  */
 export function drawReportHeader(doc: jsPDF, options: ReportHeaderOptions): number {
@@ -59,6 +65,7 @@ export function drawReportHeader(doc: jsPDF, options: ReportHeaderOptions): numb
   const margin = 14
   const headerTop = 10
   const barHeight = 28
+  const rightEdge = pageWidth - margin
 
   // Brand bar
   doc.setFillColor(...BRAND_CHARCOAL)
@@ -70,7 +77,6 @@ export function drawReportHeader(doc: jsPDF, options: ReportHeaderOptions): numb
   if (options.logoDataUrl) {
     try {
       const format = options.logoDataUrl.includes('image/jpeg') ? 'JPEG' : 'PNG'
-      // White plate behind logo for dark mark contrast
       doc.setFillColor(255, 255, 255)
       doc.roundedRect(margin, headerTop - 1, 22, 18, 2, 2, 'F')
       doc.addImage(options.logoDataUrl, format, margin + 2, headerTop + 1, 18, 14)
@@ -80,42 +86,45 @@ export function drawReportHeader(doc: jsPDF, options: ReportHeaderOptions): numb
     }
   }
 
+  // Company identity (left, beside logo)
   doc.setTextColor(255, 255, 255)
   doc.setFont('helvetica', 'bold')
-  doc.setFontSize(14)
-  doc.text(COMPANY.legalName, textLeft, headerTop + 6)
+  doc.setFontSize(13)
+  doc.text(COMPANY.legalName, textLeft, headerTop + 7)
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(8)
-  doc.text(COMPANY.slogan, textLeft, headerTop + 12)
-  doc.setFontSize(7.5)
-  doc.text(
-    `${COMPANY.email}  ·  ${COMPANY.phoneDisplay}  ·  ${COMPANY.publicSiteUrl.replace(/^https?:\/\//, '')}`,
-    textLeft,
-    headerTop + 17
-  )
+  doc.text(COMPANY.slogan, textLeft, headerTop + 14)
 
-  // Meta block under bar
-  let y = barHeight + 12
-  doc.setTextColor(...BRAND_CHARCOAL)
+  // Report title (top-right corner of brand bar)
   doc.setFont('helvetica', 'bold')
-  doc.setFontSize(13)
-  doc.text(options.title, margin, y)
-  y += 5
+  doc.setFontSize(11)
+  const titleLines = doc.splitTextToSize(options.title, 72)
+  doc.text(titleLines, rightEdge, headerTop + 8, { align: 'right' })
+
+  // Meta under logo: range, location, contacts — left-aligned with logo column
+  let y = barHeight + 12
+  const metaLeft = margin
 
   if (options.subtitle) {
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(9)
-    doc.setTextColor(...MUTED)
-    doc.text(options.subtitle, margin, y)
-    y += 5
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(10)
+    doc.setTextColor(...BRAND_CHARCOAL)
+    doc.text(options.subtitle, metaLeft, y)
+    y += 5.5
   }
 
   doc.setFont('helvetica', 'normal')
-  doc.setFontSize(8)
+  doc.setFontSize(8.5)
   doc.setTextColor(...MUTED)
-  doc.text(`${COMPANY.address} · ${COMPANY.region}`, margin, y)
-  y += 4
-  doc.text(`Generated: ${new Date().toLocaleString()}`, margin, y)
+  doc.text(`${COMPANY.address} · ${COMPANY.region}`, metaLeft, y)
+  y += 4.5
+  doc.text(
+    `${COMPANY.email}  ·  ${COMPANY.phoneDisplay}  ·  ${REPORT_SITE_DISPLAY}`,
+    metaLeft,
+    y
+  )
+  y += 4.5
+  doc.text(`Generated: ${new Date().toLocaleString()}`, metaLeft, y)
   y += 6
 
   doc.setDrawColor(226, 232, 240)
@@ -133,7 +142,7 @@ export function companyLetterheadRows(): Array<Array<string | number>> {
     [COMPANY.email],
     [COMPANY.phoneDisplay],
     [COMPANY.address],
-    [COMPANY.publicSiteUrl],
+    [REPORT_SITE_DISPLAY],
     [`Generated: ${new Date().toLocaleString()}`],
     [],
   ]
@@ -145,7 +154,7 @@ export function drawReportFooter(doc: jsPDF, pageNumber: number, pageCount: numb
   doc.setFontSize(7)
   doc.setTextColor(...MUTED)
   doc.text(
-    `${COMPANY.legalName} · Confidential · Page ${pageNumber} of ${pageCount}`,
+    `${COMPANY.legalName} · ${REPORT_SITE_DISPLAY} · Confidential · Page ${pageNumber} of ${pageCount}`,
     pageWidth / 2,
     pageHeight - 8,
     { align: 'center' }

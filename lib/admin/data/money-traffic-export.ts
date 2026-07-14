@@ -189,11 +189,20 @@ export function downloadMoneyTrafficCsv(data: FinancialSummary) {
 export async function downloadMoneyTrafficPdf(data: FinancialSummary) {
   const doc = new jsPDF()
   const logoDataUrl = await loadReportLogoDataUrl()
-  const startY = drawReportHeader(doc, {
+
+  // Cover / letterhead page only — maximize space for metrics on the next page
+  drawReportHeader(doc, {
     title: 'Money traffic & shop sales',
     subtitle: `Report range: ${rangeLabel(data)}`,
     logoDataUrl,
   })
+
+  doc.addPage()
+  const metricsTop = 18
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(12)
+  doc.setTextColor(58, 58, 58)
+  doc.text('Key metrics', 14, metricsTop)
 
   autoTable(doc, {
     head: [['Metric', 'Value']],
@@ -213,28 +222,36 @@ export async function downloadMoneyTrafficPdf(data: FinancialSummary) {
       ['Out of stock', String(data.outOfStockCount)],
       ['Pending receipts', String(data.pendingPaymentsCount)],
     ],
-    startY,
+    startY: metricsTop + 4,
     theme: 'striped',
     headStyles: { fillColor: [58, 58, 58] },
     styles: { fontSize: 9 },
     margin: { left: 14, right: 14 },
   })
 
-  const afterSummary = (doc as jsPDF & { lastAutoTable?: { finalY: number } }).lastAutoTable
-    ?.finalY
-  const y2 = (afterSummary ?? startY) + 10
+  doc.addPage()
+  const productsTop = 18
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(12)
+  doc.setTextColor(58, 58, 58)
+  doc.text('Detailed products', 14, productsTop)
+
+  const productRows =
+    data.productSales.length > 0
+      ? data.productSales.slice(0, 120).map((p) => [
+          p.name,
+          String(p.unitsSold),
+          formatRwf(p.revenue),
+          formatRwf(p.cogs),
+          formatRwf(p.profit),
+          String(p.stock),
+        ])
+      : [['No products found in catalog or paid sales for this range.', '', '', '', '', '']]
 
   autoTable(doc, {
     head: [['Product', 'Units', 'Revenue', 'COGS', 'Profit', 'Stock']],
-    body: data.productSales.slice(0, 40).map((p) => [
-      p.name,
-      String(p.unitsSold),
-      formatRwf(p.revenue),
-      formatRwf(p.cogs),
-      formatRwf(p.profit),
-      String(p.stock),
-    ]),
-    startY: y2,
+    body: productRows,
+    startY: productsTop + 4,
     theme: 'striped',
     headStyles: { fillColor: [240, 138, 40] },
     styles: { fontSize: 8 },

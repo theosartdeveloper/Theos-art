@@ -13,8 +13,8 @@ export const COMPANY = {
   logoUrl: '/images/theos-art-logo-v2.png',
   region: 'East Africa',
   timezone: 'Central Africa Time (CAT, UTC+2)',
-  /** Canonical public site URL used on certificates and QR codes */
-  publicSiteUrl: 'https://www.theosart.com',
+  /** Canonical public site URL used on certificates, reports, and QR codes */
+  publicSiteUrl: 'https://www.theosartltd.com',
 } as const
 
 export const FOUNDER = {

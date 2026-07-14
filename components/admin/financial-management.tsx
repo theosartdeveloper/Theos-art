@@ -265,7 +265,9 @@ export default function FinancialManagement() {
         </CardHeader>
         <CardContent>
           {data.productSales.length === 0 ? (
-            <p className="text-sm text-slate-600">No paid product sales in this range.</p>
+            <p className="text-sm text-slate-600">
+              No catalog products or paid line items found for this range.
+            </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">

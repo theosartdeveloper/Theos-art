@@ -50,8 +50,8 @@ export type FinancialSummary = {
 }
 
 const APPROVED_PAYMENT = ['approved', 'Paid']
-const PAID_ORDER = ['paid', 'approved']
-const PENDING_ORDER = ['unpaid', 'pending_review', 'gateway_pending']
+const PAID_ORDER = ['paid', 'approved', 'Paid']
+const PENDING_ORDER = ['unpaid', 'pending_review', 'gateway_pending', 'Pending', 'pending']
 const CANCELLED_ORDER = ['cancelled', 'canceled', 'rejected', 'refunded']
 
 function dayKey(iso: string): string {
@@ -176,28 +176,66 @@ export async function loadFinancialSummary(options?: {
   }
 
   const paidIds = paidOrders.map((o) => String(o.id))
-  const itemsByOrder = new Map<string, Array<{ product_id: string | null; product_name: string; quantity: number; unit_price: number; unit_cost: number; line_total: number }>>()
+  const itemsByOrder = new Map<
+    string,
+    Array<{
+      product_id: string | null
+      product_name: string
+      quantity: number
+      unit_price: number
+      unit_cost: number
+      line_total: number
+    }>
+  >()
+
+  type OrderItemRow = {
+    order_id: unknown
+    product_id?: unknown
+    product_name?: unknown
+    quantity?: unknown
+    unit_price?: unknown
+    unit_cost?: unknown
+    line_total?: unknown
+  }
+
+  async function fetchOrderItems(chunk: string[]): Promise<OrderItemRow[]> {
+    // Prefer full columns; fall back if migrations (product_name / unit_cost / line_total) are missing
+    const full = await supabaseAdmin!
+      .from('order_items')
+      .select('order_id, product_id, product_name, quantity, unit_price, unit_cost, line_total')
+      .in('order_id', chunk)
+
+    if (!full.error && full.data) return full.data as OrderItemRow[]
+
+    const basic = await supabaseAdmin!
+      .from('order_items')
+      .select('order_id, product_id, quantity, unit_price')
+      .in('order_id', chunk)
+
+    if (basic.error) return []
+    return (basic.data ?? []) as OrderItemRow[]
+  }
 
   if (paidIds.length > 0) {
-    // Batch in chunks to avoid URL limits
     const chunkSize = 100
     for (let i = 0; i < paidIds.length; i += chunkSize) {
       const chunk = paidIds.slice(i, i + chunkSize)
-      const { data: items } = await supabaseAdmin
-        .from('order_items')
-        .select('order_id, product_id, product_name, quantity, unit_price, unit_cost, line_total')
-        .in('order_id', chunk)
+      const items = await fetchOrderItems(chunk)
 
-      for (const item of items ?? []) {
+      for (const item of items) {
         const oid = String(item.order_id)
+        const qty = Number(item.quantity ?? 0)
+        const unitPrice = Number(item.unit_price ?? 0)
+        const unitCost = Number(item.unit_cost ?? 0)
+        const lineTotal = Number(item.line_total ?? 0) || qty * unitPrice
         const list = itemsByOrder.get(oid) ?? []
         list.push({
           product_id: item.product_id != null ? String(item.product_id) : null,
-          product_name: String(item.product_name ?? 'Item'),
-          quantity: Number(item.quantity ?? 0),
-          unit_price: Number(item.unit_price ?? 0),
-          unit_cost: Number(item.unit_cost ?? 0),
-          line_total: Number(item.line_total ?? 0),
+          product_name: String(item.product_name ?? '').trim() || 'Item',
+          quantity: qty,
+          unit_price: unitPrice,
+          unit_cost: unitCost,
+          line_total: lineTotal,
         })
         itemsByOrder.set(oid, list)
       }
@@ -247,9 +285,21 @@ export async function loadFinancialSummary(options?: {
   const shopNetProfit = shopGrossRevenue - shopCogs
   const totalRevenue = learningRevenue + supportRevenue + shopGrossRevenue
 
-  const { data: products } = await supabaseAdmin
+  const { data: productsFull, error: productsError } = await supabaseAdmin
     .from('products')
     .select('id, name, stock, price, discount, cost_price, low_stock_threshold, status')
+
+  let products = productsFull
+  if (productsError || !products) {
+    const fallback = await supabaseAdmin
+      .from('products')
+      .select('id, name, stock, price, discount, status')
+    products = (fallback.data ?? []).map((p) => ({
+      ...p,
+      cost_price: 0,
+      low_stock_threshold: 5,
+    }))
+  }
 
   let inventoryValueCost = 0
   let inventoryValueRetail = 0
@@ -274,22 +324,65 @@ export async function loadFinancialSummary(options?: {
     }
   }
 
-  const productSales = Array.from(productAgg.values())
-    .map((row) => {
-      const stockInfo = stockById.get(row.productId)
-      return {
-        productId: row.productId,
-        name: row.name || stockInfo?.name || 'Product',
-        unitsSold: row.unitsSold,
-        revenue: row.revenue,
-        cogs: row.cogs,
-        profit: row.revenue - row.cogs,
-        stock: stockInfo?.stock ?? 0,
-        costPrice: stockInfo?.cost ?? 0,
-        retailPrice: stockInfo?.retail ?? 0,
-      }
+  // Detailed product rows: sold lines enriched from catalog + unsold catalog SKUs
+  const productSalesMap = new Map<
+    string,
+    {
+      productId: string
+      name: string
+      unitsSold: number
+      revenue: number
+      cogs: number
+      profit: number
+      stock: number
+      costPrice: number
+      retailPrice: number
+    }
+  >()
+
+  for (const row of productAgg.values()) {
+    const stockInfo = row.productId ? stockById.get(row.productId) : undefined
+    const key = row.productId || row.name
+    const name =
+      (row.name && row.name !== 'Item' ? row.name : '') ||
+      stockInfo?.name ||
+      'Product'
+    productSalesMap.set(key, {
+      productId: row.productId,
+      name,
+      unitsSold: row.unitsSold,
+      revenue: row.revenue,
+      cogs: row.cogs,
+      profit: row.revenue - row.cogs,
+      stock: stockInfo?.stock ?? 0,
+      costPrice: stockInfo?.cost ?? 0,
+      retailPrice: stockInfo?.retail ?? 0,
     })
-    .sort((a, b) => b.revenue - a.revenue)
+  }
+
+  for (const p of products ?? []) {
+    const id = String(p.id)
+    if (productSalesMap.has(id)) continue
+    if (['archived', 'draft'].includes(String(p.status ?? ''))) continue
+    const stockInfo = stockById.get(id)
+    if (!stockInfo) continue
+    productSalesMap.set(id, {
+      productId: id,
+      name: stockInfo.name || String(p.name ?? 'Product'),
+      unitsSold: 0,
+      revenue: 0,
+      cogs: 0,
+      profit: 0,
+      stock: stockInfo.stock,
+      costPrice: stockInfo.cost,
+      retailPrice: stockInfo.retail,
+    })
+  }
+
+  const productSales = Array.from(productSalesMap.values()).sort((a, b) => {
+    if (b.revenue !== a.revenue) return b.revenue - a.revenue
+    return a.name.localeCompare(b.name)
+  })
 
   const profitById = new Map(orderProfits.map((p) => [p.id, p.profit]))
 
