@@ -242,7 +242,7 @@ export default async function LibraryPage({ searchParams }: PageProps) {
                 href={buildLibraryHref({ ...baseParams, category: 'gallery', gallery: undefined })}
                 className={`text-sm px-3 py-1 rounded-full border ${
                   !galleryType
-                    ? 'bg-slate-800 text-white border-slate-800'
+                    ? 'bg-[var(--brand-navy)] text-white border-[var(--brand-navy)]'
                     : 'border-slate-300 text-slate-700'
                 }`}
               >
@@ -254,7 +254,7 @@ export default async function LibraryPage({ searchParams }: PageProps) {
                   href={buildLibraryHref({ ...baseParams, category: 'gallery', gallery: type.id })}
                   className={`text-sm px-3 py-1 rounded-full border ${
                     galleryType === type.id
-                      ? 'bg-slate-800 text-white border-slate-800'
+                      ? 'bg-[var(--brand-navy)] text-white border-[var(--brand-navy)]'
                       : 'border-slate-300 text-slate-700'
                   }`}
                 >
@@ -270,7 +270,7 @@ export default async function LibraryPage({ searchParams }: PageProps) {
                 href={buildLibraryHref({ ...baseParams, category: 'culture', type: undefined })}
                 className={`text-sm px-3 py-1 rounded-full border ${
                   !cultureType
-                    ? 'bg-slate-800 text-white border-slate-800'
+                    ? 'bg-[var(--brand-navy)] text-white border-[var(--brand-navy)]'
                     : 'border-slate-300 text-slate-700'
                 }`}
               >
@@ -282,7 +282,7 @@ export default async function LibraryPage({ searchParams }: PageProps) {
                   href={buildLibraryHref({ ...baseParams, category: 'culture', type: type.id })}
                   className={`text-sm px-3 py-1 rounded-full border ${
                     cultureType === type.id
-                      ? 'bg-slate-800 text-white border-slate-800'
+                      ? 'bg-[var(--brand-navy)] text-white border-[var(--brand-navy)]'
                       : 'border-slate-300 text-slate-700'
                   }`}
                 >
@@ -298,7 +298,9 @@ export default async function LibraryPage({ searchParams }: PageProps) {
               <Link
                 href={buildLibraryHref({ ...baseParams, lang: undefined })}
                 className={`text-sm px-3 py-1 rounded-full border ${
-                  !language ? 'bg-slate-700 text-white border-slate-700' : 'border-slate-300 text-slate-700'
+                  !language
+                    ? 'bg-[var(--brand-navy)] text-white border-[var(--brand-navy)]'
+                    : 'border-slate-300 text-slate-700'
                 }`}
               >
                 All
@@ -309,7 +311,7 @@ export default async function LibraryPage({ searchParams }: PageProps) {
                   href={buildLibraryHref({ ...baseParams, lang: lang.id })}
                   className={`text-sm px-3 py-1 rounded-full border ${
                     language === lang.id
-                      ? 'bg-slate-700 text-white border-slate-700'
+                      ? 'bg-[var(--brand-navy)] text-white border-[var(--brand-navy)]'
                       : 'border-slate-300 text-slate-700'
                   }`}
                 >
@@ -325,7 +327,7 @@ export default async function LibraryPage({ searchParams }: PageProps) {
                   href={buildLibraryHref({ ...baseParams, sort: option.id })}
                   className={`text-sm px-3 py-1 rounded-full border ${
                     sort === option.id
-                      ? 'bg-slate-700 text-white border-slate-700'
+                      ? 'bg-[var(--brand-navy)] text-white border-[var(--brand-navy)]'
                       : 'border-slate-300 text-slate-700'
                   }`}
                 >

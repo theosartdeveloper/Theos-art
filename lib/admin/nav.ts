@@ -450,6 +450,7 @@ const THEOS_ART_ADMIN_VISIBLE_IDS = new Set([
   'services',
   'reviews',
   'settings',
+  'security',
 ])
 
 export function filterAdminNav(permissions: string[] | undefined): AdminNavGroup[] {

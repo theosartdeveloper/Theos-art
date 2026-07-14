@@ -16,6 +16,13 @@ export default function AdminSecurityPanel() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
 
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [passwordMessage, setPasswordMessage] = useState('')
+  const [passwordError, setPasswordError] = useState('')
+  const [savingPassword, setSavingPassword] = useState(false)
+
   const load = async () => {
     const res = await fetch('/api/admin/security/2fa')
     const data = await res.json()
@@ -81,14 +88,101 @@ export default function AdminSecurityPanel() {
     setMessage('Two-factor authentication disabled.')
   }
 
+  const changePassword = async () => {
+    setPasswordError('')
+    setPasswordMessage('')
+    if (!currentPassword || !newPassword) {
+      setPasswordError('Enter your current password and a new password.')
+      return
+    }
+    if (newPassword.length < 6) {
+      setPasswordError('New password must be at least 6 characters.')
+      return
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordError('New password and confirmation do not match.')
+      return
+    }
+
+    setSavingPassword(true)
+    try {
+      const res = await fetch('/api/admin/security/password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword, newPassword, confirmPassword }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setPasswordError(data.error || 'Could not update password')
+        return
+      }
+      setPasswordMessage(data.message || 'Password updated.')
+      setCurrentPassword('')
+      setNewPassword('')
+      setConfirmPassword('')
+    } catch {
+      setPasswordError('Could not update password')
+    } finally {
+      setSavingPassword(false)
+    }
+  }
+
   if (loading) return <p className="text-slate-600">Loading security settings…</p>
 
   return (
     <div className="space-y-6">
       <AdminSectionHeader
         title="Security"
-        description="Protect administrator sign-in with an authenticator app (TOTP)."
+        description="Change your admin password and protect sign-in with an authenticator app (TOTP)."
       />
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Change password</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4 max-w-md">
+          {passwordMessage ? <p className="text-sm text-green-700">{passwordMessage}</p> : null}
+          {passwordError ? <p className="text-sm text-red-700">{passwordError}</p> : null}
+          <div className="space-y-2">
+            <Label htmlFor="current-password">Current password</Label>
+            <Input
+              id="current-password"
+              type="password"
+              autoComplete="current-password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="new-password">New password</Label>
+            <Input
+              id="new-password"
+              type="password"
+              autoComplete="new-password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="confirm-password">Confirm new password</Label>
+            <Input
+              id="confirm-password"
+              type="password"
+              autoComplete="new-password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          </div>
+          <Button
+            type="button"
+            onClick={() => void changePassword()}
+            disabled={savingPassword}
+            className="bg-[var(--brand-navy)] text-white hover:bg-[var(--brand-navy-deep)]"
+          >
+            {savingPassword ? 'Updating…' : 'Update password'}
+          </Button>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

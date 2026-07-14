@@ -18,8 +18,8 @@ import { COMPANY } from '@/lib/company/constants'
 const PRIMARY_NAV = [
   { href: '/', label: 'Home' },
   { href: '/shop', label: 'Shop' },
-  { href: '/learning', label: 'Learning' },
   { href: '/art-gallery', label: 'Art Gallery' },
+  { href: '/learning', label: 'Learning' },
   { href: '/about', label: 'About' },
 ] as const
 

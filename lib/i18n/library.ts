@@ -19,7 +19,7 @@ const libraryMessages = {
     technologies: 'Materials & mediums',
   },
   rw: {
-    title: 'Isomo ry\'ubuhanzi',
+    title: 'Ubuhanzi',
     subtitle:
       "Reba amafoto, imishinga y'ubuhanzi, ibitabo n'ibindi bijyanye n'umuco gakondo bitegurwa na Theos Art.",
     projectsTitle: 'Imishinga y\'ubuhanzi',

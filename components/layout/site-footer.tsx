@@ -27,6 +27,9 @@ export async function SiteFooter() {
               <Link href="/art-gallery">Art Gallery</Link>
             </li>
             <li>
+              <Link href="/learning">Learning</Link>
+            </li>
+            <li>
               <Link href="/about">About</Link>
             </li>
           </ul>
