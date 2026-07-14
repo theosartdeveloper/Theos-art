@@ -143,16 +143,6 @@ export function createOrderReceiptHTML(data: OrderReceiptData): string {
       margin-bottom: 6mm;
     }
     .meta strong { color: #3a3a3a; }
-    .note {
-      font-family: system-ui, sans-serif;
-      font-size: 11px;
-      background: #fff7ed;
-      border: 1px solid #fdba74;
-      color: #9a3412;
-      padding: 3mm 3.5mm;
-      border-radius: 4px;
-      margin-bottom: 6mm;
-    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -283,10 +273,6 @@ export function createOrderReceiptHTML(data: OrderReceiptData): string {
     </div>
 
     <div class="title">Official order receipt</div>
-    <div class="note">
-      Attach this receipt to the delivery package, or give it to the client.
-      Present this receipt (and order code) when requesting a refund if required.
-    </div>
 
     <div class="meta">
       <div><strong>Customer:</strong> ${escapeHtml(data.customerName)}</div>
