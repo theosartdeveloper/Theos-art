@@ -51,8 +51,8 @@ export default async function LearningHubPage({
               </div>
               <h2 className="text-2xl font-bold text-slate-900 mb-3">Trainings</h2>
               <p className="text-slate-600 leading-relaxed mb-8">
-                Hands-on workshops and studio programmes covering technique, materials, and creative
-                practice — from foundations to advanced projects.
+                Beginner visual art training — drawing, painting, and colour foundations. Learn.
+                Create. Inspire.
               </p>
               <Link href="/trainings">
                 <Button className="bg-[var(--brand-navy)] text-white hover:bg-[var(--brand-navy-deep)]">
