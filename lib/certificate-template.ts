@@ -73,7 +73,9 @@ export function createCertificateHTML({
   const logoUrl = resolveAsset(assetBaseUrl, logoOverride || '')
   const stampUrl = resolveAsset(assetBaseUrl, stampOverride || '')
   const safeName = escapeHtml(signatoryName)
-  const safeTitle = escapeHtml(signatoryTitle)
+  // Role line under the name — keep short (e.g. "Managing Director")
+  const roleLine = String(signatoryTitle).split('·')[0]?.trim() || 'Managing Director'
+  const safeRole = escapeHtml(roleLine)
   const safeFullName = escapeHtml(fullName)
   const safeProgram = escapeHtml(program)
   const safeCertId = escapeHtml(certificateId)
@@ -321,17 +323,17 @@ export function createCertificateHTML({
     }
     .notice.pending strong { color: #475569; }
 
-    /* Bottom band — three equal columns inside the safe area */
+    /* Bottom band — two columns (authority left, QR + date right) */
     .bottom {
       flex: 0 0 auto;
       display: grid;
-      grid-template-columns: 1fr 1.3fr 1fr;
-      gap: 4mm;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 8mm;
       align-items: end;
       padding-top: 3mm;
       border-top: 1px solid #e2e8f0;
       margin-top: 2mm;
-      min-height: 38mm;
+      min-height: 48mm;
     }
 
     .col {
@@ -345,6 +347,9 @@ export function createCertificateHTML({
       overflow: hidden;
     }
 
+    .col-left { align-items: center; }
+    .col-right { align-items: center; gap: 2.5mm; }
+
     .date-value {
       font-family: 'Libre Baskerville', Georgia, serif;
       font-size: 12px;
@@ -352,8 +357,8 @@ export function createCertificateHTML({
       color: #3a3a3a;
     }
     .col-rule {
-      width: 70%;
-      max-width: 48mm;
+      width: 72%;
+      max-width: 55mm;
       border-top: 1.25px solid #2d3748;
       margin: 1.5mm 0;
     }
@@ -366,41 +371,69 @@ export function createCertificateHTML({
       text-transform: uppercase;
     }
 
-    .authority {
+    /* Stamp sits on top of the Managing Director name */
+    .sig-block {
+      position: relative;
       width: 100%;
+      max-width: 95mm;
+      min-height: 36mm;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1mm;
+      justify-content: flex-end;
+      padding-top: 10mm;
     }
     .stamp {
-      width: 28mm;
-      height: 28mm;
+      position: absolute;
+      left: 50%;
+      top: 42%;
+      width: 42mm;
+      height: 42mm;
       object-fit: contain;
-      opacity: 0.92;
-      transform: rotate(-8deg);
+      opacity: 0.88;
+      transform: translate(-50%, -50%) rotate(-12deg);
       mix-blend-mode: multiply;
+      filter: contrast(1.12) saturate(1.08);
+      z-index: 1;
+      pointer-events: none;
     }
     .sig-name {
+      position: relative;
+      z-index: 2;
       font-family: 'Cinzel', serif;
-      font-size: 13px;
+      font-size: 15px;
       font-weight: 700;
       color: #3a3a3a;
-      letter-spacing: 1.5px;
+      letter-spacing: 2px;
       text-transform: uppercase;
       line-height: 1.2;
       max-width: 100%;
       word-wrap: break-word;
+      text-shadow: 0 0 6px rgba(255, 255, 255, 0.85);
+    }
+    .sig-rule {
+      position: relative;
+      z-index: 2;
+      width: 70%;
+      max-width: 60mm;
+      border-top: 1.5px solid #2d3748;
+      margin: 2mm 0 1.5mm;
     }
     .sig-title {
+      position: relative;
+      z-index: 2;
       font-family: 'Montserrat', sans-serif;
-      font-size: 8px;
+      font-size: 9px;
+      font-weight: 600;
       line-height: 1.35;
       color: #5a6472;
+      letter-spacing: 0.6px;
       max-width: 100%;
       word-wrap: break-word;
     }
     .sig-pending {
+      position: relative;
+      z-index: 2;
       font-family: 'Montserrat', sans-serif;
       font-size: 8px;
       font-weight: 600;
@@ -422,8 +455,8 @@ export function createCertificateHTML({
       max-width: 100%;
     }
     .qr-box img {
-      width: 18mm;
-      height: 18mm;
+      width: 20mm;
+      height: 20mm;
       display: block;
       margin: 0 auto;
     }
@@ -441,6 +474,14 @@ export function createCertificateHTML({
       font-size: 5.5px;
       color: #718096;
       margin-top: 0.4mm;
+    }
+
+    .date-stack {
+      width: 100%;
+      max-width: 58mm;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .footer {
@@ -548,27 +589,21 @@ export function createCertificateHTML({
       </div>
 
       <div class="bottom">
-        <div class="col">
-          <div class="date-value">${escapeHtml(formattedDate)}</div>
-          <div class="col-rule"></div>
-          <div class="col-label">${isOfficial ? 'Date of issue' : 'Completion date'}</div>
-        </div>
-
-        <div class="col">
-          <div class="authority">
+        <div class="col col-left">
+          <div class="sig-block">
             ${isOfficial && stampUrl ? `<img class="stamp" src="${stampUrl}" alt="Company stamp">` : ''}
             ${
               isOfficial
-                ? `<div class="col-rule"></div>
-                   <div class="sig-name">${safeName}</div>
-                   <div class="sig-title">${safeTitle}</div>`
-                : `<div class="col-rule"></div>
+                ? `<div class="sig-name">${safeName}</div>
+                   <div class="sig-rule"></div>
+                   <div class="sig-title">${safeRole}</div>`
+                : `<div class="sig-rule"></div>
                    <div class="sig-pending">Awaiting stamp &amp; signature</div>`
             }
           </div>
         </div>
 
-        <div class="col">
+        <div class="col col-right">
           ${
             qrImageUrl && isOfficial
               ? `<div class="qr-box">
@@ -576,8 +611,15 @@ export function createCertificateHTML({
                   <div class="qr-label">Scan to verify</div>
                   <div class="qr-hint">www.theosartltd.com</div>
                 </div>`
-              : `<div class="col-label" style="opacity:0.5">${isOfficial ? 'Theos Art Ltd' : 'Pending verification'}</div>`
+              : `<div class="col-label" style="opacity:0.45">${
+                  isOfficial ? 'Theos Art Ltd' : 'Pending verification'
+                }</div>`
           }
+          <div class="date-stack">
+            <div class="date-value">${escapeHtml(formattedDate)}</div>
+            <div class="col-rule"></div>
+            <div class="col-label">${isOfficial ? 'Date of issue' : 'Completion date'}</div>
+          </div>
         </div>
       </div>
 
