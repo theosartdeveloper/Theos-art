@@ -4,8 +4,10 @@ import type { FinancialSummary } from '@/lib/admin/data/financial-analytics'
 import { COMPANY } from '@/lib/company/constants'
 import {
   companyLetterheadRows,
+  drawReportAuthorityAfterContent,
   drawReportFooter,
   drawReportHeader,
+  loadReportAuthorityAssets,
   loadReportLogoDataUrl,
 } from '@/lib/admin/data/report-branding'
 
@@ -188,7 +190,10 @@ export function downloadMoneyTrafficCsv(data: FinancialSummary) {
 
 export async function downloadMoneyTrafficPdf(data: FinancialSummary) {
   const doc = new jsPDF()
-  const logoDataUrl = await loadReportLogoDataUrl()
+  const [logoDataUrl, authority] = await Promise.all([
+    loadReportLogoDataUrl(),
+    loadReportAuthorityAssets(),
+  ])
   const range = rangeLabel(data)
 
   // Header + key metrics on the same page
@@ -256,6 +261,8 @@ export async function downloadMoneyTrafficPdf(data: FinancialSummary) {
     styles: { fontSize: 8 },
     margin: { left: 14, right: 14 },
   })
+
+  drawReportAuthorityAfterContent(doc, authority, productsTop)
 
   const pageCount = doc.getNumberOfPages()
   for (let i = 1; i <= pageCount; i++) {

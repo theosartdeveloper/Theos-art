@@ -4,8 +4,10 @@ import type { AdminReportData } from '@/lib/admin/data/admin-reports'
 import { COMPANY } from '@/lib/company/constants'
 import {
   companyLetterheadRows,
+  drawReportAuthorityAfterContent,
   drawReportFooter,
   drawReportHeader,
+  loadReportAuthorityAssets,
   loadReportLogoDataUrl,
 } from '@/lib/admin/data/report-branding'
 
@@ -63,7 +65,10 @@ function escapeCsvCell(value: string | number): string {
 
 async function buildAdminReportPdfDoc(report: AdminReportData): Promise<jsPDF> {
   const doc = new jsPDF()
-  const logoDataUrl = await loadReportLogoDataUrl()
+  const [logoDataUrl, authority] = await Promise.all([
+    loadReportLogoDataUrl(),
+    loadReportAuthorityAssets(),
+  ])
   const startY = drawReportHeader(doc, {
     title: 'Admin platform report',
     subtitle: `${COMPANY.platformName} — operations & programme summary`,
@@ -89,6 +94,8 @@ async function buildAdminReportPdfDoc(report: AdminReportData): Promise<jsPDF> {
       2: { cellWidth: 'auto' },
     },
   })
+
+  drawReportAuthorityAfterContent(doc, authority, startY)
 
   const pageCount = doc.getNumberOfPages()
   for (let i = 1; i <= pageCount; i++) {

@@ -14,7 +14,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Phone, Mail, MapPin, Package, Trash2, ExternalLink, CheckCircle2, XCircle } from 'lucide-react'
+import {
+  Phone,
+  Mail,
+  MapPin,
+  Package,
+  Trash2,
+  ExternalLink,
+  CheckCircle2,
+  XCircle,
+  Printer,
+} from 'lucide-react'
+import { printOrderReceipt } from '@/lib/shop/order-receipt-client'
 
 type OrderItem = {
   id: string
@@ -244,6 +255,15 @@ export default function OrderManagement() {
                     <Button
                       variant="outline"
                       size="sm"
+                      onClick={() => void printOrderReceipt(order)}
+                      title="Print receipt for delivery or refund"
+                    >
+                      <Printer className="h-4 w-4 mr-1" />
+                      Receipt
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
                       className="text-red-700 border-red-200 hover:bg-red-50"
                       disabled={deletingId === order.id}
                       onClick={() => deleteOrder(order.id, order.order_number)}
@@ -317,10 +337,24 @@ export default function OrderManagement() {
                   </table>
                 </div>
 
-                <div className="flex justify-between items-center font-semibold">
+                <div className="flex flex-wrap justify-between items-center gap-2 font-semibold">
                   <span>Total</span>
-                  <span>{Number(order.total_amount).toLocaleString()} RWF</span>
+                  <div className="flex items-center gap-3">
+                    <span>{Number(order.total_amount).toLocaleString()} RWF</span>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => void printOrderReceipt(order)}
+                    >
+                      <Printer className="h-4 w-4 mr-1" />
+                      Print delivery / refund receipt
+                    </Button>
+                  </div>
                 </div>
+                <p className="text-xs text-slate-500">
+                  Print and attach to delivery, or give to the client with the order code for refund
+                  claims. The QR opens the public receipt page.
+                </p>
 
                 <div className="rounded-lg border bg-slate-50 p-4 space-y-3">
                   <div className="flex flex-wrap items-center justify-between gap-2">

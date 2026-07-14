@@ -113,7 +113,7 @@ export function createCertificateHTML({
 
     .frame {
       position: absolute;
-      inset: 7mm;
+      inset: 4mm;
       border: 2.5px solid #3a3a3a;
       pointer-events: none;
       z-index: 1;
@@ -121,7 +121,7 @@ export function createCertificateHTML({
     .frame::before {
       content: '';
       position: absolute;
-      inset: 2.5mm;
+      inset: 2mm;
       border: 1px solid #f08a28;
     }
 
@@ -181,10 +181,10 @@ export function createCertificateHTML({
       text-transform: uppercase;
     }
 
-    /* Safe content band — keep clear of the decorative frame */
+    /* Safe content band — tighter sides so the layout fills the page */
     .shell {
       position: absolute;
-      inset: 14mm 14mm 12mm;
+      inset: 8mm 7mm 7mm;
       z-index: 3;
       display: flex;
       flex-direction: column;
@@ -238,7 +238,7 @@ export function createCertificateHTML({
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 2mm 8mm;
+      padding: 2mm 4mm;
       overflow: hidden;
     }
     .presented {
@@ -261,35 +261,35 @@ export function createCertificateHTML({
     }
     .recipient {
       font-family: 'Great Vibes', cursive;
-      font-size: 40px;
+      font-size: 44px;
       color: #3a3a3a;
       margin-top: 1.5mm;
       line-height: 1.1;
-      max-width: 220mm;
+      max-width: 250mm;
       word-wrap: break-word;
     }
     .rule {
-      width: 90mm;
-      max-width: 60%;
+      width: 110mm;
+      max-width: 70%;
       border-bottom: 1.5px solid #f08a28;
       margin: 1.5mm auto 0;
     }
     .achievement {
       font-family: 'Libre Baskerville', Georgia, serif;
-      font-size: 11px;
+      font-size: 12px;
       color: #2d3748;
       margin-top: 3mm;
       line-height: 1.55;
-      max-width: 200mm;
+      max-width: 240mm;
     }
     .program-name {
       font-family: 'Cinzel', Georgia, serif;
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 600;
       color: #3a3a3a;
       margin-top: 1.5mm;
       letter-spacing: 0.5px;
-      max-width: 200mm;
+      max-width: 240mm;
       word-wrap: break-word;
     }
     .score-line {
@@ -605,15 +605,17 @@ export function createCertificateHTML({
       <div class="bottom">
         <div class="col col-left">
           <div class="sig-block">
+            <div class="sig-text">
+              ${
+                isOfficial
+                  ? `<div class="sig-name">${safeName}</div>
+                     <div class="sig-rule"></div>
+                     <div class="sig-title">${safeRole}</div>`
+                  : `<div class="sig-rule"></div>
+                     <div class="sig-pending">Awaiting stamp &amp; signature</div>`
+              }
+            </div>
             ${isOfficial && stampUrl ? `<img class="stamp" src="${stampUrl}" alt="Company stamp">` : ''}
-            ${
-              isOfficial
-                ? `<div class="sig-name">${safeName}</div>
-                   <div class="sig-rule"></div>
-                   <div class="sig-title">${safeRole}</div>`
-                : `<div class="sig-rule"></div>
-                   <div class="sig-pending">Awaiting stamp &amp; signature</div>`
-            }
           </div>
         </div>
 

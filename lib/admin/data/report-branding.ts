@@ -12,10 +12,68 @@ const WHITE: [number, number, number] = [255, 255, 255]
 export const REPORT_SITE_DISPLAY = 'www.theosartltd.com'
 
 let cachedLogoDataUrl: string | null | undefined
+let cachedAuthority:
+  | {
+      stampDataUrl: string | null
+      signatoryName: string
+      signatoryRole: string
+    }
+  | undefined
+
+async function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result))
+    reader.onerror = () => reject(reader.error)
+    reader.readAsDataURL(blob)
+  })
+}
+
+async function fetchImageDataUrl(url: string): Promise<string | null> {
+  try {
+    const res = await fetch(url, { cache: 'no-store' })
+    if (!res.ok) return null
+    const blob = await res.blob()
+    if (!blob.size) return null
+    return blobToDataUrl(blob)
+  } catch {
+    return null
+  }
+}
 
 /** Load company logo as a data URL for reliable PDF embedding. */
 export async function loadReportLogoDataUrl(): Promise<string | null> {
   if (cachedLogoDataUrl !== undefined) return cachedLogoDataUrl
+
+  try {
+    if (typeof window !== 'undefined') {
+      const brandingRes = await fetch('/api/public/certificate-branding', { cache: 'no-store' })
+      if (brandingRes.ok) {
+        const branding = (await brandingRes.json()) as { logoUrl?: string }
+        if (branding.logoUrl) {
+          const fromBranding = await fetchImageDataUrl(branding.logoUrl)
+          if (fromBranding) {
+            cachedLogoDataUrl = fromBranding
+            return cachedLogoDataUrl
+          }
+        }
+      }
+    } else {
+      const { loadCertificateBranding } = await import('@/lib/certificate/branding')
+      const { absolutePublicUrl } = await import('@/lib/email/core')
+      const branding = await loadCertificateBranding()
+      const absolute = absolutePublicUrl(branding.logoUrl) || branding.logoUrl
+      if (absolute) {
+        const fromBranding = await fetchImageDataUrl(absolute)
+        if (fromBranding) {
+          cachedLogoDataUrl = fromBranding
+          return cachedLogoDataUrl
+        }
+      }
+    }
+  } catch {
+    // fall through
+  }
 
   if (typeof window === 'undefined') {
     try {
@@ -32,20 +90,71 @@ export async function loadReportLogoDataUrl(): Promise<string | null> {
   }
 
   try {
-    const res = await fetch(COMPANY.logoUrl, { cache: 'force-cache' })
+    const res = await fetch(COMPANY.logoUrl, { cache: 'no-store' })
     if (!res.ok) throw new Error(`Logo HTTP ${res.status}`)
-    const blob = await res.blob()
-    const dataUrl = await new Promise<string>((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onload = () => resolve(String(reader.result))
-      reader.onerror = () => reject(reader.error)
-      reader.readAsDataURL(blob)
-    })
-    cachedLogoDataUrl = dataUrl
-    return dataUrl
+    cachedLogoDataUrl = await blobToDataUrl(await res.blob())
+    return cachedLogoDataUrl
   } catch {
     cachedLogoDataUrl = null
     return null
+  }
+}
+
+/** Stamp + Managing Director assets for report signature blocks. */
+export async function loadReportAuthorityAssets(): Promise<{
+  stampDataUrl: string | null
+  signatoryName: string
+  signatoryRole: string
+}> {
+  if (cachedAuthority) return cachedAuthority
+
+  const fallback = {
+    stampDataUrl: null as string | null,
+    signatoryName: 'Elie BISAMAZA',
+    signatoryRole: 'Managing Director',
+  }
+
+  try {
+    if (typeof window !== 'undefined') {
+      const res = await fetch('/api/public/certificate-branding', { cache: 'no-store' })
+      if (!res.ok) {
+        cachedAuthority = fallback
+        return cachedAuthority
+      }
+      const branding = (await res.json()) as {
+        stampUrl?: string
+        signatoryName?: string
+        signatoryTitle?: string
+      }
+      const role =
+        String(branding.signatoryTitle || '')
+          .split('·')[0]
+          ?.trim() || 'Managing Director'
+      cachedAuthority = {
+        stampDataUrl: branding.stampUrl ? await fetchImageDataUrl(branding.stampUrl) : null,
+        signatoryName: branding.signatoryName?.trim() || fallback.signatoryName,
+        signatoryRole: role,
+      }
+      return cachedAuthority
+    }
+
+    const { loadCertificateBranding } = await import('@/lib/certificate/branding')
+    const { absolutePublicUrl } = await import('@/lib/email/core')
+    const branding = await loadCertificateBranding()
+    const stampAbs = absolutePublicUrl(branding.stampUrl) || branding.stampUrl
+    const role =
+      String(branding.signatoryTitle || '')
+        .split('·')[0]
+        ?.trim() || 'Managing Director'
+    cachedAuthority = {
+      stampDataUrl: stampAbs ? await fetchImageDataUrl(stampAbs) : null,
+      signatoryName: branding.signatoryName || fallback.signatoryName,
+      signatoryRole: role,
+    }
+    return cachedAuthority
+  } catch {
+    cachedAuthority = fallback
+    return cachedAuthority
   }
 }
 
@@ -188,4 +297,83 @@ export function drawReportFooter(doc: jsPDF, pageNumber: number, pageCount: numb
     pageHeight - 8,
     { align: 'center' }
   )
+}
+
+/**
+ * Certificate-style authority block: stamp centered over Managing Director name + title.
+ * Pass startY (after last table). Adds a new page when space is insufficient.
+ */
+export function drawReportAuthorityBlock(
+  doc: jsPDF,
+  options: {
+    stampDataUrl?: string | null
+    signatoryName: string
+    signatoryRole?: string
+    startY?: number
+  }
+): void {
+  const pageWidth = doc.internal.pageSize.getWidth()
+  const pageHeight = doc.internal.pageSize.getHeight()
+  const role = options.signatoryRole || 'Managing Director'
+  const blockH = 42
+  const footerReserve = 16
+  let y = options.startY ?? pageHeight - blockH - footerReserve
+
+  if (y + blockH > pageHeight - footerReserve) {
+    doc.addPage()
+    y = 24
+  }
+
+  const centerX = pageWidth / 2
+  const nameY = y + 22
+  const titleY = nameY + 8
+  const ruleY = nameY + 3
+
+  // Text first (paper), then stamp on top — same layering as certificates
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(10)
+  doc.setTextColor(58, 58, 58)
+  doc.text(options.signatoryName.toUpperCase(), centerX, nameY, { align: 'center' })
+
+  doc.setDrawColor(45, 55, 72)
+  doc.setLineWidth(0.4)
+  doc.line(centerX - 28, ruleY, centerX + 28, ruleY)
+
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(8)
+  doc.setTextColor(90, 100, 114)
+  doc.text(role, centerX, titleY, { align: 'center' })
+
+  if (options.stampDataUrl) {
+    try {
+      const format = options.stampDataUrl.includes('image/jpeg') ? 'JPEG' : 'PNG'
+      const stampSize = 34
+      doc.addImage(
+        options.stampDataUrl,
+        format,
+        centerX - stampSize / 2,
+        nameY - stampSize / 2 + 2,
+        stampSize,
+        stampSize,
+        undefined,
+        'FAST'
+      )
+    } catch {
+      // text-only signature if stamp fails
+    }
+  }
+
+/** Convenience: authority after last autoTable, with page break if needed. */
+export function drawReportAuthorityAfterContent(
+  doc: jsPDF,
+  authority: {
+    stampDataUrl?: string | null
+    signatoryName: string
+    signatoryRole?: string
+  },
+  fallbackY = 40
+): void {
+  const lastTable = (doc as jsPDF & { lastAutoTable?: { finalY?: number } }).lastAutoTable
+  const startY = (lastTable?.finalY ?? fallbackY) + 16
+  drawReportAuthorityBlock(doc, { ...authority, startY })
 }
