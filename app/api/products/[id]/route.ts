@@ -2,6 +2,12 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { requireAdminPermission } from '@/app/actions/admin-context'
 import { PERMISSIONS } from '@/lib/admin/permissions'
+import {
+  attachProductCategories,
+  normalizeProductRow,
+  productWritePayload,
+  productWritePayloadLegacySafe,
+} from '@/lib/platform/products'
 
 export async function PATCH(
   request: Request,
@@ -15,15 +21,34 @@ export async function PATCH(
 
     const { id } = await params
     const body = await request.json()
-    const { data, error } = await supabaseAdmin
+    const payload = {
+      ...productWritePayload(body),
+      updated_at: new Date().toISOString(),
+    }
+
+    let { data, error } = await supabaseAdmin
       .from('products')
-      .update({ ...body, updated_at: new Date().toISOString() })
+      .update(payload)
       .eq('id', id)
-      .select('*, category:categories(*)')
+      .select('*')
       .single()
 
+    if (error && /sale_unit|pack_quantity|schema cache|column/i.test(error.message)) {
+      const legacy = {
+        ...productWritePayloadLegacySafe(payload),
+        updated_at: payload.updated_at,
+      }
+      const retry = await supabaseAdmin.from('products').update(legacy).eq('id', id).select('*').single()
+      data = retry.data
+      error = retry.error
+    }
+
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-    return NextResponse.json(data)
+
+    const [withCategory] = await attachProductCategories(supabaseAdmin, [data])
+    return NextResponse.json(
+      normalizeProductRow(withCategory as Parameters<typeof normalizeProductRow>[0], withCategory.category)
+    )
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Failed to update product'
     return NextResponse.json({ error: message }, { status: 403 })

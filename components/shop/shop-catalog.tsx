@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input'
 import { AddToCartButton } from '@/components/shop/add-to-cart-button'
 import { cn } from '@/lib/utils'
 import type { Category, Product } from '@/types/platform'
+import { formatProductStockLabel, formatProductUnitLabel } from '@/lib/platform/products'
 
 function ProductImage({ src, alt }: { src?: string; alt: string }) {
   if (src) {
@@ -138,7 +139,7 @@ export function ShopCatalog({
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-slate-600 line-clamp-2 mb-3">{product.description}</p>
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-between mb-1">
                     <span className="font-bold text-lg text-[var(--brand-navy)]">
                       {finalPrice.toLocaleString()} RWF
                     </span>
@@ -148,9 +149,19 @@ export function ShopCatalog({
                         product.stock > 0 ? 'text-emerald-700' : 'text-red-700'
                       )}
                     >
-                      {product.stock > 0 ? `In stock (${product.stock})` : 'Out of stock'}
+                      {formatProductStockLabel(
+                        product.stock,
+                        product.sale_unit || 'piece',
+                        product.pack_quantity || 1
+                      )}
                     </span>
                   </div>
+                  <p className="text-xs text-slate-500 mb-4">
+                    {formatProductUnitLabel(
+                      product.sale_unit || 'piece',
+                      product.pack_quantity || 1
+                    )}
+                  </p>
                   <div className="grid grid-cols-2 gap-2">
                     <Link href={`/shop/${product.id}`}>
                       <Button

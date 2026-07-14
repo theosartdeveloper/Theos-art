@@ -15,6 +15,10 @@ import {
   isCoursePublished,
   normalizeCourseRow,
 } from '@/lib/platform/courses'
+import {
+  attachProductCategories,
+  normalizeProductRow,
+} from '@/lib/platform/products'
 import type { ProgramType } from '@/lib/enrollment/program-types'
 
 function db() {
@@ -190,10 +194,8 @@ export async function getCourseById(id: string): Promise<Course | null> {
 export async function getPublishedProducts(categorySlug?: string, search?: string): Promise<Product[]> {
   const client = db()
   if (!client) return []
-  let query = client
-    .from('products')
-    .select('*, category:categories(*)')
-    .eq('status', 'published')
+
+  let query = client.from('products').select('*').eq('status', 'published')
   if (categorySlug) {
     const { data: cat } = await client
       .from('categories')
@@ -202,19 +204,18 @@ export async function getPublishedProducts(categorySlug?: string, search?: strin
       .maybeSingle()
     if (cat) query = query.eq('category_id', cat.id)
   }
-  const { data } = await query.order('created_at', { ascending: false })
-  let products = (data ?? []).map((p) => {
-    const images = Array.isArray(p.images)
-      ? p.images
-      : p.image_url
-        ? [p.image_url]
-        : []
-    return {
-      ...p,
-      images,
-      specifications: p.specifications ?? {},
-    }
-  })
+
+  const { data, error } = await query.order('created_at', { ascending: false })
+  if (error) {
+    console.error('getPublishedProducts:', error.message)
+    return []
+  }
+
+  const withCategories = await attachProductCategories(client, data ?? [])
+  let products = withCategories.map((row) =>
+    normalizeProductRow(row as Parameters<typeof normalizeProductRow>[0], row.category)
+  )
+
   if (search) {
     const q = search.toLowerCase()
     products = products.filter(
@@ -229,23 +230,23 @@ export async function getPublishedProducts(categorySlug?: string, search?: strin
 export async function getProductById(id: string): Promise<Product | null> {
   const client = db()
   if (!client) return null
-  const { data } = await client
+  const { data, error } = await client
     .from('products')
-    .select('*, category:categories(*)')
+    .select('*')
     .eq('id', id)
     .eq('status', 'published')
     .maybeSingle()
-  if (!data) return null
-  const images = Array.isArray(data.images)
-    ? data.images
-    : data.image_url
-      ? [data.image_url]
-      : []
-  return {
-    ...data,
-    images,
-    specifications: data.specifications ?? {},
+  if (error) {
+    console.error('getProductById:', error.message)
+    return null
   }
+  if (!data) return null
+
+  const [withCategory] = await attachProductCategories(client, [data])
+  return normalizeProductRow(
+    withCategory as Parameters<typeof normalizeProductRow>[0],
+    withCategory.category
+  )
 }
 
 export async function getPublishedInternships(): Promise<Internship[]> {

@@ -137,6 +137,10 @@ export interface Product {
   images: string[]
   specifications: Record<string, string>
   status: ContentStatus
+  /** How the listing is sold: single piece, pack, or set. */
+  sale_unit?: 'piece' | 'pack' | 'set'
+  /** Pieces included when sold as a pack or set. */
+  pack_quantity?: number
   category?: Category | null
 }
 
