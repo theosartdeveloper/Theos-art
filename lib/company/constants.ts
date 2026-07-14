@@ -3,7 +3,7 @@ export const COMPANY = {
   legalName: 'Theos Art Ltd',
   brandName: 'Theos Art',
   platformName: 'Theos Art Hub',
-  slogan: 'Art that speaks',
+  slogan: 'Lasting Impressions',
   tagline: 'Original artworks and quality art materials in Kigali, Rwanda.',
   email: 'kubwatheosart@gmail.com',
   phone: '+250783086093',

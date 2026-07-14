@@ -10,7 +10,7 @@ INSERT INTO site_settings (key, value) VALUES
   ('company_phone_display', '+250 783 086 093'),
   ('company_whatsapp', '250783086093'),
   ('company_address', '342G+JX, Kigali, Rwanda'),
-  ('company_slogan', 'Art that speaks'),
+  ('company_slogan', 'Lasting Impressions'),
   ('company_tagline', 'Original artworks and quality art materials in Kigali, Rwanda.'),
   ('company_logo_url', '/images/theos-art-logo-v2.png'),
   ('payment_momo_code', '581661'),
