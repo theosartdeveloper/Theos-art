@@ -5,6 +5,7 @@ import { PwaRegister } from '@/components/pwa/pwa-register'
 import { OrganizationJsonLd } from '@/components/seo/organization-json-ld'
 import { loadPublicCompanyProfile } from '@/lib/platform/site-settings'
 import { getSeoLogoUrl, getSiteOrigin } from '@/lib/seo/site'
+import { ShopCartProvider } from '@/lib/shop/cart-context'
 import './globals.css'
 
 const _geist = Geist({ subsets: ['latin'] })
@@ -73,7 +74,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${_geist.className} font-sans antialiased`}>
         <OrganizationJsonLd />
-        {children}
+        <ShopCartProvider>
+          {children}
+        </ShopCartProvider>
         <PwaRegister />
         <Analytics />
       </body>
