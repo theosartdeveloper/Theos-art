@@ -115,8 +115,7 @@ export function ShopCartPanel() {
     form.customerPhone.trim() &&
     (form.fulfillmentType !== 'delivery' || form.deliveryAddress.trim())
 
-  const canSubmitPayment =
-    canProceedCheckout && (form.receiptUrl.trim() || form.receiptNumber.trim())
+  const canSubmitPayment = Boolean(canProceedCheckout && form.receiptUrl.trim())
 
   return (
     <Sheet
@@ -155,7 +154,7 @@ export function ShopCartPanel() {
             {step === 'success'
               ? 'Thank you — our team will contact you shortly.'
               : step === 'payment'
-                ? 'Pay with MTN MoMo and upload your receipt.'
+                ? 'Pay with MTN MoMo, then upload the receipt screenshot or PDF.'
                 : step === 'checkout'
                   ? 'Provide contact details for delivery or local pickup in Kigali.'
                   : 'Review items before checkout.'}
@@ -185,7 +184,7 @@ export function ShopCartPanel() {
           <div className="mt-6 space-y-4 px-1">
             <MomoPayCard amountLabel={`Order total: ${subtotal.toLocaleString()} RWF`} />
             <div>
-              <Label htmlFor="receipt">MoMo receipt *</Label>
+              <Label htmlFor="receipt">MoMo receipt screenshot or PDF *</Label>
               <Input
                 id="receipt"
                 type="file"
@@ -197,6 +196,11 @@ export function ShopCartPanel() {
                   if (file) handleReceiptUpload(file)
                 }}
               />
+              {form.receiptUrl ? (
+                <p className="text-xs text-emerald-700 mt-1">Receipt uploaded.</p>
+              ) : (
+                <p className="text-xs text-slate-500 mt-1">A receipt file is required to submit the order.</p>
+              )}
             </div>
             <div>
               <Label htmlFor="receiptNumber">Transaction reference (optional)</Label>

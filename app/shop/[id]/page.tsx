@@ -7,7 +7,15 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AddToCartButton } from '@/components/shop/add-to-cart-button'
 import { BuyNowPanel } from '@/components/shop/buy-now-panel'
+import { ShopProductCard } from '@/components/shop/shop-product-card'
 import { getProductById, getPublishedProducts } from '@/lib/platform/queries'
+import {
+  formatProductAvailabilityLabel,
+  formatProductUnitLabel,
+  getProductAvailability,
+  productAvailabilityClass,
+} from '@/lib/platform/products'
+import { cn } from '@/lib/utils'
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -23,6 +31,8 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     ([key]) => key !== 'sale_unit' && key !== 'pack_quantity'
   )
   const images = product.images?.length ? product.images : []
+  const availability = getProductAvailability(product.stock, product.low_stock_threshold)
+  const availabilityLabel = formatProductAvailabilityLabel(availability)
 
   return (
     <>
@@ -52,19 +62,27 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
             {product.category?.name}
           </p>
-          <h1 className="text-3xl font-bold text-slate-900 mb-4">{product.name}</h1>
-          <p className="text-slate-700 mb-6 leading-relaxed">{product.description}</p>
+          <h1 className="text-3xl font-bold text-slate-900 mb-3">{product.name}</h1>
+          <span
+            className={cn(
+              'inline-flex rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide mb-4',
+              productAvailabilityClass(availability)
+            )}
+          >
+            {availabilityLabel}
+          </span>
+          <p className="text-slate-700 mb-6 leading-relaxed">
+            {product.description?.trim() || 'No description has been added for this product yet.'}
+          </p>
           <div className="text-3xl font-bold text-[var(--brand-navy)] mb-2">
             {finalPrice.toLocaleString()} RWF
           </div>
           {product.discount ? (
-            <p className="text-sm text-slate-500 line-through mb-4">{product.price.toLocaleString()} RWF</p>
+            <p className="text-sm text-slate-500 line-through mb-2">{product.price.toLocaleString()} RWF</p>
           ) : null}
-          <p className="text-sm text-slate-700 mb-6">
-            <span className="font-medium">SKU:</span> {product.sku ?? 'N/A'} ·{' '}
-            <span className={product.stock > 0 ? 'text-emerald-700 font-medium' : 'text-red-700 font-medium'}>
-              {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
-            </span>
+          <p className="text-sm text-slate-600 mb-6">
+            {formatProductUnitLabel(product.sale_unit || 'piece', product.pack_quantity || 1)}
+            {product.sku ? ` · SKU ${product.sku}` : ''}
           </p>
           <div className="flex flex-wrap gap-3">
             <BuyNowPanel
@@ -117,27 +135,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           <h2 className="text-2xl font-bold text-slate-900 mb-6">Related Products</h2>
           <div className="grid md:grid-cols-3 gap-6">
             {related.map((item) => (
-              <Card key={item.id} className="overflow-hidden border-slate-200 bg-white">
-                {item.images?.[0] ? (
-                  <div className="relative h-32">
-                    <Image src={item.images[0]} alt={item.name} fill className="object-cover" unoptimized />
-                  </div>
-                ) : (
-                  <div className="h-32 bg-slate-100 flex items-center justify-center text-xs text-slate-600 font-medium">
-                    No image
-                  </div>
-                )}
-                <CardHeader>
-                  <CardTitle className="text-base text-slate-900">{item.name}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Link href={`/shop/${item.id}`}>
-                    <Button variant="outline" size="sm" className="border-slate-300 text-slate-800 hover:bg-slate-50">
-                      View details
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
+              <ShopProductCard key={item.id} product={item} compact />
             ))}
           </div>
         </section>

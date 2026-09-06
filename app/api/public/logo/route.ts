@@ -1,22 +1,20 @@
 import { NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabaseAdmin'
-
-const DEFAULT_LOGO = '/images/theos-art-logo-v2.png'
+import { COMPANY } from '@/lib/company/constants'
+import { loadPublicCompanyProfile } from '@/lib/platform/site-settings'
 
 export async function GET() {
   try {
-    if (!supabaseAdmin) {
-      return NextResponse.json({ logoUrl: DEFAULT_LOGO })
-    }
-
-    const { data } = await supabaseAdmin
-      .from('site_settings')
-      .select('value')
-      .eq('key', 'company_logo_url')
-      .maybeSingle()
-
-    return NextResponse.json({ logoUrl: data?.value || DEFAULT_LOGO })
+    const profile = await loadPublicCompanyProfile()
+    return NextResponse.json({
+      logoUrl: profile.logoUrl || COMPANY.logoUrl,
+      brandName: profile.brandName || COMPANY.brandName,
+      slogan: profile.slogan || COMPANY.slogan,
+    })
   } catch {
-    return NextResponse.json({ logoUrl: DEFAULT_LOGO })
+    return NextResponse.json({
+      logoUrl: COMPANY.logoUrl,
+      brandName: COMPANY.brandName,
+      slogan: COMPANY.slogan,
+    })
   }
 }

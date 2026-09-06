@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { COMPANY } from '@/lib/company/constants'
+import { formatProductAvailabilityLabel, getProductAvailability } from '@/lib/platform/products'
 import { formatProductUnitLabel, type ProductSaleUnit } from '@/lib/platform/products'
 
 type Step = 'review' | 'checkout' | 'payment' | 'success'
@@ -134,8 +135,7 @@ export function BuyNowPanel({
     form.customerPhone.trim() &&
     (form.fulfillmentType !== 'delivery' || form.deliveryAddress.trim())
 
-  const canSubmitPayment =
-    canProceedCheckout && (form.receiptUrl.trim() || form.receiptNumber.trim())
+  const canSubmitPayment = Boolean(canProceedCheckout && form.receiptUrl.trim())
 
   if (stock <= 0) {
     return (
@@ -178,7 +178,7 @@ export function BuyNowPanel({
             {step === 'success'
               ? 'Thank you — our team will contact you shortly.'
               : step === 'payment'
-                ? 'Pay with MTN MoMo and upload your receipt.'
+                ? 'Pay with MTN MoMo, then upload the receipt screenshot or PDF.'
                 : step === 'checkout'
                   ? 'Contact details for delivery or pickup in Kigali.'
                   : 'Order directly — no cart needed.'}
@@ -208,7 +208,7 @@ export function BuyNowPanel({
           <div className="mt-6 space-y-4 px-1">
             <MomoPayCard amountLabel={`Order total: ${lineTotal.toLocaleString()} RWF`} />
             <div>
-              <Label htmlFor="buy-now-receipt">MoMo receipt *</Label>
+              <Label htmlFor="buy-now-receipt">MoMo receipt screenshot or PDF *</Label>
               <Input
                 id="buy-now-receipt"
                 type="file"
@@ -222,7 +222,9 @@ export function BuyNowPanel({
               />
               {form.receiptUrl ? (
                 <p className="text-xs text-emerald-700 mt-1">Receipt uploaded.</p>
-              ) : null}
+              ) : (
+                <p className="text-xs text-slate-500 mt-1">A receipt file is required to submit the order.</p>
+              )}
             </div>
             <div>
               <Label htmlFor="buy-now-receipt-no">MoMo reference / receipt number</Label>
@@ -366,7 +368,9 @@ export function BuyNowPanel({
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
-                <span className="text-xs text-slate-500">{stock} available</span>
+                <span className="text-xs text-slate-500">
+                  {formatProductAvailabilityLabel(getProductAvailability(stock))}
+                </span>
               </div>
             </div>
 

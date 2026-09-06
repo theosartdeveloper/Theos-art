@@ -1,5 +1,6 @@
 import {
   ADMIN_NOTIFICATION_EMAIL,
+  getAdminNotificationRecipients,
   brandedEmailLayout,
   ctaButton,
   emailLayout,
@@ -415,45 +416,97 @@ export async function sendSupportSubscriptionRejectedEmail(input: {
   })
 }
 
+type ShopOrderEmailItem = { name: string; quantity: number; lineTotal: number }
+
+function shopOrderItemsTable(items: ShopOrderEmailItem[], totalAmount: number): string {
+  const rows = items
+    .map(
+      (item) => `
+        <tr>
+          <td style="padding:8px 10px;border-bottom:1px solid #e2e8f0;">${escapeHtml(item.name)}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #e2e8f0;text-align:center;">${item.quantity}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #e2e8f0;text-align:right;">${item.lineTotal.toLocaleString()} RWF</td>
+        </tr>`
+    )
+    .join('')
+  return `
+    <table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:14px;">
+      <thead>
+        <tr style="background:#f8fafc;">
+          <th style="padding:8px 10px;text-align:left;border-bottom:2px solid #e2e8f0;">Item</th>
+          <th style="padding:8px 10px;text-align:center;border-bottom:2px solid #e2e8f0;">Qty</th>
+          <th style="padding:8px 10px;text-align:right;border-bottom:2px solid #e2e8f0;">Amount</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2" style="padding:10px;font-weight:700;">Total</td>
+          <td style="padding:10px;text-align:right;font-weight:700;">${totalAmount.toLocaleString()} RWF</td>
+        </tr>
+      </tfoot>
+    </table>`
+}
+
 export async function sendShopOrderConfirmationEmail(input: {
   to: string
   customerName: string
+  customerPhone?: string
   orderNumber: string
   totalAmount: number
   fulfillmentType: 'pickup' | 'delivery'
-  items: { name: string; quantity: number; lineTotal: number }[]
+  deliveryAddress?: string | null
+  receiptNumber?: string | null
+  items: ShopOrderEmailItem[]
 }): Promise<SendEmailResult> {
-  const lines = input.items
-    .map(
-      (item) =>
-        `<li>${escapeHtml(item.name)} x ${item.quantity} ? ${item.lineTotal.toLocaleString()} RWF</li>`
-    )
-    .join('')
+  const { loadPublicCompanyProfile } = await import('@/lib/platform/site-settings')
+  const profile = await loadPublicCompanyProfile()
+  const studio = profile.brandName || COMPANY.brandName
+  const contactEmail = profile.email || COMPANY.email
+  const contactPhone = profile.phoneDisplay || COMPANY.phoneDisplay
+  const address = profile.address || COMPANY.address
+  const whatsapp = String(profile.whatsapp || COMPANY.whatsapp).replace(/\D/g, '')
+
   const fulfillment =
     input.fulfillmentType === 'delivery'
-      ? 'We will contact you to arrange delivery in Kigali after payment is verified.'
-      : 'We will notify you when your order is ready for pickup in Kigali.'
-  const shopUrl = `${getAppUrl()}/shop`
+      ? `We will call or WhatsApp you to arrange delivery${
+          input.deliveryAddress ? ` to ${escapeHtml(input.deliveryAddress)}` : ' in Kigali'
+        } after your payment is verified.`
+      : `After your payment is verified, we will contact you when the order is ready for pickup at ${escapeHtml(address)}.`
 
   const { html, logoUrl } = await brandedEmailLayout({
-    title: 'Thank you for your order',
-    subtitle: `Order ${input.orderNumber}`,
+    title: 'Order received',
+    subtitle: `Reference ${input.orderNumber}`,
     headerTone: 'success',
     bodyHtml: `
         <p>Dear ${escapeHtml(input.customerName)},</p>
-        <p>We received your shop order. Our team will verify your MTN MoMo payment shortly.</p>
-        <ul>${lines}</ul>
-        <p><strong>Total: ${input.totalAmount.toLocaleString()} RWF</strong></p>
+        <p>Thank you for ordering from ${escapeHtml(studio)}. You do not need an account. Keep this email as your order confirmation.</p>
+        <p>We have your MTN MoMo receipt and will verify the payment shortly. No further action is required from you unless we write back.</p>
+        ${shopOrderItemsTable(input.items, input.totalAmount)}
+        <p><strong>Fulfilment:</strong> ${
+          input.fulfillmentType === 'delivery' ? 'Delivery' : 'Pickup in Kigali'
+        }</p>
         <p>${fulfillment}</p>
-        <p class="muted">Reference: ${escapeHtml(input.orderNumber)}</p>
-        ${ctaButton('Visit the shop', shopUrl)}
-        <p><strong>${escapeHtml(COMPANY.brandName)} Team</strong></p>
+        ${
+          input.receiptNumber
+            ? `<p class="muted">MoMo reference you provided: ${escapeHtml(input.receiptNumber)}</p>`
+            : ''
+        }
+        <p class="muted">Order reference: <strong>${escapeHtml(input.orderNumber)}</strong></p>
+        <p>Questions? Reply to this email or contact us:</p>
+        <ul>
+          <li>Email: ${escapeHtml(contactEmail)}</li>
+          <li>Phone: ${escapeHtml(contactPhone)}</li>
+          ${whatsapp ? `<li>WhatsApp: <a href="https://wa.me/${whatsapp}">+${escapeHtml(whatsapp)}</a></li>` : ''}
+        </ul>
+        <p><strong>${escapeHtml(studio)}</strong><br><span class="muted">${escapeHtml(COMPANY.slogan)}</span></p>
       `,
   })
 
   return sendEmail({
     to: input.to,
-    subject: `Order received ? ${input.orderNumber}`,
+    replyTo: contactEmail,
+    subject: `Your ${studio} order ${input.orderNumber}`,
     html,
     logoUrl,
   })
@@ -466,27 +519,51 @@ export async function sendShopOrderAdminAlert(input: {
   customerPhone: string
   totalAmount: number
   fulfillmentType: string
+  deliveryAddress?: string | null
+  receiptNumber?: string | null
+  receiptUploaded?: boolean
+  notes?: string | null
+  items?: ShopOrderEmailItem[]
 }): Promise<SendEmailResult> {
   const adminOrdersUrl = `${getAppUrl()}/admin/dashboard/orders`
+  const fulfillmentLabel = input.fulfillmentType === 'delivery' ? 'Delivery' : 'Pickup'
+  const itemsBlock =
+    input.items && input.items.length > 0
+      ? shopOrderItemsTable(input.items, input.totalAmount)
+      : `<p><strong>Total:</strong> ${input.totalAmount.toLocaleString()} RWF</p>`
 
   const { html, logoUrl } = await brandedEmailLayout({
     title: 'New shop order',
     subtitle: input.orderNumber,
     headerTone: 'primary',
     bodyHtml: `
-        <p><strong>${escapeHtml(input.customerName)}</strong> placed an order for ${input.totalAmount.toLocaleString()} RWF (${escapeHtml(input.fulfillmentType)}).</p>
+        <p>A customer submitted a shop order. Payment is awaiting MoMo receipt review. This does not confirm stock reservation to the customer.</p>
+        ${itemsBlock}
+        <p><strong>Customer</strong></p>
         <ul>
+          <li>Name: ${escapeHtml(input.customerName)}</li>
           <li>Email: ${escapeHtml(input.customerEmail)}</li>
           <li>Phone: ${escapeHtml(input.customerPhone)}</li>
-          <li>Order: ${escapeHtml(input.orderNumber)}</li>
         </ul>
-        ${ctaButton('Open admin orders', adminOrdersUrl)}
+        <p><strong>Fulfilment:</strong> ${escapeHtml(fulfillmentLabel)}</p>
+        ${
+          input.fulfillmentType === 'delivery' && input.deliveryAddress
+            ? `<p><strong>Delivery address:</strong> ${escapeHtml(input.deliveryAddress)}</p>`
+            : ''
+        }
+        <p><strong>Payment proof:</strong> ${input.receiptUploaded === false ? 'Missing' : 'Receipt file uploaded'}${
+          input.receiptNumber ? ` · MoMo ref ${escapeHtml(input.receiptNumber)}` : ''
+        }</p>
+        ${input.notes ? `<p><strong>Customer notes:</strong> ${escapeHtml(input.notes)}</p>` : ''}
+        <p class="muted">Reply to this email to write the customer directly.</p>
+        ${ctaButton('Review this order', adminOrdersUrl)}
       `,
   })
 
   return sendEmail({
-    to: ADMIN_NOTIFICATION_EMAIL,
-    subject: `New shop order ? ${input.orderNumber}`,
+    to: await getAdminNotificationRecipients(),
+    replyTo: input.customerEmail,
+    subject: `New order ${input.orderNumber} · ${input.totalAmount.toLocaleString()} RWF`,
     html,
     logoUrl,
   })

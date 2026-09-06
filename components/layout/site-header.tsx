@@ -34,16 +34,18 @@ const mobileNavLinkClass =
 
 function BrandMark({
   logoUrl,
+  brandName,
   compact = false,
 }: {
   logoUrl: string
+  brandName: string
   compact?: boolean
 }) {
   return (
     <div className="bg-white rounded-md p-1.5 shrink-0 shadow-sm border border-white/80">
       <Image
         src={logoUrl}
-        alt={`${COMPANY.brandName} logo`}
+        alt={`${brandName} logo`}
         width={compact ? 40 : 140}
         height={compact ? 40 : 56}
         className={
@@ -60,10 +62,12 @@ function BrandMark({
 
 function MobileNavSheet({
   logoUrl,
+  brandName,
   open,
   onOpenChange,
 }: {
   logoUrl: string
+  brandName: string
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
@@ -92,9 +96,9 @@ function MobileNavSheet({
             onClick={close}
             className="flex items-center gap-3 no-underline hover:no-underline"
           >
-            <BrandMark logoUrl={logoUrl} compact />
+            <BrandMark logoUrl={logoUrl} brandName={brandName} compact />
             <SheetTitle className="text-base font-bold text-[var(--brand-navy)] truncate">
-              {COMPANY.brandName}
+              {brandName}
             </SheetTitle>
           </Link>
         </SheetHeader>
@@ -129,6 +133,8 @@ function MobileNavSheet({
 
 export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
   const [logoUrl, setLogoUrl] = useState(COMPANY.logoUrl)
+  const [brandName, setBrandName] = useState(COMPANY.brandName)
+  const [slogan, setSlogan] = useState(COMPANY.slogan)
   const [mobileOpen, setMobileOpen] = useState(false)
 
   useEffect(() => {
@@ -136,6 +142,8 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
       .then((res) => res.json())
       .then((data) => {
         if (data.logoUrl) setLogoUrl(data.logoUrl)
+        if (data.brandName) setBrandName(String(data.brandName))
+        if (data.slogan) setSlogan(String(data.slogan))
       })
       .catch(() => {})
   }, [])
@@ -153,10 +161,10 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
           href="/"
           className="flex items-center gap-3 shrink-0 hover:opacity-90 transition no-underline hover:no-underline min-w-0"
         >
-          <BrandMark logoUrl={logoUrl} />
+          <BrandMark logoUrl={logoUrl} brandName={brandName} />
           <div className="min-w-0 hidden xl:block max-w-[12rem]">
-            <p className="font-bold text-base leading-tight text-white truncate">{COMPANY.brandName}</p>
-            <p className="text-[10px] text-white/75 truncate leading-snug">{COMPANY.slogan}</p>
+            <p className="font-bold text-base leading-tight text-white truncate">{brandName}</p>
+            <p className="text-[10px] text-white/75 truncate leading-snug">{slogan}</p>
           </div>
         </Link>
 
@@ -184,7 +192,12 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
 
       {/* Mobile: menu + login only — brand mark lives in the slide-out sidebar */}
       <div className="lg:hidden flex w-full items-center justify-between gap-3 px-4 py-2.5">
-        <MobileNavSheet logoUrl={logoUrl} open={mobileOpen} onOpenChange={setMobileOpen} />
+        <MobileNavSheet
+          logoUrl={logoUrl}
+          brandName={brandName}
+          open={mobileOpen}
+          onOpenChange={setMobileOpen}
+        />
         <div className="site-header-mobile-auth flex items-center shrink-0">
           <Link href="/auth/login" className="no-underline hover:no-underline">
             <Button

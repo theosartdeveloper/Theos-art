@@ -1,35 +1,16 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { Package, Search } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { AddToCartButton } from '@/components/shop/add-to-cart-button'
+import { ShopProductCard } from '@/components/shop/shop-product-card'
 import { CATALOG_GRID, CATALOG_SHELL } from '@/lib/ui/catalog-layout'
 import { cn } from '@/lib/utils'
 import type { Category, Product } from '@/types/platform'
-import { formatProductStockLabel, formatProductUnitLabel } from '@/lib/platform/products'
-
-function ProductImage({ src, alt }: { src?: string; alt: string }) {
-  if (src) {
-    return (
-      <div className="relative h-36 w-full bg-slate-100">
-        <Image src={src} alt={alt} fill className="object-cover" unoptimized />
-      </div>
-    )
-  }
-
-  return (
-    <div className="h-36 w-full bg-slate-100 flex flex-col items-center justify-center text-slate-600 gap-2">
-      <Package className="h-8 w-8 opacity-60" />
-      <span className="text-xs font-medium">No image</span>
-    </div>
-  )
-}
 
 function CategoryButton({
   active,
@@ -121,72 +102,9 @@ export function ShopCatalog({
         </Card>
       ) : (
         <div className={CATALOG_GRID}>
-          {products.map((product) => {
-            const image = product.images?.[0]
-            const finalPrice = product.discount
-              ? product.price - product.discount
-              : product.price
-            return (
-              <Card
-                key={product.id}
-                className="overflow-hidden border-slate-200 hover:shadow-md transition-shadow bg-white"
-              >
-                <ProductImage src={image} alt={product.name} />
-                <CardHeader className="pb-2">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">
-                    {product.category?.name ?? 'General'}
-                  </p>
-                  <CardTitle className="text-lg text-slate-900 leading-snug">{product.name}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-slate-600 line-clamp-2 mb-3">{product.description}</p>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="font-bold text-lg text-[var(--brand-navy)]">
-                      {finalPrice.toLocaleString()} RWF
-                    </span>
-                    <span
-                      className={cn(
-                        'text-xs font-medium',
-                        product.stock > 0 ? 'text-emerald-700' : 'text-red-700'
-                      )}
-                    >
-                      {formatProductStockLabel(
-                        product.stock,
-                        product.sale_unit || 'piece',
-                        product.pack_quantity || 1
-                      )}
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-500 mb-4">
-                    {formatProductUnitLabel(
-                      product.sale_unit || 'piece',
-                      product.pack_quantity || 1
-                    )}
-                  </p>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Link href={`/shop/${product.id}`}>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="w-full border-slate-300 text-slate-800 hover:bg-slate-50"
-                      >
-                        View details
-                      </Button>
-                    </Link>
-                    <AddToCartButton
-                      productId={product.id}
-                      name={product.name}
-                      price={finalPrice}
-                      stock={product.stock}
-                      image={image}
-                      size="sm"
-                      className="w-full bg-[var(--brand-navy)] text-white hover:bg-[var(--brand-navy)]/90"
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            )
-          })}
+          {products.map((product) => (
+            <ShopProductCard key={product.id} product={product} />
+          ))}
         </div>
       )}
     </section>

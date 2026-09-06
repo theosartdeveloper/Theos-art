@@ -41,6 +41,12 @@ export async function POST(request: Request) {
     if (fulfillmentType === 'delivery' && !deliveryAddress) {
       return NextResponse.json({ error: 'Delivery address is required for delivery orders' }, { status: 400 })
     }
+    if (!receiptUrl) {
+      return NextResponse.json(
+        { error: 'Upload a MoMo payment receipt before submitting the order' },
+        { status: 400 }
+      )
+    }
 
     const built = await buildOrderLines(items)
     if (!built.order) {
@@ -128,26 +134,46 @@ export async function POST(request: Request) {
     const { sendShopOrderAdminAlert, sendShopOrderConfirmationEmail } = await import(
       '@/lib/email/notifications'
     )
-    void sendShopOrderConfirmationEmail({
-      to: customerEmail,
-      customerName,
-      orderNumber,
-      totalAmount,
-      fulfillmentType,
-      items: lineItems.map((line) => ({
-        name: line.product_name,
-        quantity: line.quantity,
-        lineTotal: line.line_total,
-      })),
-    })
-    void sendShopOrderAdminAlert({
-      orderNumber,
-      customerName,
-      customerEmail,
-      customerPhone,
-      totalAmount,
-      fulfillmentType,
-    })
+    const [customerMail, adminMail] = await Promise.all([
+      sendShopOrderConfirmationEmail({
+        to: customerEmail,
+        customerName,
+        customerPhone,
+        orderNumber,
+        totalAmount,
+        fulfillmentType,
+        deliveryAddress,
+        receiptNumber,
+        items: lineItems.map((line) => ({
+          name: line.product_name,
+          quantity: line.quantity,
+          lineTotal: line.line_total,
+        })),
+      }),
+      sendShopOrderAdminAlert({
+        orderNumber,
+        customerName,
+        customerEmail,
+        customerPhone,
+        totalAmount,
+        fulfillmentType,
+        deliveryAddress,
+        receiptNumber,
+        receiptUploaded: Boolean(receiptUrl),
+        notes,
+        items: lineItems.map((line) => ({
+          name: line.product_name,
+          quantity: line.quantity,
+          lineTotal: line.line_total,
+        })),
+      }),
+    ])
+    if (!customerMail.success) {
+      console.error('[shop/orders] Customer confirmation email failed:', customerMail.error)
+    }
+    if (!adminMail.success) {
+      console.error('[shop/orders] Admin new-order email failed:', adminMail.error)
+    }
 
     if (stockResult.error) {
       return NextResponse.json(

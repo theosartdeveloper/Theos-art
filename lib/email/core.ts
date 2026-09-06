@@ -13,6 +13,26 @@ export const EMAIL_FROM =
 export const ADMIN_NOTIFICATION_EMAIL =
   process.env.ADMIN_NOTIFICATION_EMAIL?.trim() || COMPANY.email
 
+function isUsableEmail(value: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+}
+
+/** Site & branding email first, then ADMIN_NOTIFICATION_EMAIL, then company default. */
+export async function getAdminNotificationRecipients(): Promise<string[]> {
+  const recipients = new Set<string>()
+  try {
+    const { loadPublicCompanyProfile } = await import('@/lib/platform/site-settings')
+    const profile = await loadPublicCompanyProfile()
+    const fromBranding = profile.email.trim()
+    if (isUsableEmail(fromBranding)) recipients.add(fromBranding)
+  } catch {
+    // fall through to env / default
+  }
+  if (isUsableEmail(ADMIN_NOTIFICATION_EMAIL)) recipients.add(ADMIN_NOTIFICATION_EMAIL)
+  if (recipients.size === 0) recipients.add(COMPANY.email)
+  return Array.from(recipients)
+}
+
 /** Content-ID for the company logo embedded in every branded email. */
 export const EMAIL_LOGO_CID = 'theos-art-logo'
 

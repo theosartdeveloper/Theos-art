@@ -29,6 +29,33 @@ export function formatProductUnitLabel(
   return `Set of ${packQuantity}`
 }
 
+export type ProductAvailability = 'available' | 'low_stock' | 'out_of_stock'
+
+export function getProductAvailability(
+  stock: number,
+  lowStockThreshold?: number | null
+): ProductAvailability {
+  if (!Number.isFinite(stock) || stock <= 0) return 'out_of_stock'
+  const threshold =
+    lowStockThreshold != null && Number.isFinite(lowStockThreshold) && lowStockThreshold > 0
+      ? lowStockThreshold
+      : 5
+  if (stock <= threshold) return 'low_stock'
+  return 'available'
+}
+
+export function formatProductAvailabilityLabel(status: ProductAvailability): string {
+  if (status === 'out_of_stock') return 'Out of stock'
+  if (status === 'low_stock') return 'Low stock'
+  return 'Available'
+}
+
+export function productAvailabilityClass(status: ProductAvailability): string {
+  if (status === 'out_of_stock') return 'bg-red-50 text-red-800 border-red-200'
+  if (status === 'low_stock') return 'bg-amber-50 text-amber-900 border-amber-200'
+  return 'bg-emerald-50 text-emerald-800 border-emerald-200'
+}
+
 export function formatProductStockLabel(
   stock: number,
   saleUnit: ProductSaleUnit,

@@ -1,8 +1,8 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { ArrowRight, ShoppingBag } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { ShopProductCard } from '@/components/shop/shop-product-card'
 import { getPublishedProducts } from '@/lib/platform/queries'
 import { COMPANY } from '@/lib/company/constants'
 import { HomeSectionHeader } from '@/components/home/home-section-header'
@@ -47,36 +47,9 @@ export async function ShopTeaserSection() {
           </Card>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {products.map((product) => {
-              const image = product.images?.[0]
-              const finalPrice =
-                product.discount != null ? product.price - product.discount : product.price
-              return (
-                <Link
-                  key={product.id}
-                  href={`/shop/${product.id}`}
-                  className="home-tile-link no-underline hover:no-underline"
-                >
-                  <Card className="h-full border-slate-200 hover:shadow-md transition-shadow overflow-hidden">
-                    <div className="relative h-40 bg-slate-100">
-                      {image ? (
-                        <Image src={image} alt="" fill className="object-cover" unoptimized />
-                      ) : (
-                        <div className="flex h-full items-center justify-center text-slate-300">
-                          <ShoppingBag className="h-8 w-8" />
-                        </div>
-                      )}
-                    </div>
-                    <CardContent className="p-4">
-                      <p className="font-semibold text-slate-900 text-sm line-clamp-2">{product.name}</p>
-                      <p className="text-sm text-[var(--brand-navy)] font-medium mt-1">
-                        {Number(finalPrice).toLocaleString()} RWF
-                      </p>
-                    </CardContent>
-                  </Card>
-                </Link>
-              )
-            })}
+            {products.map((product) => (
+              <ShopProductCard key={product.id} product={product} compact />
+            ))}
           </div>
         )}
       </div>
