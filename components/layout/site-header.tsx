@@ -132,9 +132,9 @@ function MobileNavSheet({
 }
 
 export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
-  const [logoUrl, setLogoUrl] = useState(COMPANY.logoUrl)
-  const [brandName, setBrandName] = useState(COMPANY.brandName)
-  const [slogan, setSlogan] = useState(COMPANY.slogan)
+  const [logoUrl, setLogoUrl] = useState<string>(COMPANY.logoUrl)
+  const [brandName, setBrandName] = useState<string>(COMPANY.brandName)
+  const [slogan, setSlogan] = useState<string>(COMPANY.slogan)
   const [mobileOpen, setMobileOpen] = useState(false)
 
   useEffect(() => {
